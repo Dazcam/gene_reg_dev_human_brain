@@ -8,6 +8,14 @@ Code repository for Gene regulation in the devloping human brain
 
 ***
 
+## Data availability
+
+## Pipeline
+
+This snakemake pipeline
+
+[Distribution and reproducibility](https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html)
+
 ## Data processing
 
 1. Cell Ranger - process FASTQ files
