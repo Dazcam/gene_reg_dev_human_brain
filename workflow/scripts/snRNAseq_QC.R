@@ -303,7 +303,7 @@ boxplot(as.matrix(t(C.sce.filt[most_expressed_postQC, ])), cex = 0.05,
         las = 1, xlab = "% total count per cell", cex.axis=0.5,
         col = (scales::hue_pal())(50)[50:1], horizontal = TRUE)
 
-saveRDS(object = sce.filt, file = paste0("~/sce.rna.", REGION, ".QC.rda"))
+saveRDS(object = sce.filt, file = paste0("~/sce.rna.", REGION, ".QC.rds"))
 
 
 #--------------------------------------------------------------------------------------
