@@ -6,6 +6,12 @@ Code repository for Gene regulation in the devloping human brain
 
 ## Samples
 
+
+## Alignment
+
+snRNA-seq data aligned to Hg38 genome build
+snATAC-seq data aligned to Hg38 genome build
+
 ***
 
 ## Data availability
@@ -21,3 +27,9 @@ This snakemake pipeline
 1. Cell Ranger - process FASTQ files
 2. RNA-seq - Seurat
 3. ATAC-seq - ArchR
+
+4. MAGMA - Reference data - 1000 genomes (Hg19)
+5. sLDSC - refernce data - 1000 geneomes (Hg19)
+
+# GWAS
+
