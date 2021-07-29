@@ -2,7 +2,7 @@
 # -------------------------------------------------------------------------------------
 #
 #
-#    Script for processing snATAC-seq FASTQ files with Cell Ranger (10X)
+#    Script for running LDSC on snRNA-seq data - on SCZ GWAS only at this point
 #
 #
 # -------------------------------------------------------------------------------------
