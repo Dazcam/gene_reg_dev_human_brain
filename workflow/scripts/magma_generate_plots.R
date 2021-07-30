@@ -4,15 +4,27 @@
 #
 # -------------------------------------------------------------------------------------
 
+## Initialise R library  --------------------------------------------------------------
+.libPaths( c( "/scratch/c.c1477909/R/library", .libPaths() ) )
+
 ##  Load packages  --------------------------------------------------------------------
+cat('\nLoading packages ... \n\n')
 library(tidyverse)
 library(cowplot)
 library(rmarkdown)
 
+## Parse region / set region variable -------------------------------------------------
+cat('\nParsing args ... \n')
+p <- arg_parser("Read magma input directory ... \n")
+p <- add_argument(p, "magma_dir", help = "No markdown magma dir specified")
+args <- parse_args(p)
+print(args)
+
+
 ##  Initialise variables  -------------------------------------------------------------
 REGIONS <- c('cer', 'hip', 'pfc', 'tha', 'wge')
 GWAS <- c('ADHD', 'BPD', 'MDD', 'SCZ')
-MAGMA_DIR <- '~/Desktop/single_cell/scRNAseq/batch2_CR5_200121/magma_celltyping/MAGMA_Files/'
+MAGMA_DIR <- args$magma_dir
 NAME_BODY <- '_hg38_magma_ready.sumstats.tsv.10UP.1.5DOWN'
 SUFFIX_LINEAR <- '_linear.gsa.out'
 SUFFIX_TOP10 <- '_top10.gsa.out'
@@ -135,7 +147,7 @@ for (REGION in REGIONS) {
 
 
 # Render markdown report
-render("~/Desktop/single_cell/scRNAseq/batch2_CR5_200121/markdown/Magma_celltyping_2.0.0_260521.Rmd")
+render("/scratch/c.c1477909/markdown/magma_celltyping_plots.Rmd")
 
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
