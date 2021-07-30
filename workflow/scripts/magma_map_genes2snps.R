@@ -31,13 +31,8 @@
 
 ## Load packages  ---------------------------------------------------------------------
 cat('\nLoading packages ... \n\n')
-library(Seurat)
-library(devtools)
-library(EWCE) # using srun can't access Biomart
 library(MAGMA.Celltyping) # Note the "." instead of "_" - using srun can't see magma executable
-#library(One2One) # Not required for human data I think
-library(argparser)
-library(reshape2)
+
 
 ## Parse region / set region variable -------------------------------------------------
 cat('\nParsing args ... \n')
@@ -48,10 +43,8 @@ print(args)
 
 ##  Define variables  -----------------------------------------------------------------
 MAGMA_DIR <- '/scratch/c.c1477909/magma_celltyping/'
-
 GENOME_DIR <- paste0(MAGMA_DIR, 'g1000_eur/g1000_eur')
 GWAS_PATH <- args$gwas 
-CTD_DIR <- paste0(MAGMA_DIR, 'ctd_objects')
 
 ##  Map SNPs to genes  ----------------------------------------------------------------
 
@@ -59,9 +52,11 @@ CTD_DIR <- paste0(MAGMA_DIR, 'ctd_objects')
     # This requires net access so needs to be run locally in home
     # ~10 mins on Hawk home
 
+cat('\nMapping SNPs to genes ... \n\n')
 genesOutPath <- map.snps.to.genes(path_formatted = GWAS_PATH, 
                                   genome_ref_path = GENOME_DIR)
 cat('\n\n\nGenes out path: ', genesOutPath, '\n\n')
+cat('Done.\n\n')
 
 
 # -------------------------------------------------------------------------------------
