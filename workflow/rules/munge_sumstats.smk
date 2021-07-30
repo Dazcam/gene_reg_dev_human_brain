@@ -18,10 +18,13 @@ LDSC_GWAS_DIR = SCRATCH + "ldsc/GWAS_for_ldsc/"
 # -------------  RULES  --------------
 rule all:
     input:
+        expand(MAGMA_GWAS_DIR + "{GWAS}_hg19_magma_ready.sumstats.tsv", GWAS=config['SUMSTATS']),
         expand(MAGMA_GWAS_DIR + "{GWAS}_hg38_magma_ready.sumstats.tsv", GWAS=config['SUMSTATS']),
-#        expand(LDSC_GWAS_DIR + "{GWAS}_hg38_ldsc_ready.sumstats.gz", GWAS=config['SUMSTATS']) 
+#        expand(LDSC_GWAS_DIR + "{GWAS}_hg19_ldsc_ready.sumstats.gz", GWAS=config['SUMSTATS']) 
+        expand(LDSC_GWAS_DIR + "{GWAS}_hg38_ldsc_ready.sumstats.gz", GWAS=config['SUMSTATS']) 
 
 rule standardise_sumstats:
+    # Standardises sumstats: SNP, CHR. BP, PVAL, A1, A2 + additional GWAS dependant cols
     input:   lambda wildcards: config['SUMSTATS'][wildcards.GWAS]
     output:  GWAS_DIR + "GWAS_sumstats_standardised/{GWAS}_hg19_sumstats.tsv"
     message: "Formatting {input}"
@@ -37,6 +40,7 @@ rule standardise_sumstats:
              """
 
 rule add_z_score:
+    # Adds z-scores to GWAS sumstats lacking (SCZ and BPD)
     input:   GWAS_DIR + "GWAS_sumstats_standardised/{GWAS}_hg19_sumstats.tsv"
     output:  GWAS_DIR + "GWAS_sumstats_standardised/{GWAS}_hg19_withZ_sumstats.tsv"
     message: "Adding Z score to {input}"
@@ -52,8 +56,10 @@ rule add_z_score:
 
              """
 
-rule scz_edits:
-    # Only for SCZ - removing SNP with 13 cols, adding N, sort cols to match rest of sumstats files
+rule final_standardisation_edits:
+    # SCZ - removing SNP with 13 cols, adding N, sort cols to match rest of sumstats files
+    # BPD - Adding N
+    # Format all GWAS to SNP, CHR, BP, PVAL, A1, A2, N, Z, OR, BETA/INFO SE
     input:   GWAS_DIR + "GWAS_sumstats_standardised/{GWAS}_hg19_withZ_sumstats.tsv"
     output:  GWAS_DIR + "GWAS_sumstats_standardised/{GWAS}_hg19_withZv2_sumstats.tsv"
     message: "Adding Z score to {input}"
@@ -85,8 +91,8 @@ rule scz_edits:
                  shell("cp {input} {output}")
 
 
-rule create_bed:
-     # Create bed file to run liftover
+rule sumstats_to_bed:
+     # Convert GWAS sumstats to bed format to run liftover to hg38
     input:   GWAS_DIR + "GWAS_sumstats_standardised/{GWAS}_hg19_withZv2_sumstats.tsv"
     output:  GWAS_DIR + "GWAS_sumstats_standardised/{GWAS}_hg19_sumstats.bed"
     message: "Creating {input} bed file"
@@ -101,6 +107,7 @@ rule create_bed:
 
 
 rule lift_over:
+    # Lift GWAS data from hg19 to hg38
     input:   GWAS_DIR + "GWAS_sumstats_standardised/{GWAS}_hg19_sumstats.bed"
     output:  GWAS_DIR + "GWAS_sumstats_standardised/{GWAS}_hg38_sumstats.bed"
     message: "Lifting {input} to hg38"
@@ -115,7 +122,8 @@ rule lift_over:
              """
 
 
-rule sumstats_standarised:
+rule bed_to_sumstats:
+    # Convert hg38 bed file to sumstats format
     input:   bed = GWAS_DIR + "GWAS_sumstats_standardised/{GWAS}_hg38_sumstats.bed",
              header = GWAS_DIR + "GWAS_sumstats_standardised/{GWAS}_hg19_withZv2_sumstats.tsv"
     output:  GWAS_DIR + "GWAS_sumstats_standardised/{GWAS}_hg38_sumstats.tsv"
@@ -132,19 +140,23 @@ rule sumstats_standarised:
              """
 
 rule sumstats_for_magma:
-    input:   GWAS_DIR + "GWAS_sumstats_standardised/{GWAS}_hg38_sumstats.tsv"
-    output:  MAGMA_GWAS_DIR + "{GWAS}_hg38_magma_ready.sumstats.tsv"
+    # MAGMA needs PVAL to be labeled P
+    input:   hg19 = GWAS_DIR + "GWAS_sumstats_standardised/{GWAS}_hg19_withZv2_sumstats.tsv",
+             hg38 = GWAS_DIR + "GWAS_sumstats_standardised/{GWAS}_hg38_sumstats.tsv"
+    output:  hg19 = MAGMA_GWAS_DIR + "{GWAS}_hg19_magma_ready.sumstats.tsv",
+             hg38 = MAGMA_GWAS_DIR + "{GWAS}_hg38_magma_ready.sumstats.tsv"
     message: "Munging sumstats for {input} for magma compatibility"
     log:     SCRATCH + "logs/munge_sumstats/{GWAS}_sumstats_for_magma.log"
     shell:   
              """
 
-             sed 's/PVAL/P/g' {input} > {output} 
+             sed 's/PVAL/P/g' {input.hg19} > {output.hg19}
+             sed 's/PVAL/P/g' {input.hg38} > {output.hg38}
 
              """
 
 
-rule sumstats_for_ldsc:
+rule sumstats_for_ldsc_hg38:
     input:   snps = SCRATCH + "ldsc/reference_files/w_hm3.snplist",
              gwas = GWAS_DIR + "GWAS_sumstats_standardised/{GWAS}_hg38_sumstats.tsv"
     output:  LDSC_GWAS_DIR + "{GWAS}_hg38_ldsc_ready.sumstats.gz"
@@ -162,26 +174,6 @@ rule sumstats_for_ldsc:
 
         """
 
-
-
-
-#rule lift_over2:
-#    # Original lift over attempt takes too long and choked on alt chrs in chain file
-#    input:   SCRATCH + GWAS_DIR + "GWAS_sumstats_standardised/{GWAS}_hg19_withZv2_sumstats.tsv"
-#    output:  SCRATCH + GWAS_DIR + "GWAS_sumstats_standardised/{GWAS}_hg38_sumstats.tsv"
-#    message: "Lifting {input} to hg38"
-#    log:     SCRATCH + "logs/munge_sumstats/{GWAS}_liftOver.log"
-#    params:  SCRATCH + GWAS_DIR + "hg19ToHg38.over.chain.gz"
-#    shell:
-#             """
-
-#             python python_convert/sumstats.py lift \
-#             --sumstats {input} \
-#             --out {output} \
-#             --chain-file {params} \
-#             --log {log}
-
-#             """
 
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
