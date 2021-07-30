@@ -31,5 +31,7 @@ This snakemake pipeline
 4. MAGMA - Reference data - 1000 genomes (Hg19)
 5. sLDSC - refernce data - 1000 geneomes (Hg19)
 
+6. Cluster stability (RNA) - SVM - [scRNAseq Benchmark](https://github.com/tabdelaal/scRNAseq_Benchmark/tree/snakemake_and_docker)
+
 # GWAS
 
