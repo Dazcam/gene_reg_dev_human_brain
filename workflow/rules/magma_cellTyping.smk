@@ -28,7 +28,7 @@ rule all:
   #  input: expand(MAGMA_DIR + "ctd_objects/CellTypeData_{REGION}.rda", REGION = config["REGIONS"])
   #  input:  expand(MAGMA_OUTDIR + "{GWAS}_hg38_magma_ready.sumstats.tsv.10UP.1.5DOWN/{GWAS}_hg38_magma_ready.sumstats.tsv.10UP.1.5DOWN.genes.raw", GWAS = config["SUMSTATS_MAGMA"]) 
     input: 
-        expand(MAGMA_OUTDIR + "{GWAS}_hg38_magma_ready.sumstats.tsv.10UP.1.5DOWN/{GWAS}_hg38_magma_ready.sumstats.tsv.10UP.1.5DOWN.level2.{REGION}_top10.gsa.out", REGION = config["REGIONS"], GWAS = config["SUMSTATS"]),
+        expand(MAGMA_OUTDIR + "{GWAS}_hg19_magma_ready.sumstats.tsv.10UP.1.5DOWN/{GWAS}_hg19_magma_ready.sumstats.tsv.10UP.1.5DOWN.level2.{REGION}_top10.gsa.out", REGION = config["REGIONS"], GWAS = config["SUMSTATS"]),
         expand(GENE_LIST_OUTDIR + "{REGION}_complete.file", REGION = config["REGIONS"])
           
 rule create_ctd:
@@ -47,9 +47,9 @@ rule create_ctd:
 
 rule map_genes_to_snps:
     # Requires net access to run
-    input:  GWAS_DIR + "{GWAS}_hg38_magma_ready.sumstats.tsv"
-    output: MAGMA_OUTDIR + "{GWAS}_hg38_magma_ready.sumstats.tsv.10UP.1.5DOWN/{GWAS}_hg38_magma_ready.sumstats.tsv.10UP.1.5DOWN.genes.raw"
-    log:   LOG_DIR + "magma/map_genes_to_snps_{GWAS}.log"
+    input:  GWAS_DIR + "{GWAS}_hg19_magma_ready.sumstats.tsv"
+    output: MAGMA_OUTDIR + "{GWAS}_hg19_magma_ready.sumstats.tsv.10UP.1.5DOWN/{GWAS}_hg19_magma_ready.sumstats.tsv.10UP.1.5DOWN.genes.raw"
+    log:   LOG_DIR + "magma/map_genes_to_snps_hg19_{GWAS}.log"
     shell:
             """
        
@@ -62,10 +62,10 @@ rule map_genes_to_snps:
 
 rule magma_analysis:
     input:  ctd_obj = MAGMA_DIR + "ctd_objects/CellTypeData_{REGION}.rda",
-            gene_file = MAGMA_OUTDIR + "{GWAS}_hg38_magma_ready.sumstats.tsv.10UP.1.5DOWN/{GWAS}_hg38_magma_ready.sumstats.tsv.10UP.1.5DOWN.genes.raw", 
-            gwas_file = GWAS_DIR + "{GWAS}_hg38_magma_ready.sumstats.tsv" 
-    output: MAGMA_OUTDIR + "{GWAS}_hg38_magma_ready.sumstats.tsv.10UP.1.5DOWN/{GWAS}_hg38_magma_ready.sumstats.tsv.10UP.1.5DOWN.level2.{REGION}_top10.gsa.out"
-    log:    LOG_DIR + "magma/magma_analysis_{REGION}_{GWAS}.log"
+            gene_file = MAGMA_OUTDIR + "{GWAS}_hg19_magma_ready.sumstats.tsv.10UP.1.5DOWN/{GWAS}_hg19_magma_ready.sumstats.tsv.10UP.1.5DOWN.genes.raw", 
+            gwas_file = GWAS_DIR + "{GWAS}_hg19_magma_ready.sumstats.tsv" 
+    output: MAGMA_OUTDIR + "{GWAS}_hg19_magma_ready.sumstats.tsv.10UP.1.5DOWN/{GWAS}_hg19_magma_ready.sumstats.tsv.10UP.1.5DOWN.level2.{REGION}_top10.gsa.out"
+    log:    LOG_DIR + "magma/magma_analysis_hg19_{REGION}_{GWAS}.log"
     shell:
             """
 
