@@ -1,0 +1,568 @@
+---
+title: "Magma_celltyping_analysis"
+author: "Darren Cameron"
+date: "`r format(Sys.time(), '%d/%m/%y')`"
+output: html_document
+---
+
+Magma celtyping (MC) analysis on regional snRNAseq data. All GWAS hg19.
+
+- SCZ - PGC3
+- BPD - Mullins et al. 2021
+- MDD - Wray et al. 2017
+- ADHD - Demontis et al. 2017
+
+***
+
+### **Results** {.tabset}
+
+***
+
+#### **SCZ** {.tabset}
+
+##### **Linear**
+  
+**Plot**
+
+```{r SCZ_linear_plot, echo=FALSE}
+all_regions_SCZ_magma_linear_plot
+```
+
+***
+
+**Tables**
+
+***
+
+Column are:
+
+- VARIABLE - name of the gene set, gene covariate or interaction. 
+- TYPE - denotes the type of variable 
+- NGENES - the number of genes in the data that are in the set
+- BETA - the regression coefficient of the variable
+- BETA_STD - the semi-standardized regression coefficient, corresponding to the predicted change in Z-value given a change of one standard deviation in the predictor gene set / gene covariate (ie. BETA divided by the variable’s standard deviation)
+- SE - the standard error of the regression coefficient
+- P - p-value for the parameter / variable
+- Cluster ID - Seurat cluster ID
+
+***
+
+CER
+
+```{r SCZ_cer_data, echo=FALSE}
+knitr::kable(cer_SCZ_magma_linear_data)
+```
+
+***
+
+HIP
+
+```{r SCZ_hip_data, echo=FALSE}
+knitr::kable(hip_SCZ_magma_linear_data)
+```
+
+***
+
+(P)FC
+
+```{r SCZ_pfc_data, echo=FALSE}
+knitr::kable(pfc_SCZ_magma_linear_data)
+```
+
+***
+
+THA
+
+```{r SCZ_tha_data, echo=FALSE}
+knitr::kable(tha_SCZ_magma_linear_data)
+```
+
+***
+
+WGE
+
+```{r SCZ_wge_data, echo=FALSE}
+knitr::kable(wge_SCZ_magma_linear_data)
+```
+
+***
+
+##### **top10**
+  
+**Plot**
+
+```{r SCZ_top10_plot, echo=FALSE}
+all_regions_SCZ_magma_top10_plot
+```
+
+***
+
+**Tables**
+
+***
+
+Column are:
+
+- VARIABLE - name of the gene set, gene covariate or interaction. 
+- TYPE - denotes the type of variable 
+- NGENES - the number of genes in the data that are in the set
+- BETA - the regression coefficient of the variable
+- BETA_STD - the semi-standardized regression coefficient, corresponding to the predicted change in Z-value given a change of one standard deviation in the predictor gene set / gene covariate (ie. BETA divided by the variable’s standard deviation)
+- SE - the standard error of the regression coefficient
+- P - p-value for the parameter / variable
+- Cluster ID - Seurat cluster ID
+
+***
+
+CER
+
+```{r SCZ_cer_top10_data, echo=FALSE}
+knitr::kable(cer_SCZ_magma_top10_data)
+```
+
+***
+
+HIP
+
+```{r SCZ_hip_top10_data, echo=FALSE}
+knitr::kable(hip_SCZ_magma_top10_data)
+```
+
+***
+
+(P)FC
+
+```{r SCZ_pfc_top10_data, echo=FALSE}
+knitr::kable(pfc_SCZ_magma_top10_data)
+```
+
+***
+
+THA
+
+```{r SCZ_tha_top10_data, echo=FALSE}
+knitr::kable(tha_SCZ_magma_top10_data)
+```
+
+***
+
+WGE
+
+```{r SCZ_wge_top10_data, echo=FALSE}
+knitr::kable(wge_SCZ_magma_top10_data)
+```
+
+***
+
+
+#### **BPD** {.tabset}
+
+##### **Linear**
+  
+**Plot**
+
+```{r BPD_linear_plot, echo=FALSE}
+all_regions_BPD_magma_linear_plot
+```
+
+***
+
+**Tables**
+
+***
+
+Column are:
+
+- VARIABLE - name of the gene set, gene covariate or interaction. 
+- TYPE - denotes the type of variable 
+- NGENES - the number of genes in the data that are in the set
+- BETA - the regression coefficient of the variable
+- BETA_STD - the semi-standardized regression coefficient, corresponding to the predicted change in Z-value given a change of one standard deviation in the predictor gene set / gene covariate (ie. BETA divided by the variable’s standard deviation)
+- SE - the standard error of the regression coefficient
+- P - p-value for the parameter / variable
+- Cluster ID - Seurat cluster ID
+
+***
+
+CER
+
+```{r BPD_cer_data, echo=FALSE}
+knitr::kable(cer_BPD_magma_linear_data)
+```
+
+***
+
+HIP
+
+```{r BPD_hip_data, echo=FALSE}
+knitr::kable(hip_BPD_magma_linear_data)
+```
+
+***
+
+(P)FC
+
+```{r BPD_pfc_data, echo=FALSE}
+knitr::kable(pfc_BPD_magma_linear_data)
+```
+
+***
+
+THA
+
+```{r BPD_tha_data, echo=FALSE}
+knitr::kable(tha_BPD_magma_linear_data)
+```
+
+***
+
+WGE
+
+```{r BPD_wge_data, echo=FALSE}
+knitr::kable(wge_BPD_magma_linear_data)
+```
+
+***
+
+
+##### **top10**
+  
+**Plot**
+
+```{r BPD_top10_plot, echo=FALSE}
+all_regions_BPD_magma_top10_plot
+```
+
+***
+
+**Tables**
+
+***
+
+Column are:
+
+- VARIABLE - name of the gene set, gene covariate or interaction. 
+- TYPE - denotes the type of variable 
+- NGENES - the number of genes in the data that are in the set
+- BETA - the regression coefficient of the variable
+- BETA_STD - the semi-standardized regression coefficient, corresponding to the predicted change in Z-value given a change of one standard deviation in the predictor gene set / gene covariate (ie. BETA divided by the variable’s standard deviation)
+- SE - the standard error of the regression coefficient
+- P - p-value for the parameter / variable
+- Cluster ID - Seurat cluster ID
+
+***
+
+CER
+
+```{r BPD_cer_top10_data, echo=FALSE}
+knitr::kable(cer_BPD_magma_top10_data)
+```
+
+***
+
+HIP
+
+```{r BPD_hip_top10_data, echo=FALSE}
+knitr::kable(hip_BPD_magma_top10_data)
+```
+
+***
+
+(P)FC
+
+```{r BPD_pfc_top10_data, echo=FALSE}
+knitr::kable(pfc_BPD_magma_top10_data)
+```
+
+***
+
+THA
+
+```{r BPD_tha_top10_data, echo=FALSE}
+knitr::kable(tha_BPD_magma_top10_data)
+```
+
+***
+
+WGE
+
+```{r BPD_wge_top10_data, echo=FALSE}
+knitr::kable(wge_BPD_magma_top10_data)
+```
+
+***
+
+
+#### **MDD** {.tabset}
+
+##### **Linear**
+  
+**Plot**
+
+```{r MDD_linear_plot, echo=FALSE}
+all_regions_MDD_magma_linear_plot
+```
+
+***
+
+**Tables**
+
+***
+
+Column are:
+
+- VARIABLE - name of the gene set, gene covariate or interaction. 
+- TYPE - denotes the type of variable 
+- NGENES - the number of genes in the data that are in the set
+- BETA - the regression coefficient of the variable
+- BETA_STD - the semi-standardized regression coefficient, corresponding to the predicted change in Z-value given a change of one standard deviation in the predictor gene set / gene covariate (ie. BETA divided by the variable’s standard deviation)
+- SE - the standard error of the regression coefficient
+- P - p-value for the parameter / variable
+- Cluster ID - Seurat cluster ID
+
+***
+
+CER
+
+```{r MDD_cer_data, echo=FALSE}
+knitr::kable(cer_MDD_magma_linear_data)
+```
+
+***
+
+HIP
+
+```{r MDD_hip_data, echo=FALSE}
+knitr::kable(hip_MDD_magma_linear_data)
+```
+
+***
+
+(P)FC
+
+```{r MDD_pfc_data, echo=FALSE}
+knitr::kable(pfc_MDD_magma_linear_data)
+```
+
+***
+
+THA
+
+```{r MDD_tha_data, echo=FALSE}
+knitr::kable(tha_MDD_magma_linear_data)
+```
+
+***
+
+WGE
+
+```{r MDD_wge_data, echo=FALSE}
+knitr::kable(wge_MDD_magma_linear_data)
+```
+
+***
+
+##### **top10**
+  
+**Plot**
+
+```{r MDD_top10_plot, echo=FALSE}
+all_regions_MDD_magma_top10_plot
+```
+
+***
+
+**Tables**
+
+***
+
+Column are:
+
+- VARIABLE - name of the gene set, gene covariate or interaction. 
+- TYPE - denotes the type of variable 
+- NGENES - the number of genes in the data that are in the set
+- BETA - the regression coefficient of the variable
+- BETA_STD - the semi-standardized regression coefficient, corresponding to the predicted change in Z-value given a change of one standard deviation in the predictor gene set / gene covariate (ie. BETA divided by the variable’s standard deviation)
+- SE - the standard error of the regression coefficient
+- P - p-value for the parameter / variable
+- Cluster ID - Seurat cluster ID
+
+***
+
+CER
+
+```{r MDD_cer_top10_data, echo=FALSE}
+knitr::kable(cer_MDD_magma_top10_data)
+```
+
+***
+
+HIP
+
+```{r MDD_hip_top10_data, echo=FALSE}
+knitr::kable(hip_MDD_magma_top10_data)
+```
+
+***
+
+(P)FC
+
+```{r MDD_pfc_top10_data, echo=FALSE}
+knitr::kable(pfc_MDD_magma_top10_data)
+```
+
+***
+
+THA
+
+```{r MDD_tha_top10_data, echo=FALSE}
+knitr::kable(tha_MDD_magma_top10_data)
+```
+
+***
+
+WGE
+
+```{r MDD_wge_top10_data, echo=FALSE}
+knitr::kable(wge_MDD_magma_top10_data)
+```
+
+***
+
+
+#### **ADHD** {.tabset}
+
+##### **Linear**
+  
+**Plot**
+
+```{r ADHD_linear_plot, echo=FALSE}
+all_regions_ADHD_magma_linear_plot
+```
+
+***
+
+**Tables**
+
+***
+
+Column are:
+
+- VARIABLE - name of the gene set, gene covariate or interaction. 
+- TYPE - denotes the type of variable 
+- NGENES - the number of genes in the data that are in the set
+- BETA - the regression coefficient of the variable
+- BETA_STD - the semi-standardized regression coefficient, corresponding to the predicted change in Z-value given a change of one standard deviation in the predictor gene set / gene covariate (ie. BETA divided by the variable’s standard deviation)
+- SE - the standard error of the regression coefficient
+- P - p-value for the parameter / variable
+- Cluster ID - Seurat cluster ID
+
+***
+
+CER
+
+```{r ADHD_cer_data, echo=FALSE}
+knitr::kable(cer_ADHD_magma_linear_data)
+```
+
+***
+
+HIP
+
+```{r ADHD_hip_data, echo=FALSE}
+knitr::kable(hip_ADHD_magma_linear_data)
+```
+
+***
+
+(P)FC
+
+```{r ADHD_pfc_data, echo=FALSE}
+knitr::kable(pfc_ADHD_magma_linear_data)
+```
+
+***
+
+THA
+
+```{r ADHD_tha_data, echo=FALSE}
+knitr::kable(tha_ADHD_magma_linear_data)
+```
+
+***
+
+WGE
+
+```{r ADHD_wge_data, echo=FALSE}
+knitr::kable(wge_ADHD_magma_linear_data)
+```
+
+***
+
+
+##### **top10**
+  
+**Plot**
+
+```{r ADHD_top10_plot, echo=FALSE}
+all_regions_ADHD_magma_top10_plot
+```
+
+***
+
+**Tables**
+
+***
+
+Column are:
+
+- VARIABLE - name of the gene set, gene covariate or interaction. 
+- TYPE - denotes the type of variable 
+- NGENES - the number of genes in the data that are in the set
+- BETA - the regression coefficient of the variable
+- BETA_STD - the semi-standardized regression coefficient, corresponding to the predicted change in Z-value given a change of one standard deviation in the predictor gene set / gene covariate (ie. BETA divided by the variable’s standard deviation)
+- SE - the standard error of the regression coefficient
+- P - p-value for the parameter / variable
+- Cluster ID - Seurat cluster ID
+
+***
+
+CER
+
+```{r ADHD_cer_top10_data, echo=FALSE}
+knitr::kable(cer_ADHD_magma_top10_data)
+```
+
+***
+
+HIP
+
+```{r ADHD_hip_top10_data, echo=FALSE}
+knitr::kable(hip_ADHD_magma_top10_data)
+```
+
+***
+
+(P)FC
+
+```{r ADHD_pfc_top10_data, echo=FALSE}
+knitr::kable(pfc_ADHD_magma_top10_data)
+```
+
+***
+
+THA
+
+```{r ADHD_tha_top10_data, echo=FALSE}
+knitr::kable(tha_ADHD_magma_top10_data)
+```
+
+***
+
+WGE
+
+```{r ADHD_wge_top10_data, echo=FALSE}
+knitr::kable(wge_ADHD_magma_top10_data)
+```
+
+***
