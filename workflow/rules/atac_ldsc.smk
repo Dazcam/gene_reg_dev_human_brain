@@ -6,37 +6,26 @@
 #
 # -------------------------------------------------------------------------------------
 
-# Need rule for summary doc
+# Need rule for markown
 
 # ---------  SET SMK PARAMS  ----------
-configfile: "config.yaml"
-report: "report/workflow.rst" # Experimented with this but not currently using
+configfile: "config/config.yaml"
 
 # ----------  SET VARIABLES  ----------
 SCRATCH = "/scratch/c.c1477909/"
 LDSC_DIR = SCRATCH + "ldsc/"
 MAGMA_DIR = SCRATCH + "magma_celltyping/"
 REF_DIR = LDSC_DIR + "reference_files/"
-ANN_DIR = LDSC_DIR + "LDSR_annotation_files/RNA/"
+ANN_DIR = LDSC_DIR + "LDSR_annotation_files/ATAC/"
 GWAS_DIR = LDSC_DIR + "GWAS_for_ldsc/"
 QUANTILES_DIR = MAGMA_DIR + "ldsc_gene_lists/"
-PART_HERIT_DIR = LDSC_DIR + "part_herit_files/RNA/"
+PART_HERIT_DIR = LDSC_DIR + "part_herit_files/ATAC/"
 
 # -------------  RULES  ---------------configfile: "config.yaml"
-
-SCRATCH = "/scratch/c.c1477909/"
-REF_DIR = SCRATCH + "ldsc/reference_files/"
-ANN_DIR = SCRATCH + "ldsc/LDSR_annotation_files/"
-BED_DIR = SCRATCH + "bed_files/"
-GWAS_DIR = SCRATCH + "ldsc/GWAS_for_ldsc/"
-PART_HERIT_DIR = SCRATCH + "ldsc/part_herit_files/"
-
 rule all:
     input:
-#        expand(ANN_DIR + "baseline.{CHR}_no_head.bed", CHR = range(1,23))
-#        expand(ANN_DIR + "snATACseq.{CELL_TYPE}.{CHR}.annot.gz", CELL_TYPE = config['CELL_TYPES'], CHR = range(1,23))
-#        expand(ANN_DIR + "snATACseq.{CELL_TYPE}.{CHR}.l2.ldscore.gz", CELL_TYPE = config['CELL_TYPES'], CHR = range(1,23))
-        expand(PART_HERIT_DIR + "prtHrt_snATACseq_{CELL_TYPE}_SCZ.results", CELL_TYPE = config['CELL_TYPES'])
+#        expand(PART_HERIT_DIR + "prtHrt_snATACseq_{CELL_TYPE}_SCZ.results", CELL_TYPE = config['CELL_TYPES'])
+        expand(RESULTS_DIR + "prtHrt_ATACseq_SCZ_summary.tsv")
 
 rule annot2bed:
     input:   folder = REF_DIR + "baselineLD_v2.2_1000G_Phase3"
@@ -93,27 +82,26 @@ rule partitioned_heritability:
         "--ref-ld-chr {params.baseline},{params.LD_anns} --overlap-annot "
         "--frqfile-chr {params.frqfile} --out {params.out_file} --print-coefficients 2> {log}"
 
-#rule extract_PHerit_results:
-#    input:
-#        expand(rules.partitioned_heritability.output, GWASsumstat = config['SUMSTATS']) 
-#    output:    
-#        "02_PrtHrt/PrtHrt_Test.txt"
-#    params:
-#        prtHrt_folder = "02_PrtHrt/"
-#    log:
-#        "logs/PrtHrt/extract_results.log"
-#    shell:
-#        """
-#        grep L2_1 {params.prtHrt_folder}*.results > {params.prtHrt_folder}sumstats.temp;
-#        awk -F '[.]' '{{print $2}}' {params.prtHrt_folder}sumstats.temp > {params.prtHrt_folder}gwas.temp
-#        cut -f2-10 {params.prtHrt_folder}sumstats.temp > {params.prtHrt_folder}sumstats.noCol1.temp
-#        paste -d'\t' {params.prtHrt_folder}gwas.temp {params.prtHrt_folder}sumstats.noCol1.temp > {params.prtHrt_folder}final.sumstats.temp
-#        ls -1t {params.prtHrt_folder}*results | head -n 1 | xargs head -n 1 > {params.prtHrt_folder}header.temp;
-#        cat {params.prtHrt_folder}header.temp {params.prtHrt_folder}final.sumstats.temp > {output};
-#        rm {params.prtHrt_folder}*temp;
-#        """
-#         ls -1t {params.prtHrt_folder}*results | head -n 1 | xargs head -n 1 > {output}
-#        grep L2_1 {params.prtHrt_folder}*.results >> {output}
+rule create_partHerit_summary:
+    input:   expand(PART_HERIT_DIR + "prtHrt_snATACseq_{CELL_TYPE}_SCZ.results", CELL_TYPE = config["ATAC_CELL_TYPES"])
+    output:  RESULTS_DIR + "prtHrt_ATACseq_SCZ_summary.tsv"
+    message: "Creating summary file for SCZ GWAS"
+    params:  dir = PART_HERIT_DIR,
+             cell_types = config["ATAC_CELL_TYPES"]
+    log:     "logs/LDSR/snRNAseq.SCZ_partHerit.summary.log"
+    shell:
+	         """
 
+	         head -1 {params.dir}prtHrt_snATACseq_InN.1.500bpExt.FDR.0.01.ge_SCZ.results > {output}
+
+             File=atac_celltypes.tsv
+             Lines=$(cat $File)
+             for Line in $Lines
+             do
+	         grep L2_1 /scratch/c.c1477909/ldsc/part_herit_files/prtHrt_snATACseq_"$Line"_SCZ.results | sed "s/L2_1/$Line/g" >> /scratch/c.c1477909/results/prtHrt_ATACseq_SCZ_summary.tsv
+             done
+
+	         """
+    
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
