@@ -1,0 +1,246 @@
+# -------------------------------------------------------------------------------------
+#
+#    Config file for gene expression in dev human brain study
+#
+# -------------------------------------------------------------------------------------
+
+# ---------  CELL RANGER  ----------
+SAMPLES_RNA:
+#    14510_Cerebellum_B2_RNA:
+#    14510_Hippocampus_B2_RNA:
+#    14510_Thalamus_B2_RNA:
+#    14611_Cerebellum_B2_RNA:
+#    14611_Hippocampus_B2_RNA:
+#    14611_Thalamus_B2_RNA:
+#    14993_Cerebellum_B2_RNA:
+#    14993_Hippocampus_B2_RNA:
+#    14993_PFC_B2_RNA:
+#    14993_Thalamus_B2_RNA:
+#    14993_WGE_B2_RNA:
+    14510_Cerebellum_B1_RNA:
+#    14510_PFC_B1_RNA: 
+    14510_Thalamus_B1_RNA:
+#    14510_WGE_B1_RNA:
+    14611_Cerebellum_B1_RNA:
+#    14611_PFC_B1_RNA:
+    14611_Thalamus_B1_RNA:
+#    14611_WGE_B1_RNA:
+    14993_Cerebellum_B1_RNA:
+    14993_Thalamus_B1_RNA:
+    14993_WGE_B1_RNA:
+
+SAMPLES_ATAC:
+    14510_Cerebellum_ATAC:
+    14510_Hippocampus_ATAC:
+    14510_PFC_ATAC:
+    14510_Thalamus_ATAC:
+    14510_WGE_ATAC:
+    14611_Cerebellum_ATAC:
+    14611_Hippocampus_ATAC:
+    14611_PFC_ATAC:
+    14611_Thalamus_ATAC:
+    14611_WGE_ATAC:
+    14993_Cerebellum_ATAC:
+    14993_Hippocampus_ATAC:
+    14993_PFC_ATAC:
+    14993_Thalamus_ATAC:
+    14993_WGE_ATAC:
+
+FASTQ_DIR: /scratch/c.c1477909/fq 
+REFERENCE_RNA: /scratch/c.c1477909/cellRanger/refdata-gex-GRCh38-2020-A 
+REFERENCE_ATAC: /scratch/c.c1477909/cellRanger/refdata-cellranger-atac-GRCh38-1.2.0
+
+
+REGIONS:
+    cer:
+    hip:
+    pfc:
+    tha:
+    wge:
+
+SUMSTATS:
+    ADHD: GWAS_sumstats/GWAS_sumstats_RAW/demontis-walters-martin-2017-eur-adhd-summaryqc.tsv
+    ASD: GWAS_sumstats/GWAS_sumstats_RAW/grove-ripke-als-2017-eur-asd-summaryqc.tsv
+    BPD: GWAS_sumstats/GWAS_sumstats_RAW/daner_bip_pgc3_nm.tsv
+    MDD: GWAS_sumstats/GWAS_sumstats_RAW/wray-ripke-mattheisen-2017-mdd-23me-summaryqc.tsv
+    SCZ: GWAS_sumstats/GWAS_sumstats_RAW/PGC3_SCZ_wave3_public.v2.tsv
+
+RNA_CELL_TYPES:
+    Cer-CycPro:
+    Cer-Endo:
+    Cer-ExN-Pro:
+    Cer-Granule-1:
+    Cer-Granule-2:
+    Cer-Granule-3:
+    Cer-Granule-4:
+    Cer-Granule-Pro:
+    Cer-InN-Pro-1:
+    Cer-InN-Pro-2:
+    Cer-MG:
+    Cer-N-undef-1:
+    Cer-N-undef-2:
+    Cer-OPC:
+    Cer-Purkinje-1:
+    Cer-Purkinje-2:
+    Cer-Purkinje-3:
+    Cer-Purkinje-4:
+    Cer-RG-1:
+    Cer-RG-2:
+    Cer-RG-3:
+    FC-CycPro:
+    FC-Endo:
+    FC-ExN-1:
+    FC-ExN-2:
+    FC-ExN-3:
+    FC-ExN-4:
+    FC-ExN-5:
+    FC-ExN-6:
+    FC-ExN-7:
+    FC-InN-1:
+    FC-InN-2:
+    FC-InN-3:
+    FC-IP:
+    FC-MG:
+    FC-OPC:
+    FC-RG-1:
+    FC-RG-2:
+    GE-CycPro:
+    GE-InN-1:
+    GE-InN-2:
+    GE-InN-3:
+    GE-InN-4:
+    GE-InN-5:
+    GE-InN-6:
+    GE-InN-7:
+    GE-RG-1:
+    GE-RG-2:
+    GE-RG-3:
+    Hipp-CycPro:
+    Hipp-Endo:
+    Hipp-ExN-1:
+    Hipp-ExN-2:
+    Hipp-ExN-3:
+    Hipp-ExN-4:
+    Hipp-ExN-5:
+    Hipp-ExN-6:
+    Hipp-ExN-7:
+    Hipp-InN-1:
+    Hipp-InN-2:
+    Hipp-InN-3:
+    Hipp-MG:
+    Hipp-N-Undef-1:
+    Hipp-N-Undef-2:
+    Hipp-OPC:
+    Hipp-RG-1:
+    Hipp-RG-2:
+    Hipp-RG-3:
+    Thal-CycPro:
+    Thal-Endo:
+    Thal-ExN-1:
+    Thal-ExN-2:
+    Thal-ExN-3:
+    Thal-ExN-4:
+    Thal-ExN-5:
+    Thal-ExN-6:
+    Thal-ExN-7:
+    Thal-ExN-8:
+    Thal-ExN-9:
+    Thal-InN-1:
+    Thal-InN-2:
+    Thal-InN-3:
+    Thal-InN-4:
+    Thal-IP:
+    Thal-MG:
+    Thal-OPC:
+    Thal-RG-1:
+    Thal-RG-2:
+    Thal-RG-3:
+    Thal-RG-4:
+    Thal-RG-Astro:
+
+
+CELL_TYPES:
+#    MG.250bpExt.FDR.0.1.cer:
+#    MG.500bpExt.FDR.0.01.cer:
+#    MG.500bpExt.FDR.0.05.cer:
+#    N.undef.1.250bpExt.FDR.0.1.cer:
+#    N.undef.1.500bpExt.FDR.0.01.cer:
+#    N.undef.1.500bpExt.FDR.0.05.cer:
+#    N.undef.2.250bpExt.FDR.0.1.cer:
+#    N.undef.2.500bpExt.FDR.0.01.cer:
+#    N.undef.2.500bpExt.FDR.0.05.cer:
+#    OPC.250bpExt.FDR.0.1.cer:
+#    OPC.500bpExt.FDR.0.01.cer:
+#    OPC.500bpExt.FDR.0.05.cer:
+#    Purkinje.1.250bpExt.FDR.0.1.cer:
+#    Purkinje.1.500bpExt.FDR.0.01.cer:
+#    Purkinje.1.500bpExt.FDR.0.05.cer:
+#    RG.1.250bpExt.FDR.0.1.cer:
+#    RG.1.500bpExt.FDR.0.01.cer:
+#    RG.1.500bpExt.FDR.0.05.cer:
+#    InN.1.250bpExt.FDR.0.1.ge:
+#    InN.1.500bpExt.FDR.0.01.ge:
+#    InN.1.500bpExt.FDR.0.05.ge:
+#    InN.2.250bpExt.FDR.0.1.ge:
+#    InN.2.500bpExt.FDR.0.01.ge:
+#    InN.2.500bpExt.FDR.0.05.ge:
+#    InN.3.250bpExt.FDR.0.1.ge: 
+#    InN.3.500bpExt.FDR.0.01.ge:
+#    InN.3.500bpExt.FDR.0.05.ge:
+#    InN.6.250bpExt.FDR.0.1.ge:
+#    InN.6.500bpExt.FDR.0.01.ge:
+#    InN.6.500bpExt.FDR.0.05.ge:
+#    InN.7.250bpExt.FDR.0.1.ge:
+#    InN.7.500bpExt.FDR.0.01.ge:
+#    InN.7.500bpExt.FDR.0.05.ge:
+#    RG.1.250bpExt.FDR.0.1.ge:
+#    RG.1.500bpExt.FDR.0.01.ge:
+#    RG.1.500bpExt.FDR.0.05.ge:
+#    RG.2.250bpExt.FDR.0.1.ge:
+#    RG.2.500bpExt.FDR.0.01.ge:
+#    RG.2.500bpExt.FDR.0.05.ge:
+#    RG.3.250bpExt.FDR.0.1.ge:
+#    RG.3.500bpExt.FDR.0.01.ge:
+#    RG.3.500bpExt.FDR.0.05.ge:
+
+    InN.1.250bpExt.FDR.0.01.ge:
+    InN.2.250bpExt.FDR.0.01.ge:
+    InN.3.250bpExt.FDR.0.01.ge:   
+    InN.6.250bpExt.FDR.0.01.ge:   
+    InN.7.250bpExt.FDR.0.01.ge:  
+    RG.1.250bpExt.FDR.0.01.ge:
+    RG.2.250bpExt.FDR.0.01.ge:  
+    RG.3.250bpExt.FDR.0.01.ge:
+    ExN.2.250bpExt.FDR.0.01.fc:   
+    ExN.3.250bpExt.FDR.0.01.fc: 
+    ExN.5.250bpExt.FDR.0.01.fc:  
+    ExN.6.250bpExt.FDR.0.01.fc: 
+    InN.1.250bpExt.FDR.0.01.fc:    
+    InN.2.250bpExt.FDR.0.01.fc:    
+    InN.3.250bpExt.FDR.0.01.fc:  
+    MG.250bpExt.FDR.0.01.fc:
+    RG.1.250bpExt.FDR.0.01.fc:  
+    RG.2.250bpExt.FDR.0.01.fc:
+    Granule.1.250bpExt.FDR.0.01.cer:
+    Granule.4.250bpExt.FDR.0.01.cer:
+    InN.Pro.1.250bpExt.FDR.0.01.cer:    
+    InN.Pro.2.250bpExt.FDR.0.01.cer:    
+    MG.250bpExt.FDR.0.01.cer:
+    N.undef.1.250bpExt.FDR.0.01.cer:  
+    N.undef.2.250bpExt.FDR.0.01.cer:   
+    OPC.250bpExt.FDR.0.01.cer: 
+    Purkinje.1.250bpExt.FDR.0.01.cer:   
+    RG.1.250bpExt.FDR.0.01.cer:
+
+
+#SUMSTATS_MAGMA:
+#    ADHD: /scratch/c.c1477909/GWAS_sumstats/GWAS_for_magma/ADHD_hg38_magma_ready.sumstats.tsv 
+#    ASD: GWAS_sumstats/GWAS_for_magma/ASD_hg38_magma_ready.sumstats.tsv 
+#    BIP: GWAS_sumstats/GWAS_for_magma/BIP_hg38_magma_ready.sumstats.tsv 
+#    MDD: GWAS_sumstats/GWAS_for_magma/MDD_hg38_magma_ready.sumstats.tsv 
+#    SCZ: GWAS_sumstats/GWAS_for_magma/SCZ_hg38_magma_ready.sumstats.tsv 
+
+
+
+
+
