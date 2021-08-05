@@ -22,18 +22,21 @@ library(argparser)
 
 ## Parse cell_type / set cell_type variable -------------------------------------------
 cat('Parsing args ... \n')
-p <- arg_parser("Read ldsc result table for snATAC-seq data ... \n")
-p <- add_argument(p, "in_file", help = "No input file provided")
+p <- arg_parser("Create sLDSC Rmarkdown report for snATAC-seq data ... \n")
+p <- add_argument(p, "summary_file", help = "No snATACseq sLDSC summary file specified")
+p <- add_argument(p, "markdown_file", help = "No snATACseq sLDSC Rmarkdown report file specified")
+p <- add_argument(p, "out_dir", help = "No Rmarkdown html output directory specified")
 args <- parse_args(p)
 print(args)
 
 ##  Define variables  -----------------------------------------------------------------
-IN_FILE <- args$in_file
-
+SUMMARY_FILE <- args$summary_file
+MARKDOWN_FILE <- args$markdown_file
+OUT_DIR <- ards$out_dir
 
 ## Load Data  -------------------------------------------------------------------------
 cat('Loading data ... \n')
-ph_df <- read_delim('~/Desktop/prtHrt_ATACseq_SCZ_summary.tsv', "\t", 
+ph_df <- read_delim(SUMMARY_FILE, "\t", 
                     escape_double = FALSE, trim_ws = TRUE, col_names = TRUE)
 
 for (REGION in c('cer', 'fc', 'ge')) {
@@ -261,9 +264,7 @@ ge_500bp_pVal_plot <- ggplot(ge_500bp_df, aes(x=`Cell Type`, y=neglog10)) +
 ge_500bp_plot <- plot_grid(ge_500bp_enrich_plot, ge_500bp_pVal_plot, labels = c('A', 'B'), label_size = 16)
 
 # Generate markdown document
-render('~/Desktop/single_cell/markdown/ldsc_report_atac.Rmd')
+render(MARKDOWN_FILE, output_dir = OUT_DIR)
 
 #--------------------------------------------------------------------------------------
 #--------------------------------------------------------------------------------------
-
-
