@@ -20,9 +20,21 @@ library(pheatmap)
 library(Seurat)
 options(stringsAsFactors = FALSE)
 
-##  Set variables  --------------------------------------------------------------------
-DATA_DIR <- "Desktop/single_cell/scRNAseq/batch2_CR5_200121/"
-REGION <- "WGE"
+## Parse arguments  -------------------------------------------------------------------
+cat('\nParsing args ... \n')
+p <- arg_parser("Read in scRNAseq QCed sce object and output info  ... \n")
+p <- add_argument(p, "region", help = "No brain region specified")
+p <- add_argument(p, "in_obj", help = "No snRNAseq QCed SCE object specified")
+p <- add_argument(p, "out_seurat", help = "No seurat output RDS object specified")
+p <- add_argument(p, "out_topDEgenes", help = "No top DE gene output object specified")
+args <- parse_args(p)
+print(args)
+
+##  Define variables  -----------------------------------------------------------------
+REGION <- args$region
+IN_OBJ <- args$in_obj
+OUT_SEURAT <- args$gwas
+OUT_TOP_DE_GENES
 
 VAR_FEAT  <- 2000       # No. variable features to use for FindVariableFeatures()
 PCA_UPPER_DIM <- 17     # No. PCA dimensions to be considered for dim reduction
@@ -33,7 +45,7 @@ seurat_variables <- data.frame(Variable_Features=VAR_FEAT,
                                Resolution=RESOLUTION)
 
 ##  Load data  ------------------------------------------------------------------------
-seurat.filt <- readRDS(paste0("~/sce.rna.", REGION, ".QC.rda"))
+seurat.filt <- readRDS(IN_OBJ)
 
 
 ##  Convert to Seurat Object  ---------------------------------------------------------
@@ -112,8 +124,8 @@ top30 <- seurat.filt.markers %>%
 ##  Save object  ----------------------------------------------------------------------
 # Need to do this to carry over regional cluster IDs
 seurat.filt <- StashIdent(seurat.filt, save.name = paste0(tolower(REGION),'_idents')
-saveRDS(seurat.filt, paste0("~/sce.rna.", REGION, ".seurat.rds"))
-saveRDS(seurat.filt.markers, paste0("~/sce.rna.", REGION, ".DEgenes.rds"))
+saveRDS(seurat.filt, OUT_SEURAT)
+saveRDS(seurat.filt.markers, OUT_TOP_DE_GENES)
 
 
 #--------------------------------------------------------------------------------------
