@@ -30,7 +30,7 @@ rule snRNA_seq_QC:
     # region in inout may not be needed here
     input:  data_dir = dir(RNA_DATA_DIR),
             region = config['REGIONS']
-    output: ROBJ_DIR + "sce.rna.{REGION}.QC.rds" 
+    output: ROBJ_DIR + "rna.{REGION}.sce.QC.rds" 
     log:    LOG_DIR + "data_processing/snRNA_{REGION}_QC.log" 
     shell: 
             """
