@@ -20,10 +20,21 @@ library(pheatmap)
 library(Seurat)
 options(stringsAsFactors = FALSE)
 
-## Set variables  --------------------------------------------------------------------
-DATA_DIR <- "~/Desktop/single_cell/scRNAseq/batch2_CR5_200121/"
+## Parse region / set region variable -------------------------------------------------
+cat('\nParsing args ... \n')
+p <- arg_parser("\nRead brain region and output directory for snRNAseq QC ... \n")
+p <- add_argument(p, "region", help = "No brain region specified")
+p <- add_argument(p, "in_dir", help = "No input data directory specified")
+p <- add_argument(p, "out_obj", help = "No output object and path specified")
+args <- parse_args(p)
+print(args)
 
-REGION = "WGE"
+##  Define variables  -----------------------------------------------------------------
+REGION <- args$region
+DATA_DIR <- args$in_dir
+OUT_OBJ <- args$out_obj
+GWAS <- args$gwas
+
 ## Load and munge sample specific data  ----------------------------------------------
 if (REGION == 'Cer') {
   
@@ -303,7 +314,7 @@ boxplot(as.matrix(t(C.sce.filt[most_expressed_postQC, ])), cex = 0.05,
         las = 1, xlab = "% total count per cell", cex.axis=0.5,
         col = (scales::hue_pal())(50)[50:1], horizontal = TRUE)
 
-saveRDS(object = sce.filt, file = paste0("~/sce.rna.", REGION, ".QC.rds"))
+saveRDS(object = sce.filt, file = OUT_OBJ)
 
 
 #--------------------------------------------------------------------------------------
