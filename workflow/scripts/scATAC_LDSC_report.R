@@ -4,6 +4,8 @@
 #
 #--------------------------------------------------------------------------------------
 
+# Need one-liner to automate plot limits
+
 ## Requirements  ----------------------------------------------------------------------
 
 # Required on Hawk before opening R
@@ -32,7 +34,7 @@ print(args)
 ##  Define variables  -----------------------------------------------------------------
 SUMMARY_FILE <- args$summary_file
 MARKDOWN_FILE <- args$markdown_file
-OUT_DIR <- ards$out_dir
+OUT_DIR <- args$out_dir
 
 ## Load Data  -------------------------------------------------------------------------
 cat('Loading data ... \n')
@@ -40,7 +42,7 @@ ph_df <- read_delim(SUMMARY_FILE, "\t",
                     escape_double = FALSE, trim_ws = TRUE, col_names = TRUE)
 
 for (REGION in c('cer', 'fc', 'ge')) {
-
+  
   ## Split into seprate dfs  ------------------------------------------------------------
   df_250bp <- ph_df %>% filter(grepl(REGION, Category)) %>%
     filter(grepl('250bp', Category)) %>%
@@ -54,18 +56,18 @@ for (REGION in c('cer', 'fc', 'ge')) {
     select(!Extra) %>%
     mutate(Zp = 2*pnorm(-abs(`Coefficient_z-score`))) %>%
     mutate(neglog10 = -log10(Zp))
-
+  
   assign(paste0(REGION, '_250bp_df'), df_250bp)
   assign(paste0(REGION, '_500bp_df'), df_500bp)
   
 }
-  
+
 ## Plots  ---------------------------------------------------------------------------
 ## CER ------
 # 250bp
 cer_250bp_enrich_plot <- ggplot(cer_250bp_df, aes(x=`Cell Type`, y=Enrichment)) +
   geom_bar(stat = "identity", colour = "Black", fill = "#f8766d", width = 0.85) +
-  scale_y_continuous(limits = c(-4, 6), expand = c(0.02, 0)) +
+  scale_y_continuous(limits = c(-4, 30), expand = c(0.02, 0)) +
   theme_bw() + 
   theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"), # Margin around plot
         panel.grid.major = element_blank(), 
@@ -73,7 +75,7 @@ cer_250bp_enrich_plot <- ggplot(cer_250bp_df, aes(x=`Cell Type`, y=Enrichment)) 
         panel.border = element_rect(colour = "black", size = 0.8),
         axis.title.x = element_blank(),
         axis.title.y = element_text(colour="#000000", size=14, vjust = 3),
-        axis.text.x  = element_text(colour="#000000", size=12, vjust = 0.5),
+        axis.text.x  = element_text(colour="#000000", size=12, vjust = 0.5, angle = 45),
         axis.text.y  = element_text(colour="#000000", size=12)) +
   ylab("Enrichment") +
   geom_errorbar(aes(ymin=Enrichment-Enrichment_std_error, ymax=Enrichment+Enrichment_std_error), width=.2,
@@ -81,7 +83,7 @@ cer_250bp_enrich_plot <- ggplot(cer_250bp_df, aes(x=`Cell Type`, y=Enrichment)) 
 
 cer_250bp_pVal_plot <- ggplot(cer_250bp_df, aes(x=`Cell Type`, y=neglog10)) +
   geom_bar(stat = "identity", colour = "Black", fill = "#01b0f6", width = 0.85) +
-  scale_y_continuous(limits = c(0, 1.8), expand = c(0.02, 0)) +
+  scale_y_continuous(limits = c(0, 8), expand = c(0.02, 0)) +
   theme_bw() +
   theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"), 
         panel.grid.major = element_blank(), 
@@ -89,7 +91,7 @@ cer_250bp_pVal_plot <- ggplot(cer_250bp_df, aes(x=`Cell Type`, y=neglog10)) +
         panel.border = element_rect(colour = "black", size = 0.8),
         axis.title.x = element_blank(),
         axis.title.y = element_text(colour="#000000", size=14, vjust = 3),
-        axis.text.x  = element_text(colour="#000000", size=12, vjust = 0.5),
+        axis.text.x  = element_text(colour="#000000", size=12, vjust = 0.5, angle = 45),
         axis.text.y  = element_text(colour="#000000", size=12)) +
   ylab("-log10(Z-Score P)") 
 
@@ -98,7 +100,7 @@ cer_250bp_plot <- plot_grid(cer_250bp_enrich_plot, cer_250bp_pVal_plot, labels =
 # 500bp
 cer_500bp_enrich_plot <- ggplot(cer_500bp_df, aes(x=`Cell Type`, y=Enrichment)) +
   geom_bar(stat = "identity", colour = "Black", fill = "#f8766d", width = 0.85) +
-  scale_y_continuous(limits = c(-2, 6), expand = c(0.02, 0)) +
+  scale_y_continuous(limits = c(0, 24), expand = c(0.02, 0)) +
   theme_bw() + 
   theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"), # Margin around plot
         panel.grid.major = element_blank(), 
@@ -106,7 +108,7 @@ cer_500bp_enrich_plot <- ggplot(cer_500bp_df, aes(x=`Cell Type`, y=Enrichment)) 
         panel.border = element_rect(colour = "black", size = 0.8),
         axis.title.x = element_blank(),
         axis.title.y = element_text(colour="#000000", size=14, vjust = 3),
-        axis.text.x  = element_text(colour="#000000", size=12, vjust = 0.5),
+        axis.text.x  = element_text(colour="#000000", size=12, vjust = 0.5, angle = 45),
         axis.text.y  = element_text(colour="#000000", size=12)) +
   ylab("Enrichment") +
   geom_errorbar(aes(ymin=Enrichment-Enrichment_std_error, ymax=Enrichment+Enrichment_std_error), width=.2,
@@ -114,7 +116,7 @@ cer_500bp_enrich_plot <- ggplot(cer_500bp_df, aes(x=`Cell Type`, y=Enrichment)) 
 
 cer_500bp_pVal_plot <- ggplot(cer_500bp_df, aes(x=`Cell Type`, y=neglog10)) +
   geom_bar(stat = "identity", colour = "Black", fill = "#01b0f6", width = 0.85) +
-  scale_y_continuous(limits = c(0, 2.8), expand = c(0.02, 0)) +
+  scale_y_continuous(limits = c(0, 8), expand = c(0.02, 0)) +
   theme_bw() +
   theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"), 
         panel.grid.major = element_blank(), 
@@ -122,7 +124,7 @@ cer_500bp_pVal_plot <- ggplot(cer_500bp_df, aes(x=`Cell Type`, y=neglog10)) +
         panel.border = element_rect(colour = "black", size = 0.8),
         axis.title.x = element_blank(),
         axis.title.y = element_text(colour="#000000", size=14, vjust = 3),
-        axis.text.x  = element_text(colour="#000000", size=12, vjust = 0.5),
+        axis.text.x  = element_text(colour="#000000", size=12, vjust = 0.5, angle = 45),
         axis.text.y  = element_text(colour="#000000", size=12)) +
   ylab("-log10(Z-Score P)") 
 
@@ -132,7 +134,7 @@ cer_500bp_plot <-plot_grid(cer_500bp_enrich_plot, cer_500bp_pVal_plot, labels = 
 # 250bp
 fc_250bp_enrich_plot <- ggplot(fc_250bp_df, aes(x=`Cell Type`, y=Enrichment)) +
   geom_bar(stat = "identity", colour = "Black", fill = "#f8766d", width = 0.85) +
-  scale_y_continuous(limits = c(-2, 8), expand = c(0.02, 0)) +
+  scale_y_continuous(limits = c(0, 28), expand = c(0.02, 0)) +
   theme_bw() + 
   theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"), # Margin around plot
         panel.grid.major = element_blank(), 
@@ -140,7 +142,7 @@ fc_250bp_enrich_plot <- ggplot(fc_250bp_df, aes(x=`Cell Type`, y=Enrichment)) +
         panel.border = element_rect(colour = "black", size = 0.8),
         axis.title.x = element_blank(),
         axis.title.y = element_text(colour="#000000", size=14, vjust = 3),
-        axis.text.x  = element_text(colour="#000000", size=12, vjust = 0.5),
+        axis.text.x  = element_text(colour="#000000", size=12, vjust = 0.5, angle = 45),
         axis.text.y  = element_text(colour="#000000", size=12)) +
   ylab("Enrichment") +
   geom_errorbar(aes(ymin=Enrichment-Enrichment_std_error, ymax=Enrichment+Enrichment_std_error), width=.2,
@@ -148,7 +150,7 @@ fc_250bp_enrich_plot <- ggplot(fc_250bp_df, aes(x=`Cell Type`, y=Enrichment)) +
 
 fc_250bp_pVal_plot <- ggplot(fc_250bp_df, aes(x=`Cell Type`, y=neglog10)) +
   geom_bar(stat = "identity", colour = "Black", fill = "#01b0f6", width = 0.85) +
-  scale_y_continuous(limits = c(0, 4), expand = c(0.02, 0)) +
+  scale_y_continuous(limits = c(0, 20), expand = c(0.02, 0)) +
   theme_bw() +
   theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"), 
         panel.grid.major = element_blank(), 
@@ -156,7 +158,7 @@ fc_250bp_pVal_plot <- ggplot(fc_250bp_df, aes(x=`Cell Type`, y=neglog10)) +
         panel.border = element_rect(colour = "black", size = 0.8),
         axis.title.x = element_blank(),
         axis.title.y = element_text(colour="#000000", size=14, vjust = 3),
-        axis.text.x  = element_text(colour="#000000", size=12, vjust = 0.5),
+        axis.text.x  = element_text(colour="#000000", size=12, vjust = 0.5, angle = 45),
         axis.text.y  = element_text(colour="#000000", size=12)) +
   ylab("-log10(Z-Score P)") 
 
@@ -165,7 +167,7 @@ fc_250bp_plot <-plot_grid(fc_250bp_enrich_plot, fc_250bp_pVal_plot, labels = c('
 # 500bp
 fc_500bp_enrich_plot <- ggplot(fc_500bp_df, aes(x=`Cell Type`, y=Enrichment)) +
   geom_bar(stat = "identity", colour = "Black", fill = "#f8766d", width = 0.85) +
-  scale_y_continuous(limits = c(0, 8), expand = c(0.02, 0)) +
+  scale_y_continuous(limits = c(0, 20), expand = c(0.02, 0)) +
   theme_bw() + 
   theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"), # Margin around plot
         panel.grid.major = element_blank(), 
@@ -173,7 +175,7 @@ fc_500bp_enrich_plot <- ggplot(fc_500bp_df, aes(x=`Cell Type`, y=Enrichment)) +
         panel.border = element_rect(colour = "black", size = 0.8),
         axis.title.x = element_blank(),
         axis.title.y = element_text(colour="#000000", size=14, vjust = 3),
-        axis.text.x  = element_text(colour="#000000", size=12, vjust = 0.5),
+        axis.text.x  = element_text(colour="#000000", size=12, vjust = 0.5, angle = 45),
         axis.text.y  = element_text(colour="#000000", size=12)) +
   ylab("Enrichment") +
   geom_errorbar(aes(ymin=Enrichment-Enrichment_std_error, ymax=Enrichment+Enrichment_std_error), width=.2,
@@ -181,7 +183,7 @@ fc_500bp_enrich_plot <- ggplot(fc_500bp_df, aes(x=`Cell Type`, y=Enrichment)) +
 
 fc_500bp_pVal_plot <- ggplot(fc_500bp_df, aes(x=`Cell Type`, y=neglog10)) +
   geom_bar(stat = "identity", colour = "Black", fill = "#01b0f6", width = 0.85) +
-  scale_y_continuous(limits = c(0, 6), expand = c(0.02, 0)) +
+  scale_y_continuous(limits = c(0, 20), expand = c(0.02, 0)) +
   theme_bw() +
   theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"), 
         panel.grid.major = element_blank(), 
@@ -189,7 +191,7 @@ fc_500bp_pVal_plot <- ggplot(fc_500bp_df, aes(x=`Cell Type`, y=neglog10)) +
         panel.border = element_rect(colour = "black", size = 0.8),
         axis.title.x = element_blank(),
         axis.title.y = element_text(colour="#000000", size=14, vjust = 3),
-        axis.text.x  = element_text(colour="#000000", size=12, vjust = 0.5),
+        axis.text.x  = element_text(colour="#000000", size=12, vjust = 0.5, angle = 45),
         axis.text.y  = element_text(colour="#000000", size=12)) +
   ylab("-log10(Z-Score P)") 
 
@@ -200,7 +202,7 @@ fc_500bp_plot <- plot_grid(fc_500bp_enrich_plot, fc_500bp_pVal_plot, labels = c(
 # 250bp
 ge_250bp_enrich_plot <- ggplot(ge_250bp_df, aes(x=`Cell Type`, y=Enrichment)) +
   geom_bar(stat = "identity", colour = "Black", fill = "#f8766d", width = 0.85) +
-  scale_y_continuous(limits = c(-2, 6), expand = c(0.02, 0)) +
+  scale_y_continuous(limits = c(0, 20), expand = c(0.02, 0)) +
   theme_bw() + 
   theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"), # Margin around plot
         panel.grid.major = element_blank(), 
@@ -216,7 +218,7 @@ ge_250bp_enrich_plot <- ggplot(ge_250bp_df, aes(x=`Cell Type`, y=Enrichment)) +
 
 ge_250bp_pVal_plot <- ggplot(ge_250bp_df, aes(x=`Cell Type`, y=neglog10)) +
   geom_bar(stat = "identity", colour = "Black", fill = "#01b0f6", width = 0.85) +
-  scale_y_continuous(limits = c(0, 1.2), expand = c(0.02, 0)) +
+  scale_y_continuous(limits = c(0, 12), expand = c(0.02, 0)) +
   theme_bw() +
   theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"), 
         panel.grid.major = element_blank(), 
@@ -233,7 +235,7 @@ ge_250bp_plot <- plot_grid(ge_250bp_enrich_plot, ge_250bp_pVal_plot, labels = c(
 # 500bp
 ge_500bp_enrich_plot <- ggplot(ge_500bp_df, aes(x=`Cell Type`, y=Enrichment)) +
   geom_bar(stat = "identity", colour = "Black", fill = "#f8766d", width = 0.85) +
-  scale_y_continuous(limits = c(0,4), expand = c(0.02, 0)) +
+  scale_y_continuous(limits = c(0, 15), expand = c(0.02, 0)) +
   theme_bw() + 
   theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"), # Margin around plot
         panel.grid.major = element_blank(), 
@@ -248,19 +250,19 @@ ge_500bp_enrich_plot <- ggplot(ge_500bp_df, aes(x=`Cell Type`, y=Enrichment)) +
                 position=position_dodge(.9)) 
 
 ge_500bp_pVal_plot <- ggplot(ge_500bp_df, aes(x=`Cell Type`, y=neglog10)) +
-    geom_bar(stat = "identity", colour = "Black", fill = "#01b0f6", width = 0.85) +
-    scale_y_continuous(limits = c(0, 1), expand = c(0.02, 0)) +
-    theme_bw() +
-    theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"), 
-          panel.grid.major = element_blank(), 
-          panel.grid.minor = element_blank(),
-          panel.border = element_rect(colour = "black", size = 0.8),
-          axis.title.x = element_blank(),
-          axis.title.y = element_text(colour="#000000", size=14, vjust = 3),
-          axis.text.x  = element_text(colour="#000000", size=12, vjust = 0.5),
-          axis.text.y  = element_text(colour="#000000", size=12)) +
-    ylab("-log10(Z-Score P)") 
-  
+  geom_bar(stat = "identity", colour = "Black", fill = "#01b0f6", width = 0.85) +
+  scale_y_continuous(limits = c(0, 12), expand = c(0.02, 0)) +
+  theme_bw() +
+  theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"), 
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.border = element_rect(colour = "black", size = 0.8),
+        axis.title.x = element_blank(),
+        axis.title.y = element_text(colour="#000000", size=14, vjust = 3),
+        axis.text.x  = element_text(colour="#000000", size=12, vjust = 0.5),
+        axis.text.y  = element_text(colour="#000000", size=12)) +
+  ylab("-log10(Z-Score P)") 
+
 ge_500bp_plot <- plot_grid(ge_500bp_enrich_plot, ge_500bp_pVal_plot, labels = c('A', 'B'), label_size = 16)
 
 # Generate markdown document
