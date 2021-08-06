@@ -13,23 +13,17 @@ report: "report/workflow.rst" # Experimented with this but not currently using
 
 # ----------  SET VARIABLES  ----------
 SCRATCH = "/scratch/c.c1477909/"
-LDSC_DIR = SCRATCH + "ldsc/"
+REF_DIR = LDSC_DIR + "ldsc/reference_files/"
+RESULTS_DIR = SCRATCH + "results/"
 MAGMA_DIR = SCRATCH + "magma_celltyping/"
-REF_DIR = LDSC_DIR + "reference_files/"
-ANN_DIR = LDSC_DIR + "LDSR_annotation_files/RNA/"
+ANN_DIR = RESULTS_DIR + "LDSR_annotation_files/RNA/"
 GWAS_DIR = LDSC_DIR + "GWAS_for_ldsc/"
 QUANTILES_DIR = MAGMA_DIR + "ldsc_gene_lists/"
-PART_HERIT_DIR = LDSC_DIR + "part_herit_files/RNA/"
+PART_HERIT_DIR = RESULTS_DIR + "part_herit_files/RNA/"
 
 # -------------  RULES  ---------------
 rule all:
     input:
-#        expand(ANN_DIR + "snRNAseq.test.Q{QUANTILE}.{CHR}.annot.gz", QUANTILE = range(1,11), CHR = range(1,23))
-#        expand(ANN_DIR + "snRNAseq.test.Q{QUANTILE}.{CHR}.l2.ldscore.gz", QUANTILE = range(1,11), CHR = range(1,23))
-#        expand(PART_HERIT_DIR + "prtHrt_snRNAseq_Q{QUANTILE}_SCZ.results", QUANTILE = range(1,11))
-#         expand(PART_HERIT_DIR + "prtHrt_snRNAseq_{CELL_TYPE}_Q{QUANTILE}_SCZ.results", CELL_TYPE = config["RNA_CELL_TYPES"], QUANTILE = range(0,11)), 
-#         expand(PART_HERIT_DIR + "prtHrt_snRNAseq_{CELL_TYPE}_SCZ_summary.tsv", CELL_TYPE = config["RNA_CELL_TYPES"])
-#         expand(PART_HERIT_DIR + "prtHrt_snRNAseq_{CELL_TYPE}_SCZ_plot.png", CELL_TYPE = config["RNA_CELL_TYPES"]) 
         expand(PART_HERIT_DIR + "Thal_ldsc_RNA_group_plot_lst.rds")
 
 rule make_annot:
@@ -71,13 +65,13 @@ rule partitioned_heritability:
     input:   GWAS = GWAS_DIR + "SCZ_hg38_ldsc_ready.sumstats.gz",
              #GWAS = lambda wildcards: config['SUMSTATS'][wildcards.GWASsumstat],
              LDSR = expand(rules.ldsr.output, CELL_TYPE = config["RNA_CELL_TYPES"], QUANTILE = range(0,11), CHR = range(1,23))
-    output:  PART_HERIT_DIR + "prtHrt_snRNAseq_{CELL_TYPE}_Q{QUANTILE}_SCZ.results"
+    output:  PART_HERIT_DIR + "snRNAseq_LDSC_{CELL_TYPE}_Q{QUANTILE}_SCZ.results"
     conda:   SCRATCH + "envs/ldsc.yml"
     params:  weights = REF_DIR + "weights_hm3_no_hla/weights.",
              baseline = REF_DIR + "baselineLD_v2.2_1000G_Phase3/baselineLD.",
              frqfile = REF_DIR + "1000G_Phase3_frq/1000G.EUR.QC.",
              LD_anns = ANN_DIR + "snRNAseq.{CELL_TYPE}.Q{QUANTILE}.",
-             out_file = PART_HERIT_DIR + "prtHrt_snRNAseq_{CELL_TYPE}_Q{QUANTILE}_SCZ"
+             out_file = PART_HERIT_DIR + "snRNAseq_LDSC_{CELL_TYPE}_Q{QUANTILE}_SCZ"
     message: "Running Prt Hrt with {wildcards.CELL_TYPE} Q{wildcards.QUANTILE} and SCZ GWAS"
     log:     "logs/LDSR/snRNAseq.{CELL_TYPE}.Q{QUANTILE}.SCZ_partHerit.log"
     shell:
@@ -87,25 +81,25 @@ rule partitioned_heritability:
 
 
 rule create_partHerit_summary:
-    input:   expand(PART_HERIT_DIR + "prtHrt_snRNAseq_{CELL_TYPE}_Q{QUANTILE}_SCZ.results", CELL_TYPE = config["RNA_CELL_TYPES"], QUANTILE = range(0,11))
-    output:  PART_HERIT_DIR + "prtHrt_snRNAseq_{CELL_TYPE}_SCZ_summary.tsv"
+    input:   expand(PART_HERIT_DIR + "snRNAseq_LDSC_{CELL_TYPE}_Q{QUANTILE}_SCZ.results", CELL_TYPE = config["RNA_CELL_TYPES"], QUANTILE = range(0,11))
+    output:  RESULTS_DIR + "snRNAseq_LDSC_{CELL_TYPE}_SCZ_summary.tsv"
     message: "Creating summary file for {wildcards.CELL_TYPE} and SCZ GWAS"
     params:  dir = PART_HERIT_DIR
     log:     "logs/LDSR/snRNAseq.{CELL_TYPE}.SCZ_partHerit.summary.log"
     shell:
         """
         
-        head -1 {params.dir}prtHrt_snRNAseq_Cer-RG-1_Q1_SCZ.results > {output} 
-        grep L2_1 {params.dir}prtHrt_snRNAseq_{wildcards.CELL_TYPE}_Q*_SCZ.results >> {output}
+        head -1 {params.dir}snRNAseq_LDSC_Cer-RG-1_Q1_SCZ.results > {output} 
+        grep L2_1 {params.dir}snRNAseq_LDSC_{wildcards.CELL_TYPE}_Q*_SCZ.results >> {output}
 
         """
 
         # Last two rules were run in seprate  test script need to test whole thing is working
         
 rule create_ldsc_plots:
-    input:   PART_HERIT_DIR + "prtHrt_snRNAseq_{CELL_TYPE}_SCZ_summary.tsv"
-    output:  rds = PART_HERIT_DIR + "prtHrt_snRNAseq_{CELL_TYPE}_SCZ.rds"
-             plot = PART_HERIT_DIR + "prtHrt_snRNAseq_{CELL_TYPE}_SCZ.png"
+    input:   RESULTS_DIR + "snRNAseq_LDSC_{CELL_TYPE}_SCZ_summary.tsv"
+    output:  rds = RESULTS_DIR + "snRNAseq_LDSC_{CELL_TYPE}_SCZ.rds"
+             plot = RESULTS_DIR + "snRNAseq_LDSC_{CELL_TYPE}_SCZ.png"
     message: "Creating ldsc plots for {wildcards.CELL_TYPE} and SCZ GWAS"
     log:     "logs/LDSR/snRNAseq.{CELL_TYPE}.SCZ_partHerit.plots.log"
     shell:
@@ -120,9 +114,9 @@ rule create_ldsc_plots:
 
 rule create_ldsc_group_plots:
     # R produces 5 plots but only tracking the final plot here 
-    input:   expand(PART_HERIT_DIR + "prtHrt_snRNAseq_{CELL_TYPE}_SCZ.rds", CELL_TYPE = config["RNA_CELL_TYPES"])
-    output:  PART_HERIT_DIR + "Thal_ldsc_RNA_group_plot_lst.rds"
-    params:  out_dir = PART_HERIT_DIR 
+    input:   expand(RESULTS_DIR + "snRNAseq_LDSC_{CELL_TYPE}_SCZ.rds", CELL_TYPE = config["RNA_CELL_TYPES"])
+    output:  RESULTS_DIR + "Thal_ldsc_RNA_group_plot_lst.rds"
+    params:  out_dir = RESULTS_DIR 
     message: "Creating ldsc group plots for all regions and SCZ GWAS"
     log:     "logs/LDSR/snRNAseq.AllRegions.SCZ_partHerit.group.plots.log"
     shell:
