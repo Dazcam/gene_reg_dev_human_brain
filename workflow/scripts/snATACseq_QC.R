@@ -264,6 +264,11 @@ clusters_UMAP_BySample <- plotEmbedding(ArchRProj = archR.proj.2, colorBy = "cel
 cluster_plot <- ggAlignPlots(clusters_UMAP, clusters_UMAP_BySample, type = "h")
 
 
+## Save ArchR project  ----------------------------------------------------------------
+saveArchRProject(ArchRProj = archR.proj, 
+                 outputDirectory = paste0(OUT_DIR, REGION), 
+                 load = FALSE)
+
 ## Create markdown doc  ---------------------------------------------------------------
 render(MARKDOWN_FILE)
 
