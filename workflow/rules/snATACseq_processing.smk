@@ -27,7 +27,7 @@ rule all:
 #        expand(ROBJ_DIR + "rna.{REGION}.DEgenes.rds", REGION = config['REGIONS'])
           
           
-rule snRNA_seq_QC:
+rule snATAC_seq_QC:
     # region in inout may not be needed here
     input:  data_dir = dir(ATAC_DATA_DIR),
             region = config['ATAC_REGIONS']
