@@ -52,7 +52,7 @@ DATA_DIR <- args$data_dir
 OUT_DIR <- args$out_dir
 MARKDOWN_FILE <- args$markdown_file
 
-addArchRThreads(threads = 16)
+addArchRThreads(threads = 24) # Set Hawk to 32 cores so 0.75 of total
 addArchRGenome("hg38")
 setwd(OUT_DIR) # Required or saves all files to ~/
 
