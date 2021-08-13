@@ -97,13 +97,13 @@ archR.2 <- addUMAP(
 )
 ## Batch effects - reporting  -------------------------------------------------------------
 # Cluster counts - after batch corrected Iterative LSI based clustering
-clusters_cnts_harmony <- as.data.frame(t(as.data.frame(as.vector((table(fc.archR.3$Clusters_harmony))))))
+clusters_cnts_harmony <- as.data.frame(t(as.data.frame(as.vector((table(archR.2$Clusters_harmony))))))
 rownames(clusters_cnts_harmony) <- NULL
-colnames(clusters_cnts_harmony) <- names(table(fc.archR.3$Clusters_harmony))
+colnames(clusters_cnts_harmony) <- names(table(archR.2$Clusters_harmony))
 
 # Confusion matrix - cell counts per donor
-cM_harmony <- confusionMatrix(paste0(fc.archR.3$Clusters_harmony), 
-                              paste0(fc.archR.3$Sample))
+cM_harmony <- confusionMatrix(paste0(archR.2$Clusters_harmony), 
+                              paste0(archR.2$Sample))
 clust_CM_harmony <- pheatmap::pheatmap(
   mat = as.matrix(cM_harmony), 
   color = paletteContinuous("whiteBlue"), 
@@ -112,15 +112,15 @@ clust_CM_harmony <- pheatmap::pheatmap(
 clust_CM_harmony
 
 # Plot UMAPs
-clusters_UMAP_har <- plotEmbedding(ArchRProj = fc.archR.3, colorBy = "cellColData", 
+clusters_UMAP_har <- plotEmbedding(ArchRProj = archR.2, colorBy = "cellColData", 
                                    name = "Clusters_harmony", embedding = "UMAPHarmony")
-clusters_UMAP_BySample_har <- plotEmbedding(ArchRProj = fc.archR.3, colorBy = "cellColData", 
+clusters_UMAP_BySample_har <- plotEmbedding(ArchRProj = archR.2, colorBy = "cellColData", 
                                             name = "Sample", embedding = "UMAPHarmony")
 cluster_plot_har <- ggAlignPlots(clusters_UMAP_har, clusters_UMAP_BySample_har, type = "h")
 
 # Confusion matrix to compare LSI based and batch corrected based clusters
-cM_harmony_compare <- confusionMatrix(paste0(fc.archR.3$Clusters), 
-                                      paste0(fc.archR.3$Clusters_harmony))
+cM_harmony_compare <- confusionMatrix(paste0(archR.2$Clusters), 
+                                      paste0(archR.2$Clusters_harmony))
 clust_CM_harmony_compare <- pheatmap::pheatmap(
   mat = as.matrix(cM_harmony_compare), 
   color = paletteContinuous("whiteBlue"), 
@@ -129,7 +129,7 @@ clust_CM_harmony_compare <- pheatmap::pheatmap(
 clust_CM_harmony_compare
 
 # Cluster tree to compare LSI based and batch corrected based clusters
-clusttree_harmony_df <- as.data.frame(getCellColData(fc.archR.3,
+clusttree_harmony_df <- as.data.frame(getCellColData(archR.2,
                                                      select = c("Clusters", 
                                                                 "Clusters_harmony")))
 colnames(clusttree_harmony_df) <- c("K1", "K2")
