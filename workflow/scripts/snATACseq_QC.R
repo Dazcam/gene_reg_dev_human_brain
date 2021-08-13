@@ -4,6 +4,8 @@
 #
 #--------------------------------------------------------------------------------------
 
+## need to check GE doublet numbers - may be table issue lines 223-228
+
 ##  Resources  ------------------------------------------------------------------------
 
 # ArchR manual - https://www.archrproject.com/index.html
@@ -102,14 +104,14 @@ ArrowFiles <- createArrowFiles(
 )
 
 ##  Doublets  - Cptr 2  ---------------------------------------------------------------
-#cat('\nCalculating Doublet scores ... \n')
-#doubScores <- addDoubletScores(
-#  input = ArrowFiles,
-#  k = 10, # Refers to how many cells near a "pseudo-doublet" to count.
-#  knnMethod = "UMAP", # Refers to the embedding to use for nearest neighbor search 
-#  # with doublet projection.
-#  LSIMethod = 1
-#)
+cat('\nCalculating Doublet scores ... \n')
+doubScores <- addDoubletScores(
+  input = ArrowFiles,
+  k = 10, # Refers to how many cells near a "pseudo-doublet" to count.
+  knnMethod = "UMAP", # Refers to the embedding to use for nearest neighbor search 
+  # with doublet projection.
+  LSIMethod = 1
+)
 
 
 ##  Create Arrow project  - Cptr 3  ---------------------------------------------------
@@ -219,9 +221,6 @@ ridge_plot <- plotGroups(
 ## Filter doublets  -------------------------------------------------------------------
 cat('\nFiltering doublets ... \n')
 archR.proj.2 <- filterDoublets(archR.proj)
-
-doublet_results <- readRDS(paste0(OUT_DIR, "/QualityControl/", SAMPLE_IDs[1], "/", 
-                                  SAMPLE_IDs[1], "-Doublet-Summary.rds"))
 doublet_df <- cbind(as.data.frame(table(archR.proj$Sample)), as.data.frame(table(archR.proj.2$Sample)))
 doublet_df[3] <- NULL
 doublet_df$cells_removed <- 100 - doublet_df[3] / doublet_df[2] * 100
