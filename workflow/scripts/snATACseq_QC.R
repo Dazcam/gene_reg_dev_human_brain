@@ -35,34 +35,44 @@ library(ComplexHeatmap)
 library(clustree)
 library(cowplot)
 library(rmarkdown)
+library(argparser)
 
 ## Parse region / set region variable -------------------------------------------------
 cat('\nParsing args ... \n')
 p <- arg_parser("\nRead brain region and output directory for snATACseq QC ... \n")
 p <- add_argument(p, "region", help = "No brain region specified")
 p <- add_argument(p, "data_dir", help = "No input data directory specified")
-p <- add_argument(p, "out_dir", help = "No output directory specified")
+p <- add_argument(p, "archR_out_dir", help = "No ArchR output directory specified")
 p <- add_argument(p, "markdown_file", help = "No markdown file path specified")
+p <- add_argument(p, "report_dir", help = "No report output directory specified")
+p <- add_argument(p, "report_file", help = "No report filename specified")
 args <- parse_args(p)
 print(args)
 
 ##  Define global variables  -----------------------------------------------------------
+cat('\nDefining variables ... \n')
 REGION <- args$region
 DATA_DIR <- args$data_dir
-OUT_DIR <- args$out_dir
+OUT_DIR <- args$archR_out_dir
 MARKDOWN_FILE <- args$markdown_file
+REPORT_DIR <- args$report_dir
+REPORT_FILE <- args$report_file
 
 addArchRThreads(threads = 24) # Set Hawk to 32 cores so 0.75 of total
 addArchRGenome("hg38")
-setwd(OUT_DIR) # Required or saves all files to ~/
+#setwd(OUT_DIR) # Required or saves all files to ~/
 
+# Create ArchR output directry
+cat('\nCreate output directory for Arch R project  ... \n')
+dir.create(OUT_DIR, recursive = TRUE) # Required ArchR doesn't create this for you
 
+# Loop to extract sample IDs 
 if (REGION == "Cer") {
 
   SAMPLES <- c("14510_Cerebellum_ATAC", "14611_Cerebellum_ATAC", "14993_Cerebellum_ATAC")
   SAMPLE_IDs <- SAMPLES %>% str_remove("ebellum") %>% str_remove("14") 
   
-} else if { (REGION == "FC")
+} else if (REGION == "FC") {
   
   SAMPLES <- c("14510_PFC_ATAC", "14611_PFC_ATAC", "14993_PFC_ATAC")
   SAMPLE_IDs <- SAMPLES %>% str_remove("P") %>% str_remove("14")  
@@ -77,36 +87,46 @@ if (REGION == "Cer") {
 
 
 ##  Load data - Cptr 1.5  -------------------------------------------------------------
+cat('\nCreating Arrow files ... \n')
 ArrowFiles <- createArrowFiles(
-  inputFiles = c(paste0(DATA_DIR, SAMPLES[1], "/fragments.tsv.gz"),
-                 paste0(DATA_DIR, SAMPLES[2], "/fragments.tsv.gz"),
-                 paste0(DATA_DIR, SAMPLES[3], "/fragments.tsv.gz")),
+  inputFiles = c(paste0(DATA_DIR, SAMPLES[1], "/outs/fragments.tsv.gz"),
+                 paste0(DATA_DIR, SAMPLES[2], "/outs/fragments.tsv.gz"),
+                 paste0(DATA_DIR, SAMPLES[3], "/outs/fragments.tsv.gz")),
   sampleNames = SAMPLE_IDs,
   minTSS = 4, # Dont set this too high because you can always increase later
   minFrags = 1000, 
   addTileMat = TRUE,
-  addGeneScoreMat = TRUE
+  addGeneScoreMat = TRUE,
+  QCDir = paste0(OUT_DIR, "/QualityControl"),
+  
 )
 
 ##  Doublets  - Cptr 2  ---------------------------------------------------------------
-doubScores <- addDoubletScores(
-  input = ArrowFiles,
-  k = 10, # Refers to how many cells near a "pseudo-doublet" to count.
-  knnMethod = "UMAP", # Refers to the embedding to use for nearest neighbor search 
-  # with doublet projection.
-  LSIMethod = 1
-)
+#cat('\nCalculating Doublet scores ... \n')
+#doubScores <- addDoubletScores(
+#  input = ArrowFiles,
+#  k = 10, # Refers to how many cells near a "pseudo-doublet" to count.
+#  knnMethod = "UMAP", # Refers to the embedding to use for nearest neighbor search 
+#  # with doublet projection.
+#  LSIMethod = 1
+#)
+
 
 ##  Create Arrow project  - Cptr 3  ---------------------------------------------------
+cat('\nCreate output directory for Arch R project  ... \n')
+dir.create(OUT_DIR, recursive = TRUE) # Required ArchR doesn't create this for you
+
+cat('\nCreating ArchR project ... \n')
 archR.proj <- ArchRProject(ArrowFiles = ArrowFiles, 
-                          outputDirectory = paste0(OUT_DIR, REGION),
+                          outputDirectory = OUT_DIR,
                           copyArrows = TRUE # This is recommened so that if you modify 
                           # the Arrow files you have an original copy for later usage.
 )
 
 ##  Save and load Arrow project  - Cptr 3.5  ------------------------------------------
+cat('\nSaving ArchR project ... \n')
 saveArchRProject(ArchRProj = archR.proj, 
-                 outputDirectory = paste0(OUT_DIR, REGION), 
+                 outputDirectory = OUT_DIR, 
                  load = FALSE)
 
 # Load project
@@ -119,6 +139,7 @@ archR.proj$donor <- word(archR.proj$Sample, 1, sep = "_")
 ##  Inital ArchR QC -------------------------------------------------------------------
 # ArchR does some QC when loading the files in so need to load the pre-QC info
 # Pre-filter
+cat('\nLoading pre-filtered data ... \n')
 for (SAMPLE in 1:length(SAMPLE_IDs)) {
   
   # Subset IDs
@@ -126,7 +147,7 @@ for (SAMPLE in 1:length(SAMPLE_IDs)) {
   donorID <- substr(SAMPLE_IDs[SAMPLE], 1, 3)
   
   # Load Pre-filtered data
-  preQC_df <- readRDS(paste0(OUT_DIR, "QualityControl/", SAMPLE_IDs[SAMPLE], "/", 
+  preQC_df <- readRDS(paste0(OUT_DIR, "/QualityControl/", SAMPLE_IDs[SAMPLE], "/", 
                              SAMPLE_IDs[SAMPLE], "-Pre-Filter-Metadata.rds"))
   preQC_df$log10nFrags <- log10(preQC_df$nFrags)
   
@@ -157,6 +178,7 @@ for (SAMPLE in 1:length(SAMPLE_IDs)) {
 
 ## Initial QC reporting  --------------------------------------------------------------
 # Pre-filter tss-frag plot
+cat('\nCreating pre-filter plots ... \n')
 preQC_tss_uFrag_plot <- ggAlignPlots(preQC_tss_uFrag_plot_510, preQC_tss_uFrag_plot_611, 
                                      preQC_tss_uFrag_plot_993, type = "h")
 # Counts df
@@ -195,18 +217,20 @@ ridge_plot <- plotGroups(
 )
 
 ## Filter doublets  -------------------------------------------------------------------
+cat('\nFiltering doublets ... \n')
 archR.proj.2 <- filterDoublets(archR.proj)
 
-doublet_results <- readRDS(paste0(OUT_DIR, "QualityControl/", SAMPLES[1], "/", 
-                                  SAMPLES[1], "-Doublet-Summary.RDS"))
+doublet_results <- readRDS(paste0(OUT_DIR, "/QualityControl/", SAMPLE_IDs[1], "/", 
+                                  SAMPLE_IDs[1], "-Doublet-Summary.rds"))
 doublet_df <- cbind(as.data.frame(table(archR.proj$Sample)), as.data.frame(table(archR.proj.2$Sample)))
 doublet_df[3] <- NULL
 doublet_df$cells_removed <- 100 - doublet_df[3] / doublet_df[2] * 100
 colnames(doublet_df) <- c("Sample", "Pre_DoubRem", "Post_DoubRem", "pc_cells_removed")
 doublet_df
 
-#archR.proj.2 <- archR.proj
+
 ##  Dimensionality reduction  ---------------------------------------------------------
+cat('\nRunning dimensionality reduction - pre-batch correction ... \n')
 archR.proj.2 <- addIterativeLSI(
   ArchRProj = archR.proj.2,
   useMatrix = "TileMatrix", 
@@ -223,6 +247,7 @@ archR.proj.2 <- addIterativeLSI(
 )
 
 ##  Clustering  -----------------------------------------------------------------------
+cat('\nClustering cells  ... \n')
 archR.proj.2 <- addClusters(
   input = archR.proj.2,
   reducedDims = "IterativeLSI",
@@ -232,6 +257,7 @@ archR.proj.2 <- addClusters(
 )
 
 ##  Visualisation  --------------------------------------------------------------------
+cat('\nCreating UMAP ... \n')
 archR.proj.2 <- addUMAP(
   ArchRProj = archR.proj.2, 
   reducedDims = "IterativeLSI", 
@@ -243,6 +269,7 @@ archR.proj.2 <- addUMAP(
 
 ## Clustering - reporting  ------------------------------------------------------------
 # Cluster counts - after Iterative LSI based clustering
+cat('\nCreating tables and plots for Iterative LSI based clustering ... \n')
 clusters_cnts <- as.data.frame(t(as.data.frame(as.vector((table(archR.proj.2$Clusters))))))
 rownames(clusters_cnts) <- NULL
 colnames(clusters_cnts) <- names(table(archR.proj.2$Clusters))
@@ -265,12 +292,14 @@ cluster_plot <- ggAlignPlots(clusters_UMAP, clusters_UMAP_BySample, type = "h")
 
 
 ## Save ArchR project  ----------------------------------------------------------------
+cat('\nSaving project ... \n')
 saveArchRProject(ArchRProj = archR.proj, 
-                 outputDirectory = paste0(OUT_DIR, REGION), 
+                 outputDirectory = OUT_DIR, 
                  load = FALSE)
 
 ## Create markdown doc  ---------------------------------------------------------------
-render(MARKDOWN_FILE)
+cat('\nCreating markdown report ... \n')
+render(MARKDOWN_FILE, output_file = REPORT_FILE, output_dir = REPORT_DIR)
 
 
 #--------------------------------------------------------------------------------------
