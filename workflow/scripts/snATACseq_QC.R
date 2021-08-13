@@ -70,7 +70,7 @@ dir.create(OUT_DIR, recursive = TRUE) # Required ArchR doesn't create this for y
 
 # Loop to extract sample IDs 
 if (REGION == "Cer") {
-
+  
   SAMPLES <- c("14510_Cerebellum_ATAC", "14611_Cerebellum_ATAC", "14993_Cerebellum_ATAC")
   SAMPLE_IDs <- SAMPLES %>% str_remove("ebellum") %>% str_remove("14") 
   
@@ -81,7 +81,7 @@ if (REGION == "Cer") {
   
   
 } else {
-    
+  
   SAMPLES <- c("14510_WGE_ATAC", "14611_WGE_ATAC", "14993_WGE_ATAC")
   SAMPLE_IDs <- SAMPLES %>% str_remove("W") %>% str_remove("14") 
   
@@ -119,23 +119,23 @@ cat('\nCreate output directory for Arch R project  ... \n')
 dir.create(OUT_DIR, recursive = TRUE) # Required ArchR doesn't create this for you
 
 cat('\nCreating ArchR project ... \n')
-archR.proj <- ArchRProject(ArrowFiles = ArrowFiles, 
-                          outputDirectory = OUT_DIR,
-                          copyArrows = TRUE # This is recommened so that if you modify 
-                          # the Arrow files you have an original copy for later usage.
+archR <- ArchRProject(ArrowFiles = ArrowFiles, 
+                           outputDirectory = OUT_DIR,
+                           copyArrows = TRUE # This is recommened so that if you modify 
+                           # the Arrow files you have an original copy for later usage.
 )
 
 ##  Save and load Arrow project  - Cptr 3.5  ------------------------------------------
 cat('\nSaving ArchR project ... \n')
-saveArchRProject(ArchRProj = archR.proj, 
+saveArchRProject(ArchRProj = archR, 
                  outputDirectory = OUT_DIR, 
                  load = FALSE)
 
 # Load project
-# archR.proj <- loadArchRProject(path = "")
+# archR <- loadArchRProject(path = "")
 
 ##  Add coldata  ----------------------------------------------------------------------
-archR.proj$donor <- word(archR.proj$Sample, 1, sep = "_")
+archR$donor <- word(archR$Sample, 1, sep = "_")
 
 
 ##  Inital ArchR QC -------------------------------------------------------------------
@@ -187,31 +187,31 @@ preQC_tss_uFrag_plot <- ggAlignPlots(preQC_tss_uFrag_plot_510, preQC_tss_uFrag_p
 counts_df <- rbind(counts_df_510, counts_df_611, counts_df_993)
 
 ## PostQC
-archR.proj.meta <- as.data.frame(getCellColData(archR.proj))
-archR.proj.meta$log10nFrags <- log10(archR.proj.meta$nFrags)
+archR.meta <- as.data.frame(getCellColData(archR))
+archR.meta$log10nFrags <- log10(archR.meta$nFrags)
 
 tss_uFrag_plot <- ggPoint(
-  x = archR.proj.meta[,"log10nFrags"], 
-  y = archR.proj.meta[,"TSSEnrichment"], 
+  x = archR.meta[,"log10nFrags"], 
+  y = archR.meta[,"TSSEnrichment"], 
   colorDensity = TRUE,
   continuousSet = "sambaNight",
   xlabel = "Log10 Unique Fragments",
   ylabel = "TSS Enrichment",
-  xlim = c(log10(500), quantile(archR.proj.meta[,"log10nFrags"], probs = 0.99)),
-  ylim = c(0, quantile(archR.proj.meta[,"TSSEnrichment"], probs = 0.99))
+  xlim = c(log10(500), quantile(archR.meta[,"log10nFrags"], probs = 0.99)),
+  ylim = c(0, quantile(archR.meta[,"TSSEnrichment"], probs = 0.99))
 ) + geom_hline(yintercept = 4, lty = "dashed") + geom_vline(xintercept = 3, lty = "dashed")
 
 
-fragSize_plot <- plotFragmentSizes(ArchRProj = archR.proj)
+fragSize_plot <- plotFragmentSizes(ArchRProj = archR)
 fragSize_plot 
 
-tss_plot <- plotTSSEnrichment(ArchRProj = archR.proj)
+tss_plot <- plotTSSEnrichment(ArchRProj = archR)
 tss_plot
 
 tss_uFrag_plot
 
 ridge_plot <- plotGroups(
-  ArchRProj =  archR.proj, 
+  ArchRProj =  archR, 
   groupBy = "Sample", 
   colorBy = "cellColData", 
   name = "TSSEnrichment",
@@ -220,8 +220,8 @@ ridge_plot <- plotGroups(
 
 ## Filter doublets  -------------------------------------------------------------------
 cat('\nFiltering doublets ... \n')
-archR.proj.2 <- filterDoublets(archR.proj)
-doublet_df <- cbind(as.data.frame(table(archR.proj$Sample)), as.data.frame(table(archR.proj.2$Sample)))
+archR.2 <- filterDoublets(archR)
+doublet_df <- cbind(as.data.frame(table(archR$Sample)), as.data.frame(table(archR.2$Sample)))
 doublet_df[3] <- NULL
 doublet_df$cells_removed <- 100 - doublet_df[3] / doublet_df[2] * 100
 colnames(doublet_df) <- c("Sample", "Pre_DoubRem", "Post_DoubRem", "pc_cells_removed")
@@ -230,8 +230,8 @@ doublet_df
 
 ##  Dimensionality reduction  ---------------------------------------------------------
 cat('\nRunning dimensionality reduction - pre-batch correction ... \n')
-archR.proj.2 <- addIterativeLSI(
-  ArchRProj = archR.proj.2,
+archR.2 <- addIterativeLSI(
+  ArchRProj = archR.2,
   useMatrix = "TileMatrix", 
   name = "IterativeLSI", 
   iterations = 2, 
@@ -247,8 +247,8 @@ archR.proj.2 <- addIterativeLSI(
 
 ##  Clustering  -----------------------------------------------------------------------
 cat('\nClustering cells  ... \n')
-archR.proj.2 <- addClusters(
-  input = archR.proj.2,
+archR.2 <- addClusters(
+  input = archR.2,
   reducedDims = "IterativeLSI",
   method = "Seurat",
   name = "Clusters",
@@ -257,8 +257,8 @@ archR.proj.2 <- addClusters(
 
 ##  Visualisation  --------------------------------------------------------------------
 cat('\nCreating UMAP ... \n')
-archR.proj.2 <- addUMAP(
-  ArchRProj = archR.proj.2, 
+archR.2 <- addUMAP(
+  ArchRProj = archR.2, 
   reducedDims = "IterativeLSI", 
   name = "UMAP", 
   nNeighbors = 30, 
@@ -269,12 +269,12 @@ archR.proj.2 <- addUMAP(
 ## Clustering - reporting  ------------------------------------------------------------
 # Cluster counts - after Iterative LSI based clustering
 cat('\nCreating tables and plots for Iterative LSI based clustering ... \n')
-clusters_cnts <- as.data.frame(t(as.data.frame(as.vector((table(archR.proj.2$Clusters))))))
+clusters_cnts <- as.data.frame(t(as.data.frame(as.vector((table(archR.2$Clusters))))))
 rownames(clusters_cnts) <- NULL
-colnames(clusters_cnts) <- names(table(archR.proj.2$Clusters))
+colnames(clusters_cnts) <- names(table(archR.2$Clusters))
 
 # Confusion matrix - cell counts per donor
-cM_LSI <- confusionMatrix(paste0(archR.proj.2$Clusters), paste0(archR.proj.2$Sample))
+cM_LSI <- confusionMatrix(paste0(archR.2$Clusters), paste0(archR.2$Sample))
 clust_CM_LSI <- pheatmap::pheatmap(
   mat = as.matrix(cM_LSI), 
   color = paletteContinuous("whiteBlue"), 
@@ -283,16 +283,16 @@ clust_CM_LSI <- pheatmap::pheatmap(
 clust_CM_LSI
 
 # Plot UMAP - for Integrated LSI clusters
-clusters_UMAP <- plotEmbedding(ArchRProj = archR.proj.2, colorBy = "cellColData", 
+clusters_UMAP <- plotEmbedding(ArchRProj = archR.2, colorBy = "cellColData", 
                                name = "Clusters", embedding = "UMAP")
-clusters_UMAP_BySample <- plotEmbedding(ArchRProj = archR.proj.2, colorBy = "cellColData", 
+clusters_UMAP_BySample <- plotEmbedding(ArchRProj = archR.2, colorBy = "cellColData", 
                                         name = "Sample", embedding = "UMAP")
 cluster_plot <- ggAlignPlots(clusters_UMAP, clusters_UMAP_BySample, type = "h")
 
 
 ## Save ArchR project  ----------------------------------------------------------------
 cat('\nSaving project ... \n')
-saveArchRProject(ArchRProj = archR.proj, 
+saveArchRProject(ArchRProj = archR.2, 
                  outputDirectory = OUT_DIR, 
                  load = FALSE)
 
