@@ -89,8 +89,6 @@ if (REGION == 'Cer') {
 }
 
 
-
-
 ## Prepare cell groupings for constrained integration  --------------------------------
 # Only cell-types in preClust need to be included 
 cM_unconstrained <- as.matrix(confusionMatrix(archR$Clusters_harmony, archR$predictedGroup_Un))
@@ -105,91 +103,33 @@ if (REGION == 'Cer') {
   cat(paste0('\nPrepare cell mappings for ', REGION, ' ... \n')) # Can I automate this section?
   
   # Group the unique RNA cluster IDs assigned to ATAC clusters into broad catagories
-  cGranule <- paste0(c("Granule-1", "Granule-3", "Granule-4"), collapse="|")
-  cPurkinje <- paste0(c("Purkinje-1", "Purkinje-3", "Purkinje-4"), collapse="|")
-  cRG <- paste0(c("RG-1", "RG-2"), collapse="|")
+  cExN <- "ExN-1"
+  cInN <- "InN-1"
+  cRG <- "RG-2"
   cMG <- "MG"
-  cOPC <- "OPC"
-  cIn_Pro <- paste0(c("InN-Pro-1", "InN-Pro-2"), collapse="|")
-  cN_undef <- paste0(c("N-undef-1", "N-undef-2"), collapse="|")
-  cN_Endo <- "Endo"
-  
-  # Pull out the ATAC cluster IDs that map to RNA clusters in unconstrained run
-  clustGranule <- rownames(cM_unconstrained)[grep(cGranule, preClust)]
-  clustPurkinje <- rownames(cM_unconstrained)[grep(cPurkinje, preClust)]
-  clustRG <- rownames(cM_unconstrained)[grep(cRG, preClust)]
-  clustMG <- rownames(cM_unconstrained)[grep(cMG, preClust)]
-  clustOPC <- rownames(cM_unconstrained)[grep(cOPC, preClust)]
-  clustIn_Pro <- rownames(cM_unconstrained)[grep(cIn_Pro, preClust)]
-  clustN_undef <- rownames(cM_unconstrained)[grep(cN_undef, preClust)]
-  
-  
-  # Get unique cells IDs in these categories from the seurat RNA object
-  rnaGranule <- colnames(seurat.obj)[grep(cGranule, seurat.obj$cellIDs)]
-  rnaPurkinje <- colnames(seurat.obj)[grep(cPurkinje, seurat.obj$cellIDs)]
-  rnaRG <- colnames(seurat.obj)[grep(cRG, seurat.obj$cellIDs)]
-  rnaMG <- colnames(seurat.obj)[grep(cMG, seurat.obj$cellIDs)]
-  rnaOPC <- colnames(seurat.obj)[grep(cOPC, seurat.obj$cellIDs)]
-  rnaIn_Pro <- colnames(seurat.obj)[grep(cIn_Pro, seurat.obj$cellIDs)]
-  rnaN_undef <- colnames(seurat.obj)[grep(cN_undef, seurat.obj$cellIDs)]
-  
-  # Prepare group list for constrained run
-  groupList <- SimpleList(
-    Granule = SimpleList(
-      ATAC = archR$cellNames[archR$Clusters_harmony %in% clustGranule],
-      RNA = rnaGranule
-    ),
-    Purkinje = SimpleList(
-      ATAC = archR$cellNames[archR$Clusters_harmony %in% clustPurkinje],
-      RNA = rnaPurkinje
-    ),    
-    RG = SimpleList(
-      ATAC = archR$cellNames[archR$Clusters_harmony %in% clustRG],
-      RNA = rnaRG
-    ), 
-    MG = SimpleList(
-      ATAC = archR$cellNames[archR$Clusters_harmony %in% clustMG],
-      RNA = rnaMG
-    ), 
-    OPC = SimpleList(
-      ATAC = archR$cellNames[archR$Clusters_harmony %in% clustOPC],
-      RNA = rnaOPC
-    ), 
-    In_Pro = SimpleList(
-      ATAC = archR$cellNames[archR$Clusters_harmony %in% clustIn_Pro],
-      RNA = rnaIn_Pro
-    ), 
-    N_undef = SimpleList(
-      ATAC = archR$cellNames[archR$Clusters_harmony %in% clustN_undef],
-      RNA = rnaN_undef
-    ) 
-    
-  )
-  
-} else if (REGION == 'FC') {
-  
-  cat(paste0('\nPrepare cell mappings for ', REGION, ' ... \n')) # Can I automate this section?
-  
-  # Group the unique RNA cluster IDs assigned to ATAC clusters into broad catagories
-  cExN <- paste0(c("ExN-2", "ExN-3", "ExN-4", "ExN-5", "ExN-6", "ExN-7"), collapse="|")
-  cInN <- paste0(c("InN-1", "InN-2"), collapse="|")
-  cRG <- paste0(c("RG-1", "RG-2"), collapse="|")
-  cMG <- "MG"
-  cOPC <- "OPC"
-  cIP <- "IP"
-  cCycPro <- "CycPro"
+  cExN_Pro <- "ExN-Pro-1"
+  cInN_Pro <- "InN-Pro-2"
+  cN_undef <- "N-undef-1"
+
   
   # Pull out the ATAC cluster IDs that map to RNA clusters in unconstrained run
   clustExN <- rownames(cM_unconstrained)[grep(cExN, preClust)]
   clustInN <- rownames(cM_unconstrained)[grep(cInN, preClust)]
   clustRG <- rownames(cM_unconstrained)[grep(cRG, preClust)]
   clustMG <- rownames(cM_unconstrained)[grep(cMG, preClust)]
+  clustExN_Pro <- rownames(cM_unconstrained)[grep(cExN_Pro, preClust)]
+  clustInN_Pro <- rownames(cM_unconstrained)[grep(cInN_Pro, preClust)]
+  clustN_undef <- rownames(cM_unconstrained)[grep(cN_undef, preClust)]
+  
   
   # Get unique cells IDs in these categories from the seurat RNA object
   rnaExN <- colnames(seurat.obj)[grep(cExN, seurat.obj$cellIDs)]
   rnaInN <- colnames(seurat.obj)[grep(cInN, seurat.obj$cellIDs)]
   rnaRG <- colnames(seurat.obj)[grep(cRG, seurat.obj$cellIDs)]
   rnaMG <- colnames(seurat.obj)[grep(cMG, seurat.obj$cellIDs)]
+  rnaExN_Pro <- colnames(seurat.obj)[grep(cExN_Pro, seurat.obj$cellIDs)]
+  rnaInN_Pro <- colnames(seurat.obj)[grep(cInN_Pro, seurat.obj$cellIDs)]
+  rnaN_undef <- colnames(seurat.obj)[grep(cN_undef, seurat.obj$cellIDs)]
   
   # Prepare group list for constrained run
   groupList <- SimpleList(
@@ -208,7 +148,70 @@ if (REGION == 'Cer') {
     MG = SimpleList(
       ATAC = archR$cellNames[archR$Clusters_harmony %in% clustMG],
       RNA = rnaMG
+    ), 
+    ExN_Pro = SimpleList(
+      ATAC = archR$cellNames[archR$Clusters_harmony %in% clustExN_Pro],
+      RNA = rnaExN_Pro
+    ),
+    InN_Pro = SimpleList(
+      ATAC = archR$cellNames[archR$Clusters_harmony %in% clustInN_Pro],
+      RNA = rnaInN_Pro
+    ), 
+    N_undef = SimpleList(
+      ATAC = archR$cellNames[archR$Clusters_harmony %in% clustN_undef],
+      RNA = rnaN_undef
+    ) 
+    
+  )
+  
+} else if (REGION == 'FC') {
+  
+  cat(paste0('\nPrepare cell mappings for ', REGION, ' ... \n')) # Can I automate this section?
+  
+  # Group the unique RNA cluster IDs assigned to ATAC clusters into broad catagories
+  cExN <- paste0(c("ExN-1", "ExN-2", "ExN-4", "ExN-5"), collapse="|")
+  cInN <- paste0(c("InN-1", "InN-2", "InN-3"), collapse="|")
+  cRG <- paste0(c("RG-1", "RG-2"), collapse="|")
+  cMG <- "MG"
+  cN_undef <- "N-undef"    
+
+  # Pull out the ATAC cluster IDs that map to RNA clusters in unconstrained run
+  clustExN <- rownames(cM_unconstrained)[grep(cExN, preClust)]
+  clustInN <- rownames(cM_unconstrained)[grep(cInN, preClust)]
+  clustRG <- rownames(cM_unconstrained)[grep(cRG, preClust)]
+  clustMG <- rownames(cM_unconstrained)[grep(cMG, preClust)]
+  clustN_undef <- rownames(cM_unconstrained)[grep(cN_undef, preClust)]
+
+  # Get unique cells IDs in these categories from the seurat RNA object
+  rnaExN <- colnames(seurat.obj)[grep(cExN, seurat.obj$cellIDs)]
+  rnaInN <- colnames(seurat.obj)[grep(cInN, seurat.obj$cellIDs)]
+  rnaRG <- colnames(seurat.obj)[grep(cRG, seurat.obj$cellIDs)]
+  rnaMG <- colnames(seurat.obj)[grep(cMG, seurat.obj$cellIDs)]
+  rnaN_undef <- colnames(seurat.obj)[grep(cN_undef, seurat.obj$cellIDs)]
+
+  # Prepare group list for constrained run
+  groupList <- SimpleList(
+    ExN = SimpleList(
+      ATAC = archR$cellNames[archR$Clusters_harmony %in% clustExN],
+      RNA = rnaExN
+    ),
+    InN = SimpleList(
+      ATAC = archR$cellNames[archR$Clusters_harmony %in% clustInN],
+      RNA = rnaInN
+    ),    
+    RG = SimpleList(
+      ATAC = archR$cellNames[archR$Clusters_harmony %in% clustRG],
+      RNA = rnaRG
+    ), 
+    MG = SimpleList(
+      ATAC = archR$cellNames[archR$Clusters_harmony %in% clustMG],
+      RNA = rnaMG
+    ),
+   N_undef = SimpleList(
+      ATAC = archR$cellNames[archR$Clusters_harmony %in% clustN_undef],
+      RNA = rnaN_undef
     )
+
     
   )
   
@@ -261,7 +264,8 @@ archR.2 <- addGeneIntegrationMatrix(
   dimsToUse = 1:26,
   k.score = 26,
   npcs = 26,
-  dims = 1:26
+  dims = 1:26,
+  force = TRUE
   #num.cc = 26
 )
 
