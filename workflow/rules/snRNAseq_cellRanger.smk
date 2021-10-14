@@ -7,7 +7,7 @@
 # -------------------------------------------------------------------------------------
 
 # ---------  SET SMK PARAMS  ----------
-configfile: "config.yaml"
+configfile: "config/config.yaml"
 
 
 # ----------  SET VARIABLES  ----------
