@@ -25,6 +25,7 @@
 ## Initialise R library  --------------------------------------------------------------
 .libPaths( c( "/scratch/c.c1477909/R/library", .libPaths() ) )
 
+
 ##  Load Packages  --------------------------------------------------------------------
 library(ArchR)
 library(pheatmap)
@@ -36,6 +37,7 @@ library(clustree)
 library(cowplot)
 library(rmarkdown)
 library(argparser)
+
 
 ## Parse region / set region variable -------------------------------------------------
 cat('\nParsing args ... \n')
@@ -49,6 +51,7 @@ p <- add_argument(p, "report_file", help = "No report filename specified")
 args <- parse_args(p)
 print(args)
 
+
 ##  Define global variables  -----------------------------------------------------------
 cat('\nDefining variables ... \n')
 REGION <- args$region
@@ -58,24 +61,44 @@ MARKDOWN_FILE <- args$markdown_file
 REPORT_DIR <- args$report_dir
 REPORT_FILE <- args$report_file
 
-addArchRThreads(threads = 8) # Set Hawk to 32 cores so 0.75 of total
+addArchRThreads(threads = 8) # Set Hawk to 12 cores so 0.75 of total
 addArchRGenome("hg38")
 #setwd(OUT_DIR) # Required or saves all files to ~/
 
+
 ##  Load ArchR project  -------------------------------------------------------------------
+cat('\nLoading ArchR project ... \n')
 archR <- loadArchRProject(path = OUT_DIR)
 
 ## Batch effect correction - correcting for Sample based batch effects  ---------------
 # Batch correct the LSI reduction using harmony save as new reduction named 'Harmony'
-archR.2 <- addHarmony(
-  ArchRProj = archR,
-  reducedDims = "IterativeLSI",
-  name = "Harmony",
-  groupBy = "Sample",
-  force = TRUE
-)
+# Note: for Cer we need to use ... due to cluster QC alterations
+if (REGION == 'Cer') {
+
+  cat(paste0('\nRunning batch correction for ', REGION, ' ... \n'))
+  archR.2 <- addHarmony(
+    ArchRProj = archR,
+    reducedDims = "IterativeLSI_reclust",
+    name = "Harmony",
+    groupBy = "Sample",
+    force = TRUE
+  )
+
+} else {
+
+  cat(paste0('\nRunning batch correction for ', REGION, ' ... \n'))
+  archR.2 <- addHarmony(
+    ArchRProj = archR,
+    reducedDims = "IterativeLSI",
+    name = "Harmony",
+    groupBy = "Sample",
+    force = TRUE
+  )
+
+}
 
 # Re-cluster using batch corrected LSI reduction data as input - save as 'Clusters_harmony'
+cat('\nRe-clustering ... \n')
 archR.2 <- addClusters(
   input = archR.2,
   reducedDims = "Harmony",
@@ -95,8 +118,11 @@ archR.2 <- addUMAP(
   metric = "cosine",
   force = TRUE
 )
+
+
 ## Batch effects - reporting  -------------------------------------------------------------
 # Cluster counts - after batch corrected Iterative LSI based clustering
+cat('\nCreate tables and confusion matrices ... \n')
 clusters_cnts_harmony <- as.data.frame(t(as.data.frame(as.vector((table(archR.2$Clusters_harmony))))))
 rownames(clusters_cnts_harmony) <- NULL
 colnames(clusters_cnts_harmony) <- names(table(archR.2$Clusters_harmony))
@@ -112,29 +138,53 @@ clust_CM_harmony <- pheatmap::pheatmap(
 clust_CM_harmony
 
 # Plot UMAPs
+cat('\nPlotting UMAPs ... \n')
 clusters_UMAP_har <- plotEmbedding(ArchRProj = archR.2, colorBy = "cellColData", 
                                    name = "Clusters_harmony", embedding = "UMAPHarmony")
 clusters_UMAP_BySample_har <- plotEmbedding(ArchRProj = archR.2, colorBy = "cellColData", 
                                             name = "Sample", embedding = "UMAPHarmony")
 cluster_plot_har <- ggAlignPlots(clusters_UMAP_har, clusters_UMAP_BySample_har, type = "h")
 
-# Confusion matrix to compare LSI based and batch corrected based clusters
-cM_harmony_compare <- confusionMatrix(paste0(archR.2$Clusters), 
+if (REGION == 'Cer') { 
+
+  # Confusion matrix to compare LSI based and batch corrected based clusters
+  cM_harmony_compare <- confusionMatrix(paste0(archR.2$Clusters_reclust), 
                                       paste0(archR.2$Clusters_harmony))
-clust_CM_harmony_compare <- pheatmap::pheatmap(
-  mat = as.matrix(cM_harmony_compare), 
-  color = paletteContinuous("whiteBlue"), 
-  border_color = "black", display_numbers = TRUE, number_format =  "%.0f"
-)
-clust_CM_harmony_compare
+  clust_CM_harmony_compare <- pheatmap::pheatmap(
+    mat = as.matrix(cM_harmony_compare), 
+    color = paletteContinuous("whiteBlue"), 
+    border_color = "black", display_numbers = TRUE, number_format =  "%.0f"
+  )
+  clust_CM_harmony_compare
 
-# Cluster tree to compare LSI based and batch corrected based clusters
-clusttree_harmony_df <- as.data.frame(getCellColData(archR.2,
-                                                     select = c("Clusters", 
-                                                                "Clusters_harmony")))
-colnames(clusttree_harmony_df) <- c("K1", "K2")
-clustTree_harmony_plot <- clustree(clusttree_harmony_df, prefix = "K", prop_filter = 0.01)
+  # Cluster tree to compare LSI based and batch corrected based clusters
+  clusttree_harmony_df <- as.data.frame(getCellColData(archR.2,
+                                                       select = c("Clusters_reclust", 
+                                                                  "Clusters_harmony")))
+  colnames(clusttree_harmony_df) <- c("K1", "K2")
+  clustTree_harmony_plot <- clustree(clusttree_harmony_df, prefix = "K", prop_filter = 0.01)
 
+} else {
+
+
+  # Confusion matrix to compare LSI based and batch corrected based clusters
+  cM_harmony_compare <- confusionMatrix(paste0(archR.2$Clusters),
+                                      paste0(archR.2$Clusters_harmony))
+  clust_CM_harmony_compare <- pheatmap::pheatmap(
+    mat = as.matrix(cM_harmony_compare),
+    color = paletteContinuous("whiteBlue"),
+    border_color = "black", display_numbers = TRUE, number_format =  "%.0f"
+  )
+  clust_CM_harmony_compare
+
+  # Cluster tree to compare LSI based and batch corrected based clusters
+  clusttree_harmony_df <- as.data.frame(getCellColData(archR.2,
+                                                       select = c("Clusters",
+                                                                  "Clusters_harmony")))
+  colnames(clusttree_harmony_df) <- c("K1", "K2")
+  clustTree_harmony_plot <- clustree(clusttree_harmony_df, prefix = "K", prop_filter = 0.01)
+
+}
 
 ## Save ArchR project  ----------------------------------------------------------------
 cat('\nSaving project ... \n')
@@ -147,5 +197,6 @@ saveArchRProject(ArchRProj = archR.2,
 cat('\nCreating markdown report ... \n')
 render(MARKDOWN_FILE, output_file = REPORT_FILE, output_dir = REPORT_DIR)
 
+cat('\nDONE.\n')
 #--------------------------------------------------------------------------------------
 #--------------------------------------------------------------------------------------
