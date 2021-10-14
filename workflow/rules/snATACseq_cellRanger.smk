@@ -7,24 +7,24 @@
 # -------------------------------------------------------------------------------------
 
 # ---------  SET SMK PARAMS  ----------
-configfile: "config_ATAC.yaml"
+configfile: "config/config.yaml"
 
 
 # ----------  SET VARIABLES  ----------
-shell("cellranger-atac -V;")
+shell("cellranger-atac -V")
 
 # -------------  RULES  ---------------
 
 rule all:
     input:
-       expand("{SAMPLE}.stamp", SAMPLE=config["SAMPLES"]),
+       expand("{SAMPLE}.stamp", SAMPLE=config["SAMPLES_ATAC"]),
 #       "scRNA_CR_output.csv"
 
 rule CR_cnt_ATAC:
     # Diminishing returns > 128Gs
     output: "{SAMPLE}.stamp" # Need .stamp and touch {output} in shell command as both SM and CR want to mkdir
-    params: fastq_dir=config["FASTQ_DIR"],
-            reference=config["REFERENCE_ATAC"]
+    params: FASTQ_DIR=config["FASTQ_DIR"],
+            REFERENCE=config["REFERENCE_ATAC"]
     log:    "logs/{SAMPLE}.log"
     shell:
             """
