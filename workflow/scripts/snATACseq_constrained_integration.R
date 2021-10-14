@@ -169,7 +169,7 @@ if (REGION == 'Cer') {
   cat(paste0('\nPrepare cell mappings for ', REGION, ' ... \n')) # Can I automate this section?
   
   # Group the unique RNA cluster IDs assigned to ATAC clusters into broad catagories
-  cExN <- paste0(c("ExN-1", "ExN-2", "ExN-4", "ExN-5"), collapse="|")
+  cExN <- paste0(c("ExN-2", "ExN-3", "ExN-4", "ExN-5"), collapse="|")
   cInN <- paste0(c("InN-1", "InN-2", "InN-3"), collapse="|")
   cRG <- paste0(c("RG-1", "RG-2"), collapse="|")
   cMG <- "MG"
