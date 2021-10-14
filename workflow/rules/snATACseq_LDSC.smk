@@ -20,13 +20,12 @@ BED_DIR = RESULTS_DIR + "bed_files_for_LDSC_ATAC/"
 GWAS_DIR = SCRATCH + "ldsc/GWAS_for_ldsc/"
 MARKDOWN_DIR = SCRATCH + "markdown/"
 LIFT_OVER_DIR = SCRATCH + "liftover/"
+REPORT_DIR = RESULTS_DIR + "reports/ATAC/"
 
 # -------------  RULES  ---------------
 rule all:
     input:
-#        expand(RESULTS_DIR + "snATACseq_LDSC_summary_{GWAS}.tsv", GWAS = config['LDSC_GWAS']),
-        expand(RESULTS_DIR + "snATACseq_LDSC_report.html") 
-#         expand(PART_HERIT_DIR + "snATACseq_LDSC_{CELL_TYPE}_{GWAS}.results", CELL_TYPE = config['ATAC_CELL_TYPES'], GWAS = config['LDSC_GWAS'])
+        expand(REPORT_DIR + "snATACseq_LDSC_report.html"), 
 
 rule annot2bed:
     input:   folder = REF_DIR + "baselineLD_v2.2_1000G_Phase3"
@@ -108,7 +107,7 @@ rule create_partHerit_summary:
     shell:
              """
 
-             head -1 {params.ph_dir}snATACseq_LDSC_cer.ExN.1_BPD.results > {output}
+             head -1 {params.ph_dir}snATACseq_LDSC_fc.ExN_BPD.results > {output}
 
              File={params.cell_types}
              Lines=$(cat $File)
@@ -120,11 +119,11 @@ rule create_partHerit_summary:
              """
 
 rule ldsc_mrkdwn_report:
-    input:   summary = RESULTS_DIR + "snATACseq_LDSC_summary_SCZ.tsv",
+    input:   summary = expand(RESULTS_DIR + "snATACseq_LDSC_summary_{GWAS}.tsv", GWAS = config['LDSC_GWAS']),
              markdown = MARKDOWN_DIR + "snATACseq_LDSC_report.Rmd"
-    output:  RESULTS_DIR + "snATACseq_LDSC_report.html"
+    output:  REPORT_DIR + "snATACseq_LDSC_report.html"
     message: "Creating LDSC Rmarkdown report"
-    params:  out_dir = RESULTS_DIR
+    params:  out_dir = REPORT_DIR
     log:     "logs/LDSR/snATACseq.LDSC.report.log"
     shell:
              """
