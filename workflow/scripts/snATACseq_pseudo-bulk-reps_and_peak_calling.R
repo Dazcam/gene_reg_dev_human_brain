@@ -72,6 +72,24 @@ cat(paste0('\nLoading ArchR project for ', REGION, ' ... \n'))
 archR <- loadArchRProject(path = OUT_DIR)
 
 
+## Set broad catagories for cell IDs  -------------------------------------------------
+cat(paste0('\nReclassifing cell IDs into broader catagories for ', REGION, ' ... \n'))
+if (REGION == 'FC') {
+
+  # Reclassify cell IDs into broader catagories
+  newLabel <- c("ExN", "ExN", "ExN", "ExN", "InN", "InN", "InN", "RG", "RG", "MG", "N-undef")
+  oldLabel <- c("ExN-2", "ExN-3", "ExN-4", "ExN-5", "InN-1", "InN-2", "InN-3", "RG-1", "RG-2", "MG", "N-undef")
+  archR$Clusters_RNAmapped_broad <- mapLabels(archR$Clusters_RNAmapped, newLabels = newLabel, oldLabels = oldLabel)
+
+} else { 
+
+  # Reclassify cell IDs	into broader catagories
+  newLabel <- c("InN", "InN", "InN", "InN", "RG", "RG", "RG")
+  oldLabel <- c("InN-1", "InN-3", "InN-6", "InN-7", "RG-1", "RG-2", "RG-3")
+  archR$Clusters_RNAmapped_broad <- mapLabels(archR$Clusters_RNAmapped, newLabels = newLabel, oldLabels = oldLabel)
+
+}
+
 ## Pseudo-bulk replicates - chtr 9  ---------------------------------------------------
 
 #  The underlying assumption in this process is that the single cells 
@@ -81,7 +99,7 @@ archR <- loadArchRProject(path = OUT_DIR)
 #  supersets of clusters that correspond to known cell types. 
 
 cat(paste0('\nCreate pseudo-bulk replicates for ', REGION, ' ... \n'))
-archR.2 <- addGroupCoverages(ArchRProj = archR, groupBy = "Clusters_RNAmapped", force = TRUE)
+archR.2 <- addGroupCoverages(ArchRProj = archR, groupBy = "Clusters_RNAmapped_broad", force = TRUE)
 
 ##  Peak Calling  - cptr 10  ----------------------------------------------------------
 # Set macs2 path - note that you need to set the default python env to python 2
@@ -91,24 +109,25 @@ pathToMacs2 <- MACS2_PATH
 cat(paste0('\nCalling peaks for ', REGION, ' ... \n'))
 archR.2 <- addReproduciblePeakSet(
   ArchRProj = archR.2, 
-  groupBy = "Clusters_RNAmapped", 
+  groupBy = "Clusters_RNAmapped_broad", 
   pathToMacs2 = MACS2_PATH,
   cutOff = FDR_THRESHOLD, 
   extendSummits = EXTEND_BPs)
 
 ## Peak Calling - Reporting  ----------------------------------------------------------
 
+# Create peak cnt table and bed files for LDSC 
 # Print peak calling parameters
 # Had to cobble code from ArchR repo to generate this - this is printed to screen
 # During peak calling but only partially reproduced in log
 
 cat(paste0('\nCreate tables and plots for report ', REGION, ' ... \n'))
-coverageParams <- archR.2@projectMetadata$GroupCoverages[["Clusters_RNAmapped"]]$Params
-coverage_metadata <- archR.2@projectMetadata$GroupCoverages[["Clusters_RNAmapped"]]$coverageMetadata
+coverageParams <- archR.2@projectMetadata$GroupCoverages[["Clusters_RNAmapped_broad"]]$Params
+coverage_metadata <- archR.2@projectMetadata$GroupCoverages[["Clusters_RNAmapped_broad"]]$coverageMetadata
 maxPeaks_default <- 150000
 peaksPerCell_default <- 500
 
-tableGroups <- table(getCellColData(archR.2, "Clusters_RNAmapped", drop = TRUE))
+tableGroups <- table(getCellColData(archR.2, "Clusters_RNAmapped_broad", drop = TRUE))
 peakCallParams_summary_df <- lapply(seq_along(coverageParams$cellGroups), function(y){
   x <- coverageParams$cellGroups[[y]]
   uniq <- unique(unlist(x))
@@ -142,12 +161,13 @@ peak_call_summary_plot <- ggplot(peak_call_summary,
 
 ## Create bed files for LDSC  ---------------------------------------------------------
 # ArchR peak calling output subs in dots for dashes in cell-type part of rds filename 
-cell_types <- gsub("\\-", "\\.", unique(archR$Clusters_RNAmapped)) 
+cell_types <- gsub("\\-", "\\.", unique(archR$Clusters_RNAmapped_broad)) 
 
+cat(paste0('\nCreating bed files for ', REGION, ' ... \n'))
 for (CELL_TYPE in cell_types) {
   
   # Load reproducible peak set for each cell-type
-  PEAKS <- readRDS(paste0('results/ARCHR/', REGION, '/PeakCalls/', 
+  PEAKS <- readRDS(paste0('results/reports/ATAC/ARCHR/', REGION, '/PeakCalls/', 
                           CELL_TYPE, '-reproduciblePeaks.gr.rds'))
   
   # Convert to bed file
@@ -171,9 +191,38 @@ for (CELL_TYPE in cell_types) {
   
 }
 
+## Create peak count table
+cat(paste0('\nCreate peak count table for ', REGION, ' ... \n'))
+for (CELL_TYPE in cell_types) {
+  
+  if (exists("PEAK_CNT_DF")) {
+    
+    PEAKS <- get(paste0(CELL_TYPE, '_peaks'))
+    PEAK_CNT <- cbind(CELL_TYPE, dim(Repitools::annoGR2DF(PEAKS))[1])
+    PEAK_CNT_DF <- rbind(PEAK_CNT_DF, PEAK_CNT)
+    
+  } else {
+    
+    PEAKS <- get(paste0(CELL_TYPE, '_peaks'))
+    PEAK_CNT_DF <- cbind(CELL_TYPE, dim(Repitools::annoGR2DF(PEAKS))[1])
+    colnames(PEAK_CNT_DF) <- c("Cell Type", "Peak count")
+    
+  }
+  
+  
+}
+
+cat('\nPeak counts are: ... \n')
+PEAK_CNT_DF <- base::as.data.frame(PEAK_CNT_DF)
+PEAK_CNT_DF
+
+## Create UMAP of broad clusters
+cat(paste0('\nCreate broad cluster UMAP for ', REGION, ' ... \n'))
+UMAP_broad <- plotEmbedding(archR.2, colorBy = "cellColData", name = "Clusters_RNAmapped_broad")
+
 
 ## Save ArchR project  ----------------------------------------------------------------
-cat('\nSaving project ... \n')
+cat('\n\nSaving project ... \n')
 saveArchRProject(ArchRProj = archR.2, 
                  outputDirectory = OUT_DIR, 
                  load = FALSE)
