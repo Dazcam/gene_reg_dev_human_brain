@@ -1,6 +1,6 @@
 #--------------------------------------------------------------------------------------
 #
-#    ArchR - Motif and Co-accessibility analysis
+#    ArchR - Motif and peak to gene linkage analysis analysis
 #
 #--------------------------------------------------------------------------------------
 
@@ -82,7 +82,7 @@ for (REGION in c("FC", "GE")) {
   )
   enrichMotifs
   
-  heatmapEM <- plotEnrichHeatmap(enrichMotifs, n = 7, transpose = TRUE)
+  heatmapEM <- plotEnrichHeatmap(enrichMotifs, n = 15, transpose = TRUE)
   assign(paste0("motif_heatmap_", REGION), heatmapEM)
 
   ## Motif Footprinting  -  Chptr 14  ---------------------------------------------------
@@ -94,7 +94,7 @@ for (REGION in c("FC", "GE")) {
     motifPositions
 
     # Subset the GRangesList to a few TFs
-    motifs <- c("NEUROD2", "NEUROD6", "ASCL1", "TCF12")
+    motifs <- c('MEF2C', 'NEUROD4', 'NEUROD2', 'ASCL1', 'ASCL2', 'DLX5', 'PRRX1')
     markerMotifs <- unlist(lapply(motifs, function(x) grep(x, names(motifPositions), value = TRUE)))
     #markerMotifs <- markerMotifs[markerMotifs %ni% "SREBF1_22"]
     markerMotifs
@@ -118,7 +118,70 @@ for (REGION in c("FC", "GE")) {
   
   }
 
-}
+  ## Peak to gene links  -  Chptr 15.3  -------------------------------------------------
+  cat(paste0("Starting peak to gene linkage analysis for ", REGION, " ... \n"))
+  cat("Adding Peak to gene links ... \n")
+  archR <- addPeak2GeneLinks(
+  ArchRProj = archR,
+  reducedDims = "Harmony"
+  )
+
+  cat("\nRetrieving Peak to gene links ... \n")
+  p2g <- getPeak2GeneLinks(
+  ArchRProj = archR,
+  corCutOff = 0.45,
+  resolution = 1,
+  returnLoops = FALSE
+  )
+
+  cat("\nCreating Peak to gene links dataframes ... \n")
+  p2g_df <- base::as.data.frame(p2g)
+  geneIDs_df <- Repitools::annoGR2DF(metadata(p2g)$geneSet)
+  peakIDs_df <- Repitools::annoGR2DF(metadata(p2g)$peakSet)
+
+
+  cat("\nObtaining peak start/stop coordinates and gene IDs for links ... \n")
+
+  # Need to remove dfs between regions or region specific entries will be appended
+  if (exists("peak2gene_df")) { rm(peak2gene_df) }
+  if (exists("peak2gene_final_df")) { rm(peak2gene_final_df) }
+  
+  for (LOOP in 1:nrow(p2g_df)) {
+    
+    gene_index <- p2g_df[LOOP, 2]
+    peak_index <- p2g_df[LOOP, 1]
+    
+    gene_TSS <- geneIDs_df[gene_index, ]$start
+    gene_ID <- geneIDs_df[gene_index, ]$name
+    peak_start <- peakIDs_df[peak_index, ]$start
+    peak_end <- peakIDs_df[peak_index, ]$end
+    chr <- as.vector(peakIDs_df[peak_index, ]$chr)
+    
+    if (exists("peak2gene_df")) {
+      
+      peak2gene_row <- cbind(chr, peak_start, peak_end, gene_TSS, gene_ID)
+      peak2gene_df <- rbind(peak2gene_df, peak2gene_row)
+      
+    } else {
+      
+      peak2gene_df <- cbind(chr, peak_start, peak_end, gene_TSS, gene_ID)
+      
+    }
+    
+    
+  }
+  
+  # Join peak start/stop coordinates and gene IDs to original table
+  peak2gene_final_df <- cbind(peak2gene_df, p2g_df)
+  
+  
+  cat("\nWriting table to file ... \n")
+  write_tsv(peak2gene_final_df, paste0('results/peak2gene_table_', REGION, '.tsv'))
+  
+}  
+
+
+
 
 ## Create markdown doc  ---------------------------------------------------------------
 cat('\nCreating markdown report ... \n')
@@ -128,3 +191,4 @@ cat('\nDONE.\n')
 
 #--------------------------------------------------------------------------------------
 #--------------------------------------------------------------------------------------
+
