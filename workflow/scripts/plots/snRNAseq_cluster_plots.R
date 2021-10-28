@@ -50,19 +50,143 @@ for (REGION in REGIONS) {
   
 }
 
-# Add titles
-pfc_plot + ggtitle('Frontal Cortex') 
-wge_plot + ggtitle('Ganglionic Eminence') 
-hip_plot + ggtitle('Hippocampus') 
-tha_plot + ggtitle('Thalamus') 
-cer_plot + ggtitle('Cerebellum') 
+# Standardise colours
+ExN_blue <- c('#9A6324', '#76B5C5', "#00BDD2", "#00B6EB", '#CEE5FD', 
+              '#ABDBE3','#1E81B0', '#779CBA', '#B8D2EB')
+InN_green <- c('#3CBB75FF', '#55C667FF', '#00FF00A5','#73D055FF', '#95D840FF', '#10A53DFF', '#006400')
+RG_red <- c('#FAA0A0', '#FF5959', '#F75151', '#EF0029', '#D2042D')
+cycPro_lavender <- c("#DCBEFF")
+endo_brown <- '#9A6324'
+ip_magenta <- "#D078FF"
+OPC_yelow <- '#FFDE725FF'
+MG_orange <- '#F58231'
+
+# GE
+ge_colours <- c('#DCBEFF', '#006400', '#55C667FF', '#00FF00A5', '#10A53DFF',
+                 '#95D840FF', '#73D055FF',  '#3CBB75FF', '#FAA0A0', '#EF0029', 
+                 '#D2042D')
+
+ge_final_plot <- wge_plot +
+  ggtitle('Ganglionic Eminence') +
+  theme_bw() +
+  NoLegend() +
+  theme(legend.text=element_text(size = 12),
+        legend.title = element_blank(),
+        plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.border = element_rect(colour = "black", size = 1),
+        plot.title = element_text(hjust = 0.5),
+        axis.title.x = element_text(colour = "#000000", size = 14),
+        axis.title.y = element_text(colour = "#000000", size = 14),
+        axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
+        axis.text.y  = element_text(colour = "#000000", size = 12)) +
+  scale_color_manual(values = ge_colours)
+
+
+# Cer
+cer_colours <- c('#DCBEFF', '#9A6324', '#76B5C5', '#CEE5FD', '#00BDD2',  
+                 '#00B6EB', '#ABDBE3', '#1E81B0', '#3CBB75FF', '#00FF00A5', 
+                 '#006400', '#95D840FF', '#B7FFB7', '#10A53DFF', '#F58231', 
+                 '#949494', '#CCCCCC', '#FDE725FF', '#FAA0A0','#EF0029', 
+                 '#D2042D')
+
+cer_final_plot <- cer_plot +
+  ggtitle('Cerebellum') +
+  theme_bw() +
+  NoLegend() +
+  theme(legend.text=element_text(size = 12),
+        legend.title = element_blank(),
+        plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.border = element_rect(colour = "black", size = 1),
+        plot.title = element_text(hjust = 0.5),
+        axis.title.x = element_text(colour = "#000000", size = 14),
+        axis.title.y = element_text(colour = "#000000", size = 14),
+        axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
+        axis.text.y  = element_text(colour = "#000000", size = 12)) +
+  scale_color_manual(values = cer_colours)
+
+# FC
+fc_colours <- c("#DCBEFF", '#9A6324', '#CEE5FD', '#76B5C5', '#ABDBE3', '#779CBA', 
+                '#1E81B0', '#95D840FF', '#55C667FF', '#73D055FF', '#10A53DFF', 
+                '#D078FF', '#F58231', '#CCCCCC', '#FDE725FF', '#FF5959', '#EF0029')
+
+fc_final_plot <- pfc_plot +
+  ggtitle('Frontal Cortex') +
+  theme_bw() +
+  NoLegend() +
+  theme(legend.text=element_text(size = 12),
+        legend.title = element_blank(),
+        plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.border = element_rect(colour = "black", size = 1),
+        plot.title = element_text(hjust = 0.5),
+        axis.title.x = element_text(colour = "#000000", size = 14),
+        axis.title.y = element_text(colour = "#000000", size = 14),
+        axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
+        axis.text.y  = element_text(colour = "#000000", size = 12)) +
+  scale_color_manual(values = fc_colours)
+
+# Hip
+hip_colours <- c("#DCBEFF", '#9A6324', '#76B5C5', "#00BDD2", '#CEE5FD',  
+                "#00B6EB", '#ABDBE3','#1E81B0', '#779CBA', '#73D055FF', 
+                '#10A53DFF', '#95D840FF', '#F58231', "#949494", '#CCCCCC',  
+                '#FDE725FF', '#FAA0A0', '#EF0029', '#D2042D')
+
+hip_final_plot <- hip_plot +
+  ggtitle('Hippocampus') +
+  theme_bw() +
+  NoLegend() +
+  theme(legend.text=element_text(size = 12),
+        legend.title = element_blank(),
+        plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.border = element_rect(colour = "black", size = 1),
+        plot.title = element_text(hjust = 0.5),
+        axis.title.x = element_text(colour = "#000000", size = 14),
+        axis.title.y = element_text(colour = "#000000", size = 14),
+        axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
+        axis.text.y  = element_text(colour = "#000000", size = 12)) +
+  scale_color_manual(values = hip_colours)
+
+
+
+# Tha
+thalamus_colours <- c("#DCBEFF", '#9A6324', '#76B5C5', "#00BDD2", "#00B6EB", 
+                      '#CEE5FD', '#ABDBE3','#1E81B0', '#779CBA', '#B8D2EB', 
+                      '#CEE5FD', "#3CBB75FF", "#55C667FF", "#73D055FF",
+                      '#95D840FF', "#D078FF", '#F58231', '#FDE725FF', '#FAA0A0',
+                      '#FF5959', '#F75151', '#EF0029', '#D2042D')
+
+tha_final_plot <- tha_plot +
+  ggtitle('Thalamus') +
+  theme_bw() +
+  NoLegend() +
+  theme(legend.text=element_text(size = 12),
+        legend.title = element_blank(),
+        plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.border = element_rect(colour = "black", size = 1),
+        plot.title = element_text(hjust = 0.5),
+        axis.title.x = element_text(colour = "#000000", size = 14),
+        axis.title.y = element_text(colour = "#000000", size = 14),
+        axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
+        axis.text.y  = element_text(colour = "#000000", size = 12)) +
+  scale_color_manual(values = thalamus_colours)
+  
+
 
 # Plot
-fig1_plot <- plot_grid(pfc_plot + ggtitle('Frontal Cortex'), 
-                       wge_plot + ggtitle('Ganglionic Eminence'),
-                       hip_plot + ggtitle('Hippocampus'),
-                       tha_plot + ggtitle('Thalamus'),
-                       cer_plot + ggtitle('Cerebellum'), 
+fig1_plot <- plot_grid(fc_final_plot, 
+                       ge_final_plot,
+                       hip_final_plot,
+                       tha_final_plot,
+                       cer_final_plot, 
                        labels = 'AUTO', label_size = 16)
 
 # Save plot
@@ -230,5 +354,4 @@ dev.off()
 
 #--------------------------------------------------------------------------------------
 #--------------------------------------------------------------------------------------
-
 
