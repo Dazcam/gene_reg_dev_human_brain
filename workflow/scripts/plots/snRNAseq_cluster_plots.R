@@ -27,6 +27,30 @@ ALDINGER_DIR <- '~/Desktop/single_cell/public_datasets/aldinger2021_fetal_cer_pr
 REGIONS <- c('cer', 'hip', 'pfc', 'tha', 'wge')
 PCA_UPPER_DIM <- 17
 
+## Set default ggplot theme
+my_theme <-   theme(legend.text=element_text(size = 12),
+                    legend.title = element_blank(),
+                    plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
+                    panel.grid.major = element_blank(), 
+                    panel.grid.minor = element_blank(),
+                    panel.border = element_rect(colour = "black", size = 1),
+                    plot.title = element_text(hjust = 0.5),
+                    axis.title.x = element_text(colour = "#000000", size = 14),
+                    axis.title.y = element_text(colour = "#000000", size = 14),
+                    axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
+                    axis.text.y  = element_text(colour = "#000000", size = 12))
+
+## Standardise colour palette
+ExN_blue <- c('#9A6324', '#76B5C5', "#00BDD2", "#00B6EB", '#CEE5FD', 
+              '#ABDBE3','#1E81B0', '#779CBA', '#B8D2EB')
+InN_green <- c('#3CBB75FF', '#55C667FF', '#00FF00A5','#73D055FF', '#95D840FF', '#10A53DFF', '#006400')
+RG_red <- c('#FAA0A0', '#FF5959', '#F75151', '#EF0029', '#D2042D')
+cycPro_lavender <- c("#DCBEFF")
+endo_brown <- '#9A6324'
+ip_magenta <- "#D078FF"
+OPC_yelow <- '#FFDE725FF'
+MG_orange <- '#F58231'
+
 ## Load Data --------------------------------------------------------------------------
 # Seurat objects  ----
 for (REGION in REGIONS) { 
@@ -43,23 +67,12 @@ for (REGION in REGIONS) {
                           pt.size = 0.1, repel = TRUE) + ggtitle(NULL) 
   
   cluster_plot_noLabel <- DimPlot(seurat.obj, reduction = "umap", group.by = 'plotIDs',
-                                  pt.size = 0.1) + ggtitle(NULL) 
+                                  pt.size = 0.1, repel = TRUE) + ggtitle(NULL) 
   
   assign(paste0(REGION, '_plot'), cluster_plot, .GlobalEnv)
   assign(paste0(REGION, '_noLabel_plot'), cluster_plot_noLabel, .GlobalEnv)
   
 }
-
-# Standardise colours
-ExN_blue <- c('#9A6324', '#76B5C5', "#00BDD2", "#00B6EB", '#CEE5FD', 
-              '#ABDBE3','#1E81B0', '#779CBA', '#B8D2EB')
-InN_green <- c('#3CBB75FF', '#55C667FF', '#00FF00A5','#73D055FF', '#95D840FF', '#10A53DFF', '#006400')
-RG_red <- c('#FAA0A0', '#FF5959', '#F75151', '#EF0029', '#D2042D')
-cycPro_lavender <- c("#DCBEFF")
-endo_brown <- '#9A6324'
-ip_magenta <- "#D078FF"
-OPC_yelow <- '#FFDE725FF'
-MG_orange <- '#F58231'
 
 # GE
 ge_colours <- c('#DCBEFF', '#006400', '#55C667FF', '#00FF00A5', '#10A53DFF',
@@ -70,17 +83,7 @@ ge_final_plot <- wge_plot +
   ggtitle('Ganglionic Eminence') +
   theme_bw() +
   NoLegend() +
-  theme(legend.text=element_text(size = 12),
-        legend.title = element_blank(),
-        plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
-        panel.grid.major = element_blank(), 
-        panel.grid.minor = element_blank(),
-        panel.border = element_rect(colour = "black", size = 1),
-        plot.title = element_text(hjust = 0.5),
-        axis.title.x = element_text(colour = "#000000", size = 14),
-        axis.title.y = element_text(colour = "#000000", size = 14),
-        axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
-        axis.text.y  = element_text(colour = "#000000", size = 12)) +
+  my_theme+
   scale_color_manual(values = ge_colours)
 
 
@@ -95,17 +98,7 @@ cer_final_plot <- cer_plot +
   ggtitle('Cerebellum') +
   theme_bw() +
   NoLegend() +
-  theme(legend.text=element_text(size = 12),
-        legend.title = element_blank(),
-        plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
-        panel.grid.major = element_blank(), 
-        panel.grid.minor = element_blank(),
-        panel.border = element_rect(colour = "black", size = 1),
-        plot.title = element_text(hjust = 0.5),
-        axis.title.x = element_text(colour = "#000000", size = 14),
-        axis.title.y = element_text(colour = "#000000", size = 14),
-        axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
-        axis.text.y  = element_text(colour = "#000000", size = 12)) +
+  my_theme +
   scale_color_manual(values = cer_colours)
 
 # FC
@@ -117,69 +110,36 @@ fc_final_plot <- pfc_plot +
   ggtitle('Frontal Cortex') +
   theme_bw() +
   NoLegend() +
-  theme(legend.text=element_text(size = 12),
-        legend.title = element_blank(),
-        plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
-        panel.grid.major = element_blank(), 
-        panel.grid.minor = element_blank(),
-        panel.border = element_rect(colour = "black", size = 1),
-        plot.title = element_text(hjust = 0.5),
-        axis.title.x = element_text(colour = "#000000", size = 14),
-        axis.title.y = element_text(colour = "#000000", size = 14),
-        axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
-        axis.text.y  = element_text(colour = "#000000", size = 12)) +
+  my_theme +
   scale_color_manual(values = fc_colours)
 
 # Hip
 hip_colours <- c("#DCBEFF", '#9A6324', '#76B5C5', "#00BDD2", '#CEE5FD',  
                 "#00B6EB", '#ABDBE3','#1E81B0', '#779CBA', '#73D055FF', 
-                '#10A53DFF', '#95D840FF', '#F58231', "#949494", '#CCCCCC',  
+                '#00FF00A5', '#10A53DFF', '#95D840FF', '#CCCCCC', "#949494",   
                 '#FDE725FF', '#FAA0A0', '#EF0029', '#D2042D')
 
 hip_final_plot <- hip_plot +
   ggtitle('Hippocampus') +
   theme_bw() +
   NoLegend() +
-  theme(legend.text=element_text(size = 12),
-        legend.title = element_blank(),
-        plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
-        panel.grid.major = element_blank(), 
-        panel.grid.minor = element_blank(),
-        panel.border = element_rect(colour = "black", size = 1),
-        plot.title = element_text(hjust = 0.5),
-        axis.title.x = element_text(colour = "#000000", size = 14),
-        axis.title.y = element_text(colour = "#000000", size = 14),
-        axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
-        axis.text.y  = element_text(colour = "#000000", size = 12)) +
+  my_theme +
   scale_color_manual(values = hip_colours)
-
-
 
 # Tha
 thalamus_colours <- c("#DCBEFF", '#9A6324', '#76B5C5', "#00BDD2", "#00B6EB", 
                       '#CEE5FD', '#ABDBE3','#1E81B0', '#779CBA', '#B8D2EB', 
-                      '#CEE5FD', "#3CBB75FF", "#55C667FF", "#73D055FF",
-                      '#95D840FF', "#D078FF", '#F58231', '#FDE725FF', '#FAA0A0',
+                      '#CEE5FD', '#10A53DFF', '#00FF00A5', '#95D840FF', '#006400',
+                      "#D078FF", '#F58231', '#FDE725FF', '#FAA0A0',
                       '#FF5959', '#F75151', '#EF0029', '#D2042D')
 
 tha_final_plot <- tha_plot +
   ggtitle('Thalamus') +
   theme_bw() +
   NoLegend() +
-  theme(legend.text=element_text(size = 12),
-        legend.title = element_blank(),
-        plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
-        panel.grid.major = element_blank(), 
-        panel.grid.minor = element_blank(),
-        panel.border = element_rect(colour = "black", size = 1),
-        plot.title = element_text(hjust = 0.5),
-        axis.title.x = element_text(colour = "#000000", size = 14),
-        axis.title.y = element_text(colour = "#000000", size = 14),
-        axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
-        axis.text.y  = element_text(colour = "#000000", size = 12)) +
+  my_theme +
   scale_color_manual(values = thalamus_colours)
   
-
 
 # Plot
 fig1_plot <- plot_grid(fc_final_plot, 
@@ -195,7 +155,9 @@ tiff(paste0(FIG_DIR, "Fig_1.tiff"), height = 20, width = 30, units='cm',
 fig1_plot
 dev.off()
 
-##  Label Transfer  - Polioudakis  - FC only  -----------------------------------------
+
+##  Cluster assignment section  -------------------------------------------------------
+#  Seurat - using Polioudakis reference dataset  - FC only  -----------------------------------------
 load("~/Desktop/single_cell/public_datasets/sc_dev_cortex_geschwind/raw_counts_mat.rdata")
 gersch_matrix <-  as.matrix(raw_counts_mat)
 gersch_meta <-  as.data.frame(read_csv("Desktop/single_cell/public_datasets/sc_dev_cortex_geschwind/cell_metadata.csv")) 
@@ -218,16 +180,11 @@ predictions <- TransferData(anchorset = study.anchors, refdata = rna_gersch$Clus
 seurat.pfc <- AddMetaData(seurat.pfc, metadata = predictions)
 seurat.pfc$prediction.match <- seurat.pfc$predicted.id == seurat.pfc$seurat_clusters
 
-fig_S1C <- DimPlot(seurat.pfc, pt.size = 0.1, reduction = "umap",
-                                      label = TRUE, group.by = "predicted.id") +
-  ggtitle(NULL)
-  
-  
 
-##  ClustifyR - using reference dataset - FC and GE  ----------------------------------
+#  ClustifyR - using Nowakowski reference dataset - FC and GE  
 load(file = paste0("Desktop/single_cell/public_datasets/Nowakowski/Nowakowski2018_cortex_dev_clustifyR.rda"))
 
-## Run clustifyr  
+# Run clustifyr  - Nowakowski - FC and GE 
 for (REGION in c("pfc", "wge")) {
   
   seurat.obj <- get(paste0('seurat.', REGION))
@@ -244,9 +201,9 @@ for (REGION in c("pfc", "wge")) {
   )
   
   # Plots
-  clustifyR_plot <- DimPlot(res, reduction = "umap", label = TRUE,
-                            pt.size = 0.01, group.by = 'type') +
-    ggtitle(NULL)
+  clustifyR_plot <- DimPlot(res, reduction = "umap", label = TRUE, repel = TRUE,
+                            pt.size = 0.1, group.by = 'type') + ggtitle(NULL)
+
   
   # Assign plots
   if (REGION == 'pfc') {
@@ -261,9 +218,8 @@ for (REGION in c("pfc", "wge")) {
   
 }
 
-
-##  ClustifyR - using gene set - Cer --------------------------------------------------
-## Load and prep data  ----------------------------------------------------------------
+##  ClustifyR - using Aldinger gene set - Cer -----------------------------------------
+# Load and prep data  -
 aldinger_cer_markers <- read_tsv(paste0(ALDINGER_DIR, 
                                         "aldinger2019_supp_markers_table_S9.txt")) 
 
@@ -292,66 +248,163 @@ list_res <- clustify_lists(
   metric = "pct"                 # test to use for assigning cell types
 )
 
-# Plots
-# Plot clusters
+
+## Plots  -----------------------------------------------------------------------------
+# S1 - FC comparisons
+fig_S1A <- pfc_plot +
+  ggtitle('Frontal Cortex') +
+  theme_bw() +
+  my_theme +
+  scale_color_manual(values = fc_colours)
+
+nowakowski_fc_colours <- c('#1E81B0', '#76B5C5', '#779CBA',  '#CEE5FD',  '#ABDBE3',
+                            '#9A6324', '#95D840FF', '#55C667FF', '#D078FF', '#F58231',  
+                           '#FDE725FF', '#FF5959')
+
+fig_S1B <- fig_S1B + 
+  ggtitle('Nowakowski') +
+  theme_bw() +
+#  NoLegend() +
+  my_theme +
+  scale_color_manual(values = nowakowski_fc_colours) 
+  
+poulioudakis_colours <- c('#9A6324', '#779CBA', '#1E81B0', '#ABDBE3', '#76B5C5',
+                          '#CEE5FD', '#95D840FF', '#55C667FF', '#D078FF', '#F58231',  
+                          '#FDE725FF', '#FF5959',  '#9A7B47',  '#6300A7FF',  '#8707A6FF', 
+                          '#EF0029')
+
+fig_S1C <- DimPlot(seurat.pfc, pt.size = 0.1, reduction = "umap",
+                   label = TRUE, group.by = "predicted.id") +
+  ggtitle('Poulioudakis') +
+  theme_bw() +
+  #  NoLegend() +
+ my_theme +
+  scale_color_manual(values = poulioudakis_colours)
+
+fig_S1D <- pfc_noLabel_plot +
+  ggtitle('Frontal Cortex') +
+  theme_bw() +
+  #  NoLegend() +
+  my_theme +
+  scale_color_manual(values = fc_colours)
+
+
+# S2 - GE comparisons
+fig_S2A <- wge_plot +
+  ggtitle('Ganglionic Eminence') +
+  theme_bw() +
+  my_theme +
+  scale_color_manual(values = ge_colours)
+
+nowakowski_ge_colours <- c('#FFD8B1', '#95D840FF','#55C667FF', '#00FF00A5', '#10A53DFF',
+                           '#DCBEFF', '#FAA0A0',  '#3CBB75FF', '#FF5959')
+
+fig_S2B <- fig_S2B + 
+  ggtitle('Nowakowski') +
+  theme_bw() +
+  #  NoLegend() +
+  my_theme +
+  scale_color_manual(values = nowakowski_ge_colours) 
+
+fig_S2C <- wge_noLabel_plot +
+  ggtitle('Ganglionic Eminence') +
+  theme_bw() +
+  my_theme +
+  scale_color_manual(values = ge_colours)
+
+# S3 - Hip comparisons
+fig_S3A <- hip_plot +
+  ggtitle('Hippocampus') +
+  theme_bw() +
+  my_theme +
+  scale_color_manual(values = hip_colours)
+
+fig_S3B <- hip_noLabel_plot +
+  ggtitle('Hippocampus') +
+  theme_bw() +
+  my_theme +
+  scale_color_manual(values = hip_colours)
+
+# S4 - Tha comparisons
+fig_S4A <- tha_plot +
+  ggtitle('Thalamus') +
+  theme_bw() +
+  my_theme +
+  scale_color_manual(values = thalamus_colours)
+
+fig_S4B <- tha_noLabel_plot +
+  ggtitle('Thalamus') +
+  theme_bw() +
+  my_theme +
+  scale_color_manual(values = thalamus_colours)
+
+
+# S5 - Cer comparisons
+fig_S5A <- cer_plot +
+  ggtitle('Cerebellum') +
+  theme_bw() +
+  my_theme +
+  scale_color_manual(values = cer_colours)
+
+cer_colours <- c('#DCBEFF', '#9A6324', '#76B5C5', '#CEE5FD', '#00BDD2',  
+                 '#00B6EB', '#ABDBE3', '#1E81B0', '#3CBB75FF', '#00FF00A5', 
+                 '#006400', '#95D840FF', '#B7FFB7', '#10A53DFF', '#F58231', 
+                 '#949494', '#CCCCCC', '#FDE725FF', '#FAA0A0','#EF0029', 
+                 '#D2042D')
+
+aldinger_colours <- c('#FAA0A0', '#3CBB75FF', '#9A6324', '#76B5C5', '#D2042D', 
+                      '#CEE5FD', '#F58231', '#B7FFB7', '#FDE725FF', '#10A53DFF', 
+                      '#95D840FF')
+
 fig_S5B <- DimPlot(list_res, reduction = "umap", 
                    pt.size = 0.1, group.by = "type.clustify",
-                   repel = TRUE) + ggtitle(NULL)
+                   repel = TRUE) + ggtitle(NULL) +
+  ggtitle('Aldinger') +
+  theme_bw() +
+  my_theme +
+  scale_color_manual(values = aldinger_colours)
+  
 
-
-##  Create group plots ----------------------------------------------------------------
-# S1
-fig_S1 <- plot_grid(pfc_plot, fig_S1B, fig_S1C, pfc_noLabel_plot, 
-                    labels = 'AUTO', label_size = 16)
-
-# S2
-fig_S2 <- plot_grid(wge_plot, fig_S2B, wge_noLabel_plot,
-                    labels = 'AUTO', label_size = 16)
-
-# S3
-fig_S3 <- plot_grid(hip_plot, hip_noLabel_plot,
-                    labels = 'AUTO', label_size = 16)
-
-# S4
-fig_S4 <- plot_grid(tha_plot, tha_noLabel_plot,
-                    labels = 'AUTO', label_size = 16)
-
-# S5
-fig_S5 <- plot_grid(cer_plot, fig_S5B, cer_noLabel_plot,
-                    labels = 'AUTO', label_size = 16)
+fig_S5C <- cer_noLabel_plot +
+  ggtitle('Cerebellum') +
+  theme_bw() +
+  my_theme +
+  scale_color_manual(values = cer_colours)
 
 
 # Save plots
 # Fig S1 
-tiff(paste0(FIG_DIR, "Fig_S1.tiff"), height = 30, width = 30, units='cm', 
+tiff(paste0(FIG_DIR, "Fig_S1.tiff"), height = 30, width = 40, units='cm', 
      compression = "lzw", res = 300)
-fig_S1
+fig_S1 <- plot_grid(fig_S1A, fig_S1B, fig_S1C, fig_S1D,
+                    labels = 'AUTO', label_size = 16, align = c("hv"))
 dev.off()
 
 # Fig S2
-tiff(paste0(FIG_DIR, "Fig_S2.tiff"), height = 30, width = 30, units='cm', 
+tiff(paste0(FIG_DIR, "Fig_S2.tiff"), height = 30, width = 40, units='cm', 
      compression = "lzw", res = 300)
-fig_S2
+plot_grid(fig_S2A, fig_S2B, fig_S2C,
+          labels = 'AUTO', label_size = 16, align = c("hv"))
 dev.off()
 
 # Fig S3
-tiff(paste0(FIG_DIR, "Fig_S3.tiff"), height = 30, width = 30, units='cm', 
+tiff(paste0(FIG_DIR, "Fig_S3.tiff"), height = 15, width = 40, units='cm', 
      compression = "lzw", res = 300)
-fig_S3
+plot_grid(fig_S3A, fig_S3B, labels = 'AUTO', label_size = 16, align = c("hv"))
 dev.off()
 
 # Fig S4
-tiff(paste0(FIG_DIR, "Fig_S4.tiff"), height = 30, width = 30, units='cm', 
+tiff(paste0(FIG_DIR, "Fig_S4.tiff"), height = 15, width = 40, units='cm', 
      compression = "lzw", res = 300)
-fig_S4
+plot_grid(fig_S4A, fig_S4B, labels = 'AUTO', label_size = 16, align = c("hv"))
 dev.off()
 
 # Fig S5
-tiff(paste0(FIG_DIR, "Fig_S5.tiff"), height = 30, width = 30, units='cm', 
+tiff(paste0(FIG_DIR, "Fig_S5.tiff"), height = 30, width = 40, units='cm', 
      compression = "lzw", res = 300)
-fig_S5
+plot_grid(fig_S5A, fig_S5B, fig_S5C,
+          labels = 'AUTO', label_size = 16, align = c("hv"))
 dev.off()
 
 #--------------------------------------------------------------------------------------
 #--------------------------------------------------------------------------------------
-
