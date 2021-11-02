@@ -76,8 +76,8 @@ for (REGION in REGIONS) {
 
 # GE
 ge_colours <- c('#DCBEFF', '#006400', '#55C667FF', '#00FF00A5', '#10A53DFF',
-                 '#95D840FF', '#73D055FF',  '#3CBB75FF', '#FAA0A0', '#EF0029', 
-                 '#D2042D')
+                '#95D840FF', '#73D055FF',  '#3CBB75FF', '#FAA0A0', '#EF0029', 
+                '#D2042D')
 
 ge_final_plot <- wge_plot +
   ggtitle('Ganglionic Eminence') +
@@ -115,9 +115,9 @@ fc_final_plot <- pfc_plot +
 
 # Hip
 hip_colours <- c("#DCBEFF", '#9A6324', '#76B5C5', "#00BDD2", '#CEE5FD',  
-                "#00B6EB", '#ABDBE3','#1E81B0', '#779CBA', '#73D055FF', 
-                '#00FF00A5', '#10A53DFF', '#95D840FF', '#CCCCCC', "#949494",   
-                '#FDE725FF', '#FAA0A0', '#EF0029', '#D2042D')
+                 "#00B6EB", '#ABDBE3','#1E81B0', '#779CBA', '#73D055FF', 
+                 '#00FF00A5', '#10A53DFF', '#95D840FF', '#CCCCCC', "#949494",   
+                 '#FDE725FF', '#FAA0A0', '#EF0029', '#D2042D')
 
 hip_final_plot <- hip_plot +
   ggtitle('Hippocampus') +
@@ -139,7 +139,7 @@ tha_final_plot <- tha_plot +
   NoLegend() +
   my_theme +
   scale_color_manual(values = thalamus_colours)
-  
+
 
 # Plot
 fig1_plot <- plot_grid(fc_final_plot, 
@@ -150,7 +150,7 @@ fig1_plot <- plot_grid(fc_final_plot,
                        labels = 'AUTO', label_size = 16)
 
 # Save plot
-tiff(paste0(FIG_DIR, "Fig_1.tiff"), height = 20, width = 30, units='cm',
+tiff(paste0(FIG_DIR, "Fig_1.tiff"), height = 40, width = 30, units='cm',
      compression = "lzw", res = 300)
 fig1_plot
 dev.off()
@@ -191,7 +191,7 @@ for (REGION in c("pfc", "wge")) {
   
   # Set varibles genes to consider - 500-1000 recommended 
   var_genes <- VariableFeatures(seurat.obj)[1:1000]
-
+  
   res <- clustifyr::clustify(
     input = seurat.obj,       # a Seurat object
     ref_mat = ref_cortex_dev,    # matrix of RNA-seq expression data for each cell type
@@ -203,7 +203,7 @@ for (REGION in c("pfc", "wge")) {
   # Plots
   clustifyR_plot <- DimPlot(res, reduction = "umap", label = TRUE, repel = TRUE,
                             pt.size = 0.1, group.by = 'type') + ggtitle(NULL)
-
+  
   
   # Assign plots
   if (REGION == 'pfc') {
@@ -258,16 +258,16 @@ fig_S1A <- pfc_plot +
   scale_color_manual(values = fc_colours)
 
 nowakowski_fc_colours <- c('#1E81B0', '#76B5C5', '#779CBA',  '#CEE5FD',  '#ABDBE3',
-                            '#9A6324', '#95D840FF', '#55C667FF', '#D078FF', '#F58231',  
+                           '#9A6324', '#95D840FF', '#55C667FF', '#D078FF', '#F58231',  
                            '#FDE725FF', '#FF5959')
 
 fig_S1B <- fig_S1B + 
   ggtitle('Nowakowski') +
   theme_bw() +
-#  NoLegend() +
+  #  NoLegend() +
   my_theme +
   scale_color_manual(values = nowakowski_fc_colours) 
-  
+
 poulioudakis_colours <- c('#9A6324', '#779CBA', '#1E81B0', '#ABDBE3', '#76B5C5',
                           '#CEE5FD', '#95D840FF', '#55C667FF', '#D078FF', '#F58231',  
                           '#FDE725FF', '#FF5959',  '#9A7B47',  '#6300A7FF',  '#8707A6FF', 
@@ -278,7 +278,7 @@ fig_S1C <- DimPlot(seurat.pfc, pt.size = 0.1, reduction = "umap",
   ggtitle('Poulioudakis') +
   theme_bw() +
   #  NoLegend() +
- my_theme +
+  my_theme +
   scale_color_manual(values = poulioudakis_colours)
 
 fig_S1D <- pfc_noLabel_plot +
@@ -352,7 +352,7 @@ cer_colours <- c('#DCBEFF', '#9A6324', '#76B5C5', '#CEE5FD', '#00BDD2',
                  '#949494', '#CCCCCC', '#FDE725FF', '#FAA0A0','#EF0029', 
                  '#D2042D')
 
-aldinger_colours <- c('#FAA0A0', '#3CBB75FF', '#9A6324', '#76B5C5', '#D2042D', 
+aldinger_colours <- c('#FAA0A0', '#CCCCCC', '#9A6324', '#76B5C5', '#D2042D', 
                       '#CEE5FD', '#F58231', '#B7FFB7', '#FDE725FF', '#10A53DFF', 
                       '#95D840FF')
 
@@ -363,7 +363,7 @@ fig_S5B <- DimPlot(list_res, reduction = "umap",
   theme_bw() +
   my_theme +
   scale_color_manual(values = aldinger_colours)
-  
+
 
 fig_S5C <- cer_noLabel_plot +
   ggtitle('Cerebellum') +
