@@ -13,7 +13,7 @@ cat('\nLoading packages ... \n\n')
 library(tidyverse)
 library(cowplot)
 
-##  Initialise variables  -------------------------------------------------------------
+##  Initialise Categorys  -------------------------------------------------------------
 REGIONS <- c("Cer", "FC", "GE", "Hipp", "Thal")
 GWAS <- c( 'BPD', 'MDD', 'SCZ', 'HEIGHT')
 DATA_DIR <- "~/Dropbox/BRAY_sc_analysis/files_for_paper/figures/data_for_figures/"
@@ -33,41 +33,159 @@ for (DISORDER in GWAS) {
     # Remove regional info from cell types on y axis
     subset_top10_df$Category <- gsub("^.*?-", "", subset_top10_df$Category)
     
+    ##  Plot  ---------------------------------------------------------------------------
     # Update region names in plot titles to new ones for FC and GE
-    if (REGION == "Hipp") {
+    if (REGION == "FC") {
       
-      TITLE <- "HIP"
+      TITLE <- "FC"
       
-    } else if (REGION == "Thal") {
+      top10Plot <- ggplot(data = subset_top10_df, aes(x = `Coefficient_z-score`, y = factor(Category, rev(levels(factor(Category)))))) +
+        geom_bar(stat = "identity", fill = c("#DCBEFF", '#9A6324', '#CEE5FD', '#CEE5FD', '#CEE5FD', 
+                                             '#CEE5FD', '#CEE5FD', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', 
+                                             '#3CBB75FF', '#D078FF', '#F58231', '#CCCCCC', '#FDE725FF', 
+                                             '#FF5959', '#FF5959'), color = 'black') +
+        geom_vline(xintercept=qnorm(0.05/91), linetype = "dashed", color = "black") +
+        geom_vline(xintercept=-qnorm(0.05), linetype = "dotted", color = "black") +
+        geom_vline(xintercept=-qnorm(0.05/91), linetype = "dashed", color = "black") +
+        geom_vline(xintercept=qnorm(0.05), linetype = "dotted", color = "black") +
+        theme_bw() +
+        ggtitle(toupper(TITLE)) +
+        theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
+              panel.grid.major = element_blank(), 
+              panel.grid.minor = element_blank(),
+              panel.border = element_rect(colour = "black", size = 1),
+              plot.title = element_text(hjust = 0.5),
+              axis.title.x = element_text(colour = "#000000", size = 14),
+              axis.title.y = element_text(colour = "#000000", size = 14),
+              axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
+              axis.text.y  = element_text(colour = "#000000", size = 12)) +
+        xlab(expression('Coefficient Z score')) +
+        ylab('Cell type')
       
-      TITLE <- "THA"
+      assign(paste0(REGION, '_', DISORDER, '_ldsc_top10_plot'), top10Plot, envir = .GlobalEnv)
+      assign(paste0(REGION, '_', DISORDER, '_ldsc_top10_data'), subset_top10_df, envir = .GlobalEnv)
+      
+    } else if (REGION == "Cer") {
+      
+      TITLE <- REGION
+      
+      top10Plot <- ggplot(data = subset_top10_df, aes(x = `Coefficient_z-score`, y = factor(Category, rev(levels(factor(Category)))))) +
+        geom_bar(stat = "identity", fill = c('#DCBEFF', '#9A6324', '#CEE5FD', '#CEE5FD', '#CEE5FD', 
+                                             '#CEE5FD', '#CEE5FD', '#CEE5FD', '#3CBB75FF', '#3CBB75FF', 
+                                             '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', '#F58231', 
+                                             '#CCCCCC', '#CCCCCC', '#FDE725FF', '#FF5959', '#FF5959', 
+                                             '#FF5959'), color = 'black') +
+        geom_vline(xintercept=qnorm(0.05/91), linetype = "dashed", color = "black") +
+        geom_vline(xintercept=-qnorm(0.05), linetype = "dotted", color = "black") +
+        geom_vline(xintercept=-qnorm(0.05/91), linetype = "dashed", color = "black") +
+        geom_vline(xintercept=qnorm(0.05), linetype = "dotted", color = "black") +
+        theme_bw() +
+        ggtitle(toupper(TITLE)) +
+        theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
+              panel.grid.major = element_blank(), 
+              panel.grid.minor = element_blank(),
+              panel.border = element_rect(colour = "black", size = 1),
+              plot.title = element_text(hjust = 0.5),
+              axis.title.x = element_text(colour = "#000000", size = 14),
+              axis.title.y = element_text(colour = "#000000", size = 14),
+              axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
+              axis.text.y  = element_text(colour = "#000000", size = 12)) +
+        xlab(expression('Coefficient Z score')) +
+        ylab('Cell type')
+      
+      assign(paste0(REGION, '_', DISORDER, '_ldsc_top10_plot'), top10Plot, envir = .GlobalEnv)
+      assign(paste0(REGION, '_', DISORDER, '_ldsc_top10_data'), subset_top10_df, envir = .GlobalEnv)
+      
+    } else if (REGION == "Hipp") {
+      
+      TITLE <- 'Hip'
+      
+      top10Plot <- ggplot(data = subset_top10_df, aes(x = `Coefficient_z-score`, y = factor(Category, rev(levels(factor(Category)))))) +
+        geom_bar(stat = "identity", fill = c("#DCBEFF", '#9A6324', '#CEE5FD', '#CEE5FD', '#CEE5FD',  
+                                             '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD', '#3CBB75FF', 
+                                             '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', '#CCCCCC', "#CCCCCC",   
+                                             '#FDE725FF', '#FF5959', '#FF5959', '#FF5959'), color = 'black') +
+        geom_vline(xintercept=qnorm(0.05/91), linetype = "dashed", color = "black") +
+        geom_vline(xintercept=-qnorm(0.05), linetype = "dotted", color = "black") +
+        geom_vline(xintercept=-qnorm(0.05/91), linetype = "dashed", color = "black") +
+        geom_vline(xintercept=qnorm(0.05), linetype = "dotted", color = "black") +
+        theme_bw() +
+        ggtitle(toupper(TITLE)) +
+        theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
+              panel.grid.major = element_blank(), 
+              panel.grid.minor = element_blank(),
+              panel.border = element_rect(colour = "black", size = 1),
+              plot.title = element_text(hjust = 0.5),
+              axis.title.x = element_text(colour = "#000000", size = 14),
+              axis.title.y = element_text(colour = "#000000", size = 14),
+              axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
+              axis.text.y  = element_text(colour = "#000000", size = 12)) +
+        xlab(expression('Coefficient Z score')) +
+        ylab('Cell type')
+      
+      assign(paste0(REGION, '_', DISORDER, '_ldsc_top10_plot'), top10Plot, envir = .GlobalEnv)
+      assign(paste0(REGION, '_', DISORDER, '_ldsc_top10_data'), subset_top10_df, envir = .GlobalEnv)
+      
+    } else if (REGION == "GE") {
+      
+      TITLE <- "GE"
+      
+      top10Plot <- ggplot(data = subset_top10_df, aes(x = `Coefficient_z-score`, y = factor(Category, rev(levels(factor(Category)))))) +
+        geom_bar(stat = "identity", fill = c('#DCBEFF', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF',
+                                             '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', '#FF5959', '#FF5959', 
+                                             '#FF5959'), color = 'black') +
+        geom_vline(xintercept=qnorm(0.05/91), linetype = "dashed", color = "black") +
+        geom_vline(xintercept=-qnorm(0.05), linetype = "dotted", color = "black") +
+        geom_vline(xintercept=-qnorm(0.05/91), linetype = "dashed", color = "black") +
+        geom_vline(xintercept=qnorm(0.05), linetype = "dotted", color = "black") +
+        theme_bw() +
+        ggtitle(toupper(TITLE)) +
+        theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
+              panel.grid.major = element_blank(), 
+              panel.grid.minor = element_blank(),
+              panel.border = element_rect(colour = "black", size = 1),
+              plot.title = element_text(hjust = 0.5),
+              axis.title.x = element_text(colour = "#000000", size = 14),
+              axis.title.y = element_text(colour = "#000000", size = 14),
+              axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
+              axis.text.y  = element_text(colour = "#000000", size = 12)) +
+        xlab(expression('Coefficient Z score')) +
+        ylab('Cell type')
+      
+      assign(paste0(REGION, '_', DISORDER, '_ldsc_top10_plot'), top10Plot, envir = .GlobalEnv)
+      assign(paste0(REGION, '_', DISORDER, '_ldsc_top10_data'), subset_top10_df, envir = .GlobalEnv)
+      
       
     } else {
       
-      TITLE <- REGION
+      TITLE <- 'Tha'
+      
+      top10Plot <- ggplot(data = subset_top10_df, aes(x = `Coefficient_z-score`, y = factor(Category, rev(levels(factor(Category)))))) +
+        geom_bar(stat = "identity", fill = c("#DCBEFF", '#9A6324', '#CEE5FD', '#CEE5FD', '#CEE5FD',  
+                                             '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD',
+                                             '#CEE5FD', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF',
+                                             "#D078FF", '#F58231', '#FDE725FF', '#FF5959',
+                                             '#FF5959', '#FF5959', '#FF5959', '#FF5959'), color = 'black') +
+        geom_vline(xintercept=-log10(0.00054), linetype = "dashed", color = "black") +
+        geom_vline(xintercept=-log10(0.05), linetype = "dotted", color = "black") +
+        theme_bw() +
+        ggtitle(toupper(TITLE)) +
+        theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
+              panel.grid.major = element_blank(), 
+              panel.grid.minor = element_blank(),
+              panel.border = element_rect(colour = "black", size = 1),
+              plot.title = element_text(hjust = 0.5),
+              axis.title.x = element_text(colour = "#000000", size = 14),
+              axis.title.y = element_text(colour = "#000000", size = 14),
+              axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
+              axis.text.y  = element_text(colour = "#000000", size = 12)) +
+        xlab(expression('Coefficient Z score')) +
+        ylab('Cell type')
+      
+      assign(paste0(REGION, '_', DISORDER, '_ldsc_top10_plot'), top10Plot, envir = .GlobalEnv)
+      assign(x = paste0(REGION, '_', DISORDER, '_ldsc_top10_df'), value = subset_top10_df, envir = .GlobalEnv)
+      
     }
-    
-    # Plot
-    top10Plot <- ggplot(data = subset_top10_df, aes(x = `Coefficient_z-score`, y = factor(Category, rev(levels(factor(Category)))))) +
-      geom_bar(stat = "identity", fill = "steelblue", color = 'black') +
-      geom_vline(xintercept = -3.5, linetype = "dashed", color = "black") +
-      geom_vline(xintercept = 3.5, linetype = "dashed", color = "black") +
-      theme_bw() +
-      ggtitle(toupper(TITLE)) +
-      theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
-            panel.grid.major = element_blank(), 
-            panel.grid.minor = element_blank(),
-            panel.border = element_rect(colour = "black", size = 1),
-            plot.title = element_text(hjust = 0.5),
-            axis.title.x = element_text(colour = "#000000", size = 14),
-            axis.title.y = element_text(colour = "#000000", size = 14),
-            axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
-            axis.text.y  = element_text(colour = "#000000", size = 12)) +
-      xlab(expression('Coefficient Z score')) +
-      ylab('Cell type')
-    
-    assign(paste0(REGION, '_', DISORDER, '_ldsc_top10_plot'), top10Plot, envir = .GlobalEnv)
-    assign(x = paste0(REGION, '_', DISORDER, '_ldsc_top10_df'), value = subset_top10_df, envir = .GlobalEnv)
     
   }
   
@@ -77,10 +195,10 @@ cat('\nCreating group plots ... \n')
 for (DISORDER in GWAS) {
   
   ldsc_top10_plot <- plot_grid(get(paste0('Cer_', DISORDER, '_ldsc_top10_plot')),
-                                get(paste0('Hipp_', DISORDER, '_ldsc_top10_plot')), 
-                                get(paste0('FC_', DISORDER, '_ldsc_top10_plot')),
-                                get(paste0('Thal_', DISORDER, '_ldsc_top10_plot')),
-                                get(paste0('GE_', DISORDER, '_ldsc_top10_plot')))
+                               get(paste0('Hipp_', DISORDER, '_ldsc_top10_plot')), 
+                               get(paste0('FC_', DISORDER, '_ldsc_top10_plot')),
+                               get(paste0('Thal_', DISORDER, '_ldsc_top10_plot')),
+                               get(paste0('GE_', DISORDER, '_ldsc_top10_plot')))
   
   assign(paste0('all_regions_', DISORDER, '_ldsc_top10_plot'), ldsc_top10_plot, envir = .GlobalEnv)
   
