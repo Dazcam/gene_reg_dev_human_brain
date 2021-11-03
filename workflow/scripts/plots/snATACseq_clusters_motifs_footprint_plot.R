@@ -51,38 +51,48 @@ cer_colours <- c('#DCBEFF', '#9A6324', '#76B5C5', '#CEE5FD', '#00BDD2',
                  '#D2042D')
 
 fc_colours <- c('#76B5C5', '#CEE5FD', '#00B6EB', '#1E81B0', '#3CBB75FF', 
-                 '#00FF00A5', '#10A53DFF', '#F58231', '#CCCCCC', '#FAA0A0',
-                 '#D2042D')
+                '#00FF00A5', '#10A53DFF', '#F58231', '#CCCCCC', '#FAA0A0',
+                '#D2042D')
 
 fig_5A <- fig_5A +
   ggtitle('Frontal Cortex') +
-scale_color_manual(values = fc_colours)
+  scale_color_manual(values = fc_colours) +
+  NoLegend()
+
+
+# Can get rid of numbers on plot where are they????? This changes legend labels
+# levels(fig_5A[["data"]][["color"]]) <- c('ExN-5', 'ExN-4', 'ExN-3', 'ExN-2', 'InN-3', 
+#                                         'InN-2', 'InN-1', 'MG', 'N-undef', 'RG-2', 'RG-1')
 
 ge_colours <- c('#3CBB75FF', '#00FF00A5', '#10A53DFF', '#B7FFB7', '#D2042D', 
                 '#EF0029', '#FAA0A0')
 
 fig_5B <- fig_5B +
   ggtitle('Ganglionic Eminence') +
-  scale_color_manual(values = ge_colours)
+  scale_color_manual(values = ge_colours) +
+  NoLegend()
 
 fc_broad_colours <- c('#76B5C5', '#3CBB75FF', '#F58231', '#CCCCCC', '#EF0029')
 
 fig_5C <- fig_5C +
   ggtitle('Frontal Cortex') +
-  scale_color_manual(values = fc_broad_colours)
+  scale_color_manual(values = fc_broad_colours) +
+  NoLegend()
 
 ge_broad_colours <- c('#3CBB75FF', '#EF0029')
 
 fig_5D <- fig_5D +
   ggtitle('Ganglionic Eminence') +
-  scale_color_manual(values = ge_broad_colours)
+  scale_color_manual(values = ge_broad_colours) +
+  NoLegend()
 
 # Motif enrichment plots  -------------------------------------------------------------
 fig_5E <- ggplot(fig_5E_matrix, aes(x = X2, y = X1, fill = value)) +
   geom_tile(color = "black", size = 0.4) +
-  scale_fill_gradient2(low = "#075AFF",
-                       mid = "#FFFFCC",
-                       high = "#FF0000") +
+  scale_fill_gradient2(low = "#4575b4",
+                       mid = "#fdfbba",
+                       high = "#d73027",
+                       midpoint = 50) +
   theme(legend.position = "none",
         legend.title=element_blank(),
         plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
@@ -103,9 +113,10 @@ fig_5E <- ggplot(fig_5E_matrix, aes(x = X2, y = X1, fill = value)) +
 
 fig_5F <- ggplot(fig_5F_matrix, aes(x = X2, y = X1, fill = value)) +
   geom_tile(color = "black", size = 0.4) +
-  scale_fill_gradient2(low = "#075AFF",
-                       mid = "#FFFFCC",
-                       high = "#FF0000",
+  scale_fill_gradient2(low = "#4575b4",
+                       mid = "#fdfbba",
+                       high = "#d73027",
+                       midpoint = 50,
                        guide = guide_colorbar(frame.colour = "black",
                                               frame.linewidth = 0.4)) +
   theme(#legend.position = "none",
@@ -135,7 +146,7 @@ fig_5H <- ggplotify::as.ggplot(fig_5H_grob[['DLX5_412']])
 # Fig 5A-D - Fetal cell type gene overlap plot
 
 fig_5AtoD <- plot_grid(fig_5A, fig_5B, fig_5C, fig_5D, labels = c('A', 'B', 'C', 'D'), 
-          label_size = 16, align = c("hv"))
+                       label_size = 16, align = c("hv"))
 
 
 fig_5EtoF <- plot_grid(fig_5E, fig_5F, labels = c('E', 'F'), 
