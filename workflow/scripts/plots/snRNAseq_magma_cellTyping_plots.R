@@ -63,7 +63,8 @@ for (REGION in REGIONS) {
               axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
               axis.text.y  = element_text(colour = "#000000", size = 12)) +
         xlab(expression('-log10(P)')) +
-        ylab('Cell type')
+        ylab('Cell type') +
+        xlim(0, 11.5)
       
       assign(paste0(REGION, '_', DISORDER, '_magma_top10_plot'), top10Plot, envir = .GlobalEnv)
       assign(paste0(REGION, '_', DISORDER, '_magma_top10_data'), top10Data, envir = .GlobalEnv)
@@ -94,7 +95,8 @@ for (REGION in REGIONS) {
               axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
               axis.text.y  = element_text(colour = "#000000", size = 12)) +
         xlab(expression('-log10(P)')) +
-        ylab('Cell type')
+        ylab('Cell type') +
+        xlim(0, 11.5)
       
       assign(paste0(REGION, '_', DISORDER, '_magma_top10_plot'), top10Plot, envir = .GlobalEnv)
       assign(paste0(REGION, '_', DISORDER, '_magma_top10_data'), top10Data, envir = .GlobalEnv)
@@ -122,7 +124,8 @@ for (REGION in REGIONS) {
               axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
               axis.text.y  = element_text(colour = "#000000", size = 12)) +
         xlab(expression('-log10(P)')) +
-        ylab('Cell type')
+        ylab('Cell type') +
+        xlim(0, 11.5)
       
       assign(paste0(REGION, '_', DISORDER, '_magma_top10_plot'), top10Plot, envir = .GlobalEnv)
       assign(paste0(REGION, '_', DISORDER, '_magma_top10_data'), top10Data, envir = .GlobalEnv)
@@ -149,7 +152,8 @@ for (REGION in REGIONS) {
              axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
              axis.text.y  = element_text(colour = "#000000", size = 12)) +
         xlab(expression('-log10(P)')) +
-        ylab('Cell type')
+        ylab('Cell type') +
+        xlim(0, 11.5)
      
       assign(paste0(REGION, '_', DISORDER, '_magma_top10_plot'), top10Plot, envir = .GlobalEnv)
       assign(paste0(REGION, '_', DISORDER, '_magma_top10_data'), top10Data, envir = .GlobalEnv)
@@ -179,7 +183,8 @@ for (REGION in REGIONS) {
             axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
             axis.text.y  = element_text(colour = "#000000", size = 12)) +
       xlab(expression('-log10(P)')) +
-      ylab('Cell type')
+      ylab('Cell type') +
+      xlim(0, 11.5)
     
     assign(paste0(REGION, '_', DISORDER, '_magma_top10_plot'), top10Plot, envir = .GlobalEnv)
     assign(paste0(REGION, '_', DISORDER, '_magma_top10_data'), top10Data, envir = .GlobalEnv)
