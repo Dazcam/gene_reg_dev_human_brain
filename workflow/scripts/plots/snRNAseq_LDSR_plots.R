@@ -60,7 +60,8 @@ for (DISORDER in GWAS) {
               axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
               axis.text.y  = element_text(colour = "#000000", size = 12)) +
         xlab(expression('Coefficient Z score')) +
-        ylab('Cell type')
+        ylab('Cell type') +
+        xlim(-6, 6)
       
       assign(paste0(REGION, '_', DISORDER, '_ldsc_top10_plot'), top10Plot, envir = .GlobalEnv)
       assign(paste0(REGION, '_', DISORDER, '_ldsc_top10_data'), subset_top10_df, envir = .GlobalEnv)
@@ -91,7 +92,8 @@ for (DISORDER in GWAS) {
               axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
               axis.text.y  = element_text(colour = "#000000", size = 12)) +
         xlab(expression('Coefficient Z score')) +
-        ylab('Cell type')
+        ylab('Cell type') +
+        xlim(-6, 6)
       
       assign(paste0(REGION, '_', DISORDER, '_ldsc_top10_plot'), top10Plot, envir = .GlobalEnv)
       assign(paste0(REGION, '_', DISORDER, '_ldsc_top10_data'), subset_top10_df, envir = .GlobalEnv)
@@ -121,7 +123,8 @@ for (DISORDER in GWAS) {
               axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
               axis.text.y  = element_text(colour = "#000000", size = 12)) +
         xlab(expression('Coefficient Z score')) +
-        ylab('Cell type')
+        ylab('Cell type') +
+        xlim(-6, 6)
       
       assign(paste0(REGION, '_', DISORDER, '_ldsc_top10_plot'), top10Plot, envir = .GlobalEnv)
       assign(paste0(REGION, '_', DISORDER, '_ldsc_top10_data'), subset_top10_df, envir = .GlobalEnv)
@@ -150,7 +153,8 @@ for (DISORDER in GWAS) {
               axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
               axis.text.y  = element_text(colour = "#000000", size = 12)) +
         xlab(expression('Coefficient Z score')) +
-        ylab('Cell type')
+        ylab('Cell type') +
+        xlim(-6, 6)
       
       assign(paste0(REGION, '_', DISORDER, '_ldsc_top10_plot'), top10Plot, envir = .GlobalEnv)
       assign(paste0(REGION, '_', DISORDER, '_ldsc_top10_data'), subset_top10_df, envir = .GlobalEnv)
@@ -180,7 +184,8 @@ for (DISORDER in GWAS) {
               axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
               axis.text.y  = element_text(colour = "#000000", size = 12)) +
         xlab(expression('Coefficient Z score')) +
-        ylab('Cell type')
+        ylab('Cell type') +
+        xlim(-6, 6)
       
       assign(paste0(REGION, '_', DISORDER, '_ldsc_top10_plot'), top10Plot, envir = .GlobalEnv)
       assign(x = paste0(REGION, '_', DISORDER, '_ldsc_top10_df'), value = subset_top10_df, envir = .GlobalEnv)
@@ -228,7 +233,6 @@ tiff(paste0(PLOT_DIR, "Fig_S12.tiff"), height = 30, width = 30, units='cm',
      compression = "lzw", res = 300)
 all_regions_HEIGHT_ldsc_top10_plot
 dev.off()
-
 
 
 #--------------------------------------------------------------------------------------
