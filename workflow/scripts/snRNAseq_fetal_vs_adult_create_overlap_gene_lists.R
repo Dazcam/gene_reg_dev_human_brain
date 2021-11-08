@@ -59,11 +59,11 @@ GO_OUTDIR <- '~/Dropbox/BRAY_sc_analysis/files_for_paper/RNA/fetal_vs_adult/GO_a
 # Gene lists from Q10s for our significant cell types in snRNAseq data
 cat('Load the fetal brain cell type Q10 gene lists ... \n')
 for (CELL_TYPE in CELL_TYPES) {
-
+  
   GENE_LIST <- read_csv(paste0(DATA_DIR, CELL_TYPE, "_Q10_genes.tsv"), col_names = FALSE)
   CELL_TYPE <- gsub("-", "_", CELL_TYPE)
   assign(CELL_TYPE, GENE_LIST)
-                        
+  
 }
 
 # Load Skene gene specificity data
@@ -77,13 +77,13 @@ for (CELL_TYPE in c('skene_InN', 'skene_MSN', 'skene_CA1', 'skene_SS')) {
   # Pull out Q10 vector
   cat(paste0('Extracting genes that have highest expression specificity in: ', CELL_TYPE, '\n'))
   GENES <- skene_genes %>%
-  dplyr::select(gene, .data[[CELL_TYPE]]) %>%
-  arrange(desc(.data[[CELL_TYPE]])) %>%
-  top_frac(.10) %>%
-  pull(gene) 
+    dplyr::select(gene, .data[[CELL_TYPE]]) %>%
+    arrange(desc(.data[[CELL_TYPE]])) %>%
+    top_frac(.10) %>%
+    pull(gene) 
   
   cat(paste0('Total genes before converting IDs: ', length(GENES), '\n'))
-
+  
   # Convert mouse gene IDs to human
   cat('Convert gene IDs from mouse to human using BiomaRt ... \n')
   human = useMart("ensembl", dataset = "hsapiens_gene_ensembl")
@@ -101,7 +101,7 @@ for (CELL_TYPE in c('skene_InN', 'skene_MSN', 'skene_CA1', 'skene_SS')) {
   cat(paste0('Total genes after converting IDs: ', dim(humanx)[1], '\n'))
   
   assign(CELL_TYPE, humanx)
-
+  
 }
 
 # Magma gene wide p-values
@@ -223,7 +223,7 @@ process_data(Venn(gene_list_4e))
 #       compression = 'lzw', res = 300)
 #  print(FIG)
 #  dev.off()
-  
+
 #}
 
 # Output tables
@@ -232,7 +232,7 @@ process_data(Venn(gene_list_4e))
 #write_tsv(top_GWAS_genes, paste0(DATA_DIR, 'top_', DISORDER, '_genes.tsv'))
 
 #for (CELL_TYPE in CELL_TYPES) {
-  
+
 #  cat(paste0('\nWriting tables for ', DISORDER, '\n'))
 #  CELL_TYPE <- gsub("-", "_", CELL_TYPE)
 #  GENES <- as.data.frame(get(paste0(CELL_TYPE, '_overlaps')))
@@ -279,15 +279,15 @@ cat('\nInter-dataset comparisons - 4 Skene vs. all fetal cells  ... \n')
 cat('Creating pairwise intersections  ... \n')
 x <- 0
 for (i in skene_overlap_list) {
-   
+  
   x <- x + 1   
   vect_skene <- vector()
   
   for (j in fetal_overlap_list) {
     vect_skene <- c(vect_skene, length(intersect(i,j)))
   }
-   
-    assign(paste0('vect_skene', x), vect_skene)
+  
+  assign(paste0('vect_skene', x), vect_skene)
   
 }
 
@@ -307,12 +307,12 @@ prcnt <- vector()
 skene_df <- reshape2::melt(skene_df) %>%
   arrange(Var1) %>%
   group_by(Var1) 
-  
+
 for (i in 1:length(skene_df$Var2)) {
-    
+  
   GENE_NUMBER <- length(get(paste0(as.character(skene_df$Var2[i]), '_overlaps')))
   prcnt <- c(prcnt, (skene_df$value[i] / GENE_NUMBER))
-    
+  
 }
 
 cat('Creating plots  ... \n')
@@ -349,6 +349,8 @@ skene_plot <- skene_df %>%
   ylab("") +
   coord_flip() 
 
+saveRDS(skene_df, '~/Dropbox/BRAY_sc_analysis/files_for_paper/figures/data_for_figures/skene_overlap_matrix.rds')
+
 cat('Writing plots  ... \n')
 # Write plots
 tiff(paste0(DATA_DIR, 'fetal_intersect_plot.tiff'), height = 30, width = 30, units='cm', 
@@ -360,7 +362,7 @@ tiff(paste0(DATA_DIR, 'skene_intersect_plot.tiff'), height = 30, width = 30, uni
      compression = 'lzw', res = 300)
 print(skene_plot)
 dev.off()
-  
+
 cat('Done.\n')
 
 # -------------------------------------------------------------------------------------
@@ -390,7 +392,7 @@ CELL_TYPES_INTRA <- c('FC_ExN_3', 'FC_ExN_4', 'FC_ExN_5', 'FC_InN_1', 'GE_InN_1'
 for (CELL_TYPE in CELL_TYPES_INTRA) {
   
   CELL_TYPE_DF <- get(CELL_TYPE)
-    
+  
   cat(paste0('\nProducing gene list for ', CELL_TYPE, ' ... \n'))
   
   gene_list <- list(
@@ -399,7 +401,7 @@ for (CELL_TYPE in CELL_TYPES_INTRA) {
   
   GENE_LIST_PLOT <- ggVennDiagram(gene_list, label_alpha = 0, edge_size = 0.5) +
     ggplot2::scale_fill_gradient(low="#FEE2E8", high = "#FF708E")
-                
+  
   # Intersections
   intersection_genes <- unlist(process_region_data(Venn(gene_list))[[3,3]])
   cat(paste0('Genes intersecting ', CELL_TYPE, ' and FC-ExN-2: ', length(intersection_genes), '\n'))
@@ -452,7 +454,7 @@ for (CELL_TYPE in CELL_TYPES_INTRA) {
 }
 
 cat('Done.\n')
-  
+
 ## Inter-dataset gene lists  ----------------------------------------------------------
 cat('\nIndividually remove overlapping Skene cell type genes from all fetal cell type gene lists ... \n')
 
@@ -460,7 +462,7 @@ cat('\n---- Defining variables for Intra-dataset gene lists ----\n')
 CELL_TYPES_INTER <- c('FC_ExN_2', 'FC_ExN_3', 'FC_ExN_4', 'FC_ExN_5', 'FC_InN_1', 'GE_InN_1', 
                       'GE_InN_2', 'Hipp_ExN_4', 'Hipp_ExN_6', 'Thal_ExN_5', 'Thal_ExN_9')
 CELL_TYPES_SKENE <- c('skene_SS', 'skene_InN', 'skene_MSN', 'skene_CA1')
-  
+
 for (SKENE_CELL_TYPE in CELL_TYPES_SKENE) {  
   
   cat(paste0('\n--------  ', SKENE_CELL_TYPE, '  --------\n'))
@@ -522,15 +524,15 @@ for (SKENE_CELL_TYPE in CELL_TYPES_SKENE) {
     #   https://github.com/neurogenomics/MAGMA_Celltyping/blob/f931877dedcde103723f14242d5242fdca7b3af6/R/map_specificity_to_entrez.r#L19
     #   all_hgnc_wtEntrez<- MAGMA.Celltyping::all_hgnc_wtEntrez
     #all_hgnc_wt_entrez <- read_delim("Desktop/single_nuclei/snRNAseq/final_analyses/all_hgnc_wt_entrez.tsv", 
-     #                                delim = "\t", escape_double = FALSE, 
-     #                                trim_ws = TRUE)
+    #                                delim = "\t", escape_double = FALSE, 
+    #                                trim_ws = TRUE)
     
     #colnames(all_hgnc_wt_entrez)[1] = "human.symbol"
     humanSymsPresent = as.character(all_hgnc_wt_entrez$human.symbol[all_hgnc_wt_entrez$human.symbol %in% cell_type_genes$X1])
     cat(paste0('Gene conversion count after using Skene conversion list: ', length(humanSymsPresent)  , ' ... \n'))
     
     conversion_check <- cbind(paste0(CELL_TYPE, '_no_', SKENE_CELL_TYPE), length(cell_type_genes$X1), sum(is.na(genes_entrez)), 
-          length(genes_entrez_noNA), length(humanSymsPresent))
+                              length(genes_entrez_noNA), length(humanSymsPresent))
     
     if (exists("conversion_check_df")) {
       
