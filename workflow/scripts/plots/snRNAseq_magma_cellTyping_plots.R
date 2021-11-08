@@ -62,7 +62,7 @@ for (REGION in REGIONS) {
               axis.title.y = element_text(colour = "#000000", size = 14),
               axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
               axis.text.y  = element_text(colour = "#000000", size = 12)) +
-        xlab(expression('-log10(P)')) +
+        xlab(expression(-log[10](P))) +
         ylab('Cell type') +
         xlim(0, 11.5)
       
@@ -94,7 +94,7 @@ for (REGION in REGIONS) {
               axis.title.y = element_text(colour = "#000000", size = 14),
               axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
               axis.text.y  = element_text(colour = "#000000", size = 12)) +
-        xlab(expression('-log10(P)')) +
+        xlab(expression(-log[10](P))) +
         ylab('Cell type') +
         xlim(0, 11.5)
       
@@ -123,7 +123,7 @@ for (REGION in REGIONS) {
               axis.title.y = element_text(colour = "#000000", size = 14),
               axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
               axis.text.y  = element_text(colour = "#000000", size = 12)) +
-        xlab(expression('-log10(P)')) +
+        xlab(expression(-log[10](P))) +
         ylab('Cell type') +
         xlim(0, 11.5)
       
@@ -143,54 +143,54 @@ for (REGION in REGIONS) {
         theme_bw() +
         ggtitle(toupper(TITLE)) +
         theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
-             panel.grid.major = element_blank(), 
-             panel.grid.minor = element_blank(),
-             panel.border = element_rect(colour = "black", size = 1),
-             plot.title = element_text(hjust = 0.5),
-             axis.title.x = element_text(colour = "#000000", size = 14),
-             axis.title.y = element_text(colour = "#000000", size = 14),
-             axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
-             axis.text.y  = element_text(colour = "#000000", size = 12)) +
-        xlab(expression('-log10(P)')) +
+              panel.grid.major = element_blank(), 
+              panel.grid.minor = element_blank(),
+              panel.border = element_rect(colour = "black", size = 1),
+              plot.title = element_text(hjust = 0.5),
+              axis.title.x = element_text(colour = "#000000", size = 14),
+              axis.title.y = element_text(colour = "#000000", size = 14),
+              axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
+              axis.text.y  = element_text(colour = "#000000", size = 12)) +
+        xlab(expression(-log[10](P))) +
         ylab('Cell type') +
         xlim(0, 11.5)
-     
+      
       assign(paste0(REGION, '_', DISORDER, '_magma_top10_plot'), top10Plot, envir = .GlobalEnv)
       assign(paste0(REGION, '_', DISORDER, '_magma_top10_data'), top10Data, envir = .GlobalEnv)
-
+      
       
     } else {
       
       TITLE <- REGION
-    
-    top10Plot <- ggplot(data = top10Data, aes(x = -log10(as.numeric(P)), y = factor(VARIABLE, rev(levels(factor(VARIABLE)))))) +
-      geom_bar(stat = "identity", fill = c('#CEE5FD', '#CEE5FD', '#FF5959', '#CEE5FD', '#CEE5FD', 
-                                           '#FF5959', '#3CBB75FF', '#3CBB75FF', '#CEE5FD', '#DCBEFF', 
-                                           '#CEE5FD', '#D078FF', '#FF5959', '#CEE5FD', '#FF5959',
-                                           '#3CBB75FF', '#FDE725FF', '#FF5959', '#CEE5FD', '#CEE5FD', 
-                                           '#3CBB75FF', '#F58231', '#9A6324'), color = 'black') +
-      geom_vline(xintercept=-log10(0.00054), linetype = "dashed", color = "black") +
-      geom_vline(xintercept=-log10(0.05), linetype = "dotted", color = "black") +
-      theme_bw() +
-      ggtitle(toupper(TITLE)) +
-      theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
-            panel.grid.major = element_blank(), 
-            panel.grid.minor = element_blank(),
-            panel.border = element_rect(colour = "black", size = 1),
-            plot.title = element_text(hjust = 0.5),
-            axis.title.x = element_text(colour = "#000000", size = 14),
-            axis.title.y = element_text(colour = "#000000", size = 14),
-            axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
-            axis.text.y  = element_text(colour = "#000000", size = 12)) +
-      xlab(expression('-log10(P)')) +
-      ylab('Cell type') +
-      xlim(0, 11.5)
-    
-    assign(paste0(REGION, '_', DISORDER, '_magma_top10_plot'), top10Plot, envir = .GlobalEnv)
-    assign(paste0(REGION, '_', DISORDER, '_magma_top10_data'), top10Data, envir = .GlobalEnv)
-    
+      
+      top10Plot <- ggplot(data = top10Data, aes(x = -log10(as.numeric(P)), y = factor(VARIABLE, rev(levels(factor(VARIABLE)))))) +
+        geom_bar(stat = "identity", fill = c('#CEE5FD', '#CEE5FD', '#FF5959', '#CEE5FD', '#CEE5FD', 
+                                             '#FF5959', '#3CBB75FF', '#3CBB75FF', '#CEE5FD', '#DCBEFF', 
+                                             '#CEE5FD', '#D078FF', '#FF5959', '#CEE5FD', '#FF5959',
+                                             '#3CBB75FF', '#FDE725FF', '#FF5959', '#CEE5FD', '#CEE5FD', 
+                                             '#3CBB75FF', '#F58231', '#9A6324'), color = 'black') +
+        geom_vline(xintercept=-log10(0.00054), linetype = "dashed", color = "black") +
+        geom_vline(xintercept=-log10(0.05), linetype = "dotted", color = "black") +
+        theme_bw() +
+        ggtitle(toupper(TITLE)) +
+        theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
+              panel.grid.major = element_blank(), 
+              panel.grid.minor = element_blank(),
+              panel.border = element_rect(colour = "black", size = 1),
+              plot.title = element_text(hjust = 0.5),
+              axis.title.x = element_text(colour = "#000000", size = 14),
+              axis.title.y = element_text(colour = "#000000", size = 14),
+              axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
+              axis.text.y  = element_text(colour = "#000000", size = 12)) +
+        xlab(expression(-log[10](P))) +
+        ylab('Cell type') +
+        xlim(0, 11.5)
+      
+      assign(paste0(REGION, '_', DISORDER, '_magma_top10_plot'), top10Plot, envir = .GlobalEnv)
+      assign(paste0(REGION, '_', DISORDER, '_magma_top10_data'), top10Data, envir = .GlobalEnv)
+      
     }
-  
+    
   }
   
 }
@@ -236,7 +236,7 @@ fetal_vs_adult_plot  <- ggplot(data = fetal_vs_adult, aes(x = -log10(as.numeric(
         axis.title.y = element_text(colour = "#000000", size = 14),
         axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
         axis.text.y  = element_text(colour = "#000000", size = 12)) +
-  xlab(expression('-log10(P)')) +
+  xlab(expression(-log[10](P))) +
   ylab('Cell type')
 
 
