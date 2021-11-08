@@ -6,7 +6,7 @@
 
 ## Info  ------------------------------------------------------------------------------
 
-#  Code for figures 4A and 4B - Desktop
+#  Code for figures 4 and ext_data_fig_1 - Desktop
 
 ##  Load packages  --------------------------------------------------------------------
 cat('\nLoading packages ... \n\n')
@@ -22,42 +22,52 @@ PLOT_DIR <- "~/Dropbox/BRAY_sc_analysis/files_for_paper/figures/"
 
 ##  Load data -------------------------------------------------------------------------
 fetal_matrix <- readRDS(paste0(DATA_DIR, 'fetal_overlap_matrix.rds'))
+skene_matrix <- readRDS(paste0(DATA_DIR, 'skene_overlap_matrix.rds'))
 magma_matrix <- read_table(paste0(DATA_DIR, 'magma_fetal.vs.adult_summary.tsv'))
 
 ##  Plot ------------------------------------------------------------------------------
-fig_4A <- reshape2::melt(fetal_matrix) %>%
-  arrange(Var1) %>%
-  group_by(Var1) %>%
-  filter(row_number() >= which(Var1 == Var2)) %>%
-  ggplot(aes(x = Var1, y = Var2, fill = 'white')) + 
+fig_4 <- skene_matrix %>%
+  add_column(percent = prcnt) %>%
+  mutate(percent = sprintf("%0.3f", percent)) %>%
+  ggplot(aes(x=Var1, y=Var2, fill = 'white')) + 
   geom_tile(color = "black", size = 0.5, fill = '#DBF3FA') +
-  geom_text(aes(label = value, size = 12)) +
+  geom_text(aes(label = paste(value, '\n', percent)), hjust = 'centre') +
+  theme(axis.text.x = element_text(angle = -90, hjust = TRUE)) +
   theme_minimal() +
   theme(axis.text.x = element_text(colour = "#000000", size = 12),
         axis.text.y  = element_text(colour = "#000000", size = 12),
         legend.position = "none",
         panel.grid = element_blank()) +
+  theme(legend.position = "none") +
+  theme(panel.grid = element_blank()) +
+  scale_x_discrete(labels = as.factor(gsub("_", "-", as.vector(unique(skene_matrix$Var1))))) +
+  scale_y_discrete(limits = rev(levels(skene_matrix$Var2)), labels = rev(gsub("_", "-", as.vector(unique(skene_matrix$Var2))))) +
   xlab("") + 
   ylab("") +
-  coord_fixed() 
+  coord_equal(ratio = 1) 
+  
 
+# Fix y-axis labels
 
-fig_4B <- ggplot(data = magma_matrix, aes(x = -log10(as.numeric(P)), y = factor(VARIABLE, rev(levels(factor(VARIABLE)))))) +
+y_axis_labels <- rev(gsub("_", "-", as.vector(unique(magma_matrix$VARIABLE))))
+y_axis_labels <- gsub("-no-", " no ", y_axis_labels)
+
+ext_data_fig_1 <- magma_matrix %>%
+  filter(!grepl("_no_FC", VARIABLE)) %>%
+  ggplot(aes(x = -log10(as.numeric(P)), y = factor(VARIABLE, rev(levels(factor(VARIABLE)))))) +
   geom_bar(stat = "identity", fill = c('#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD',
                                        '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD',
                                        '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD',
-                                       '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD', '#3CBB75FF',
+                                       '#CEE5FD', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF',
                                        '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF',
-                                       '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF',
-                                       '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', '#CEE5FD',
-                                       '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD',
+                                       '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', '#CEE5FD', '#CEE5FD',
                                        '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD',
                                        '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD',
                                        '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD') , color = 'black') +
   geom_vline(xintercept=-log10(0.05/54), linetype = "dashed", color = "black") +
   geom_vline(xintercept=-log10(0.05), linetype = "dotted", color = "black") +
   theme_bw() +
-#  ggtitle(toupper(TITLE)) +
+  #  ggtitle(toupper(TITLE)) +
   theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
@@ -67,22 +77,23 @@ fig_4B <- ggplot(data = magma_matrix, aes(x = -log10(as.numeric(P)), y = factor(
         axis.title.y = element_text(colour = "#000000", size = 14),
         axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
         axis.text.y  = element_text(colour = "#000000", size = 12)) +
-  xlab(expression('-log10(P)')) +
+  scale_y_discrete(labels = y_axis_labels) +
+  xlab(expression(-log[10](P))) +
   ylab('Cell type')
 
-plot_grid(fig_4A, fig_4B, labels = 'AUTO', label_size = 16)
+
 
 # Save plots
 # Fig 4A - Fetal cell type gene overlap plot
-tiff(paste0(PLOT_DIR, "Fig_4A.tiff"), height = 30, width = 30, units='cm', 
+tiff(paste0(PLOT_DIR, "Fig_4.tiff"), height = 30, width = 30, units='cm', 
      compression = "lzw", res = 300)
-fig_4A
+fig_4
 dev.off()
 
 # Fig 4B - Fetal cell type gene overlap plot
-tiff(paste0(PLOT_DIR, "Fig_4B.tiff"), height = 30, width = 30, units='cm', 
+tiff(paste0(PLOT_DIR, "ext_data_fig_1.tiff"), height = 30, width = 30, units='cm', 
      compression = "lzw", res = 300)
-fig_4B
+ext_data_fig_1
 dev.off()
 
 # -------------------------------------------------------------------------------------
