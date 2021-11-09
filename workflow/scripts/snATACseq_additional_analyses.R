@@ -23,6 +23,10 @@ library(rmarkdown)
 library(chromVARmotifs)
 library(ComplexHeatmap)
 library(argparser)
+library(pheatmap)
+library(cowplot)
+library(ggplotify) # required to convert grob to ggplot object - footprinting
+
 
 ## Parse region / set region variable -------------------------------------------------
 cat('\nParsing args ... \n')
@@ -51,6 +55,80 @@ for (REGION in c("FC", "GE")) {
   cat(paste0('\nAdding peak matrix ... \n'))
   archR <- addPeakMatrix(archR) 
   
+  ##  Create data for figs 5A-D  --------------------------------------------------------
+  cat(paste0('\nCreating rds files for figs 5A-D ... \n'))
+  if (REGION == 'FC') {
+  
+    fig_5A <- plotEmbedding(archR, colorBy = "cellColData", name = "Clusters_RNAmapped") +
+      ggtitle(NULL) +
+      theme_bw() +
+      theme(legend.text=element_text(size = 12),
+            legend.title = element_blank(),
+            plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
+            panel.grid.major = element_blank(), 
+            panel.grid.minor = element_blank(),
+            panel.border = element_rect(colour = "black", size = 1),
+            plot.title = element_text(hjust = 0.5),
+            axis.title.x = element_text(colour = "#000000", size = 14),
+            axis.title.y = element_text(colour = "#000000", size = 14),
+            axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
+            axis.text.y  = element_text(colour = "#000000", size = 12)) 
+    
+    fig_5C <- plotEmbedding(archR, colorBy = "cellColData", name = "Clusters_RNAmapped_broad") +
+      ggtitle(NULL) +
+      theme_bw() +
+      theme(legend.text=element_text(size = 12),
+            legend.title = element_blank(),
+            plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
+            panel.grid.major = element_blank(), 
+            panel.grid.minor = element_blank(),
+            panel.border = element_rect(colour = "black", size = 1),
+            plot.title = element_text(hjust = 0.5),
+            axis.title.x = element_text(colour = "#000000", size = 14),
+            axis.title.y = element_text(colour = "#000000", size = 14),
+            axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
+            axis.text.y  = element_text(colour = "#000000", size = 12)) 
+    
+    saveRDS(fig_5A, 'results/figures/Fig_5A.rds') 
+    saveRDS(fig_5C, 'results/figures/Fig_5C.rds') 
+  
+  } else {
+    
+    fig_5B <- plotEmbedding(archR, colorBy = "cellColData", name = "Clusters_RNAmapped") +
+      ggtitle(NULL) +
+      theme_bw() +
+      theme(legend.text=element_text(size = 12),
+            legend.title = element_blank(),
+            plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
+            panel.grid.major = element_blank(), 
+            panel.grid.minor = element_blank(),
+            panel.border = element_rect(colour = "black", size = 1),
+            plot.title = element_text(hjust = 0.5),
+            axis.title.x = element_text(colour = "#000000", size = 14),
+            axis.title.y = element_text(colour = "#000000", size = 14),
+            axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
+            axis.text.y  = element_text(colour = "#000000", size = 12)) 
+    
+    fig_5D <- plotEmbedding(archR, colorBy = "cellColData", name = "Clusters_RNAmapped_broad") +
+      ggtitle(NULL) +
+      theme_bw() +
+      theme(legend.text=element_text(size = 12),
+            legend.title = element_blank(),
+            plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
+            panel.grid.major = element_blank(), 
+            panel.grid.minor = element_blank(),
+            panel.border = element_rect(colour = "black", size = 1),
+            plot.title = element_text(hjust = 0.5),
+            axis.title.x = element_text(colour = "#000000", size = 14),
+            axis.title.y = element_text(colour = "#000000", size = 14),
+            axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
+            axis.text.y  = element_text(colour = "#000000", size = 12)) 
+    
+    saveRDS(fig_5B, 'results/figures/Fig_5B.rds') 
+    saveRDS(fig_5D, 'results/figures/Fig_5D.rds') 
+    
+  }
+
   ##  IDing Marker peaks that are unique to individual cluster - chptr 11  --------------
   # scRNA labels
   table(archR$Clusters_RNAmapped_broad)
@@ -82,40 +160,98 @@ for (REGION in c("FC", "GE")) {
   )
   enrichMotifs
   
+  # Export enrichMotifs and motif p-val table used for plotting
+  saveRDS(enrichMotifs, paste0('results/figures/', REGION, '_motifs.rds'))
+  saveRDS(assays(enrichMotifs)[["mlog10Padj"]], paste0('results/figures/', REGION, '_motifs_mlogPs.rds'))
+
   heatmapEM <- plotEnrichHeatmap(enrichMotifs, n = 15, transpose = TRUE)
   assign(paste0("motif_heatmap_", REGION), heatmapEM)
+  
+  ## Create motif heatmap RDS files for figures 5E-F  -----------------------------------
+  cat(paste0('\nCreating rds files for figs 5E-F ... \n'))
+  # Return heatmap matrix
+  heatmap_matrix <- plotEnrichHeatmap(enrichMotifs, n = 15, transpose = TRUE,
+                                      returnMatrix = TRUE)
+  
+  # Remove all extra info from motif names
+  new_cols <- as.data.frame(str_split(colnames(heatmap_matrix), 
+                                      fixed("_"), simplify = TRUE)) %>%
+    pull(V1)
+  colnames(heatmap_matrix) <- new_cols
+    
+  # Note that Complex heatmap also has a function called heatmap for object conversion!!
+  motif_heatmap_plot <- as.ggplot(pheatmap::pheatmap(heatmap_matrix, cluster_rows = FALSE, cluster_cols = FALSE,
+                           cellwidth = 12, cellheight = 15, fontsize_row = 12,
+                           fontsize_col = 12)) 
+  
+  # Save motif heatmap RDS files
+  if (REGION == 'FC') {
+  
+    saveRDS(motif_heatmap_plot, 'results/figures/Fig_5E.rds') 
+    saveRDS(heatmap_matrix, 'results/figures/Fig_5E_matrix.rds')    
+
+  } else {
+    
+    saveRDS(motif_heatmap_plot, 'results/figures/Fig_5F.rds') 
+    saveRDS(heatmap_matrix, 'results/figures/Fig_5F_matrix.rds')    
+
+  }
+
 
   ## Motif Footprinting  -  Chptr 14  ---------------------------------------------------
+  cat(paste0('\nRunning footprinting ... \n'))
   if (REGION == 'FC') {
 
   
     cat(paste0('\nGenerating motif footprints for ', REGION, ' ... \n'))
     motifPositions <- getPositions(archR)
     motifPositions
-
-    # Subset the GRangesList to a few TFs
-    motifs <- c('MEF2C', 'NEUROD4', 'NEUROD2', 'ASCL1', 'ASCL2', 'DLX5', 'PRRX1')
-    markerMotifs <- unlist(lapply(motifs, function(x) grep(x, names(motifPositions), value = TRUE)))
-    #markerMotifs <- markerMotifs[markerMotifs %ni% "SREBF1_22"]
-    markerMotifs
-
-    # Compute footprints - Note: Any user-defined feature set can be footprinted
-    seFoot <- getFootprints(
-    ArchRProj = archR, 
-    positions = motifPositions[markerMotifs], 
-    groupBy = "Clusters_RNAmapped_broad"
-    )
-
-    # Plot footprints - Note: multiple normalisation methods that can be used
-    plotFootprints(
-      seFoot = seFoot,
-      ArchRProj = archR, 
-      normMethod = "Subtract",
-      plotName = "Footprints-Subtract-Bias",
-      addDOC = FALSE,
-      smoothWindow = 5
-    )
   
+  cat(paste0('\nCreating rds files for figs 5G-H ... \n'))
+  for (MOTIF in c('NEUROD2_73', 'DLX5_412')) {
+      
+      motifs <- MOTIF
+      markerMotifs <- unlist(lapply(motifs, function(x) grep(x, names(motifPositions), value = TRUE)))
+      markerMotifs
+      
+      # Compute footprints
+      cat(paste0(MOTIF, ' ... \n'))
+      seFoot <- getFootprints(
+        ArchRProj = archR, 
+        positions = motifPositions[markerMotifs], 
+        groupBy = "Clusters_RNAmapped_broad"
+      )
+      
+      # Plot footprint - plot = FALSE required to get grob object
+      cat(paste0('Plotting ... \n'))
+      footprint_grob <-  plotFootprints(
+          seFoot = seFoot,
+          ArchRProj = archR, 
+          normMethod = "Subtract",
+          plotName = "Footprints_subtract_bias",
+          addDOC = FALSE,
+          smoothWindow = 5,
+          plot = FALSE
+          
+        )
+    
+      # Convert to ggplot object 
+      cat(paste0('Converting grob to ggplot object ... \n'))
+      footprint_plot <- ggplotify::as.ggplot(footprint_grob[[MOTIF]])
+      
+      if (MOTIF == 'NEUROD2_73') {
+        
+        saveRDS(footprint_plot, 'results/figures/Fig_5G.rds') 
+        saveRDS(footprint_grob, 'results/figures/Fig_5G_grob.rds')        
+
+      } else {
+        
+        saveRDS(footprint_plot, 'results/figures/Fig_5H.rds') 
+        saveRDS(footprint_grob, 'results/figures/Fig_5H_grob.rds')
+      }
+    
+    }
+
   }
 
   ## Peak to gene links  -  Chptr 15.3  -------------------------------------------------
@@ -138,7 +274,44 @@ for (REGION in c("FC", "GE")) {
   p2g_df <- base::as.data.frame(p2g)
   geneIDs_df <- Repitools::annoGR2DF(metadata(p2g)$geneSet)
   peakIDs_df <- Repitools::annoGR2DF(metadata(p2g)$peakSet)
+  
+  markerGenes  <- c("CALN1", "FUT9", "DLX1", "DLX2")
 
+  p <- plotBrowserTrack(
+    ArchRProj = archR, 
+    groupBy = "Clusters_RNAmapped_broad", 
+    geneSymbol = markerGenes, 
+    upstream = 50000,
+    downstream = 50000,
+    loops = getPeak2GeneLinks(archR)
+)
+
+  # Plot p2g links
+  cat(paste0("Plotting p2g links for ", REGION, " ... \n"))
+  tiff(paste0("results/figures/CALN1_peak2gene", REGION, ".tiff"), height = 10, width = 10, units='cm', 
+       compression = "lzw", res = 300)
+  grid::grid.newpage()
+  grid::grid.draw(p$CALN1)
+  dev.off()
+
+  tiff(paste0("results/figures/FUT9_peak2gene", REGION, ".tiff"), height = 10, width = 10, units='cm', 
+       compression = "lzw", res = 300)
+  grid::grid.newpage()    
+  grid::grid.draw(p$FUT9)
+  dev.off()
+
+  tiff(paste0("results/figures/DLX1_peak2gene", REGION, ".tiff"), height = 10, width = 10, units='cm', 
+       compression = "lzw", res = 300)
+  grid::grid.newpage()
+  grid::grid.draw(p$DLX1)
+  dev.off()
+
+  tiff(paste0("results/figures/DLX2_peak2gene", REGION, ".tiff"), height = 10, width = 10, units='cm', 
+       compression = "lzw", res = 300)
+  grid::grid.newpage()
+  grid::grid.draw(p$DLX2)
+  dev.off()
+  
 
   cat("\nObtaining peak start/stop coordinates and gene IDs for links ... \n")
 
@@ -191,4 +364,3 @@ cat('\nDONE.\n')
 
 #--------------------------------------------------------------------------------------
 #--------------------------------------------------------------------------------------
-
