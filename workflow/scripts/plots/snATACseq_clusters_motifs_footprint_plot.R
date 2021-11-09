@@ -28,11 +28,22 @@ for (PLOT in c('A', 'B', 'C', 'D')) {
   
 }
 
-for (PLOT in c('E', 'F')) {
+# Old
+# for (PLOT in c('E', 'F')) {
+#   
+#   plot_matrix <- readRDS(paste0(DATA_DIR, 'Fig_5', PLOT, '_matrix.rds'))
+#   plot_matrix_melt <- reshape::melt(plot_matrix)
+#   assign(paste0('fig_5', PLOT, '_matrix'), plot_matrix_melt)
+#   
+# }
+
+# Using matrices pulled directly from full motifs object
+for (REGION in c('FC', 'GE')) {
   
-  plot_matrix <- readRDS(paste0(DATA_DIR, 'Fig_5', PLOT, '_matrix.rds'))
-  plot_matrix_melt <- reshape::melt(plot_matrix)
-  assign(paste0('fig_5', PLOT, '_matrix'), plot_matrix_melt)
+  motifs_matrix <- readRDS(paste0(DATA_DIR, REGION, '_motifs.rds'))
+  motifs_pVal_matrix <- readRDS(paste0(DATA_DIR, REGION, '_motifs_mlogPs.rds'))
+  assign(paste0(REGION, '_motifs_matrix'), motifs_matrix)
+  assign(paste0(REGION, '_motifs_pVal_matrix'), motifs_pVal_matrix)       
   
 }
 
@@ -87,12 +98,63 @@ fig_5D <- fig_5D +
   NoLegend()
 
 # Motif enrichment plots  -------------------------------------------------------------
-fig_5E <- ggplot(fig_5E_matrix, aes(x = X2, y = X1, fill = value)) +
+# Had an issue with N.undef and number of motifs being plotted. Issues due to low 
+# p-vals for N.undef and the pVal cut of threshold for the motif plotting function
+# Just pulled the code from the repo to generate these plots manually
+
+for (REGION in c('FC', 'GE')) {
+  
+  # Set variables 
+  cutOff = 20
+  n = 10
+  pMax = Inf
+  binaryClusterRows = TRUE
+  clusterCols = TRUE
+  pal = paletteContinuous(set = "comet", n = 100)
+  rastr = TRUE
+  
+  # Load pVal matrix
+  mat <- get(paste0(REGION, '_motifs_pVal_matrix'))
+  
+  # Remove all text from motif names except motif IDs
+  rownames(mat) <- gsub("_.*","\\1", rownames(mat))
+  
+  # Remove N.undef from FC
+  if (REGION == 'FC') { mat <- mat[, c(1,2,3,5)] }
+  
+  # Keep top x motifs
+  keep <- lapply(seq_len(ncol(mat)), function(x){
+    idx <- head(order(mat[, x], decreasing = TRUE), n)
+    rownames(mat)[idx[which(mat[idx, x] > cutOff)]]
+  }) %>% unlist %>% unique
+  mat <- mat[keep, , drop = FALSE]
+  
+  passMat <- lapply(seq_len(nrow(mat)), function(x){
+    (mat[x, ] >= 0.9*max(mat[x, ])) * 1
+  }) %>% Reduce("rbind", .) %>% data.frame
+  colnames(passMat) <- colnames(mat)
+  
+  mat[mat > pMax] <- pMax
+  
+  mat <- ArchR:::.rowScale(as.matrix(mat), min = 0)
+  
+  # This adds maxes in brackets in rownames - not needed
+  # if(pMax != 100){
+  #   rownames(mat[[1]]) <- paste0(rownames(mat[[1]]), " (",round(mat$max),")")
+  #   rownames(passMat) <- rownames(mat[[1]])
+  # }
+  
+  mat2 <- mat[[1]] * 100
+  
+  assign(paste0(REGION, '_motifs_matix_filtered'), mat2)
+
+}
+
+fig_5E <- ggplot(reshape::melt(FC_motifs_matix_filtered), aes(x = X2, y = X1, fill = value)) +
   geom_tile(color = "black", size = 0.4) +
   scale_fill_gradient2(low = "#4575b4",
                        mid = "#fdfbba",
-                       high = "#d73027",
-                       midpoint = 50) +
+                       high = "#d73027") +
   theme(legend.position = "none",
         legend.title=element_blank(),
         plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
@@ -103,22 +165,20 @@ fig_5E <- ggplot(fig_5E_matrix, aes(x = X2, y = X1, fill = value)) +
         axis.title.x = element_text(colour = "#000000", size = 14),
         axis.title.y = element_text(colour = "#000000", size = 14),
         axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
-        axis.text.y  = element_text(colour = "#000000", size = 12),
+        axis.text.y  = element_text(colour = "#000000", size = 11),
         axis.ticks.x = element_blank(),
         axis.ticks.y = element_blank()) +
   scale_y_discrete(expand = c(0, 0)) +
   xlab(NULL) +
-  ylab(NULL) +
-  coord_flip() 
+  ylab(NULL) 
 
-fig_5F <- ggplot(fig_5F_matrix, aes(x = X2, y = X1, fill = value)) +
+fig_5F <- ggplot(reshape::melt(GE_motifs_matix_filtered), aes(x = X2, y = X1, fill = value)) +
   geom_tile(color = "black", size = 0.4) +
   scale_fill_gradient2(low = "#4575b4",
                        mid = "#fdfbba",
                        high = "#d73027",
-                       midpoint = 50,
                        guide = guide_colorbar(frame.colour = "black",
-                                              frame.linewidth = 0.4)) +
+                                              frame.linewidth = 0.5)) +
   theme(#legend.position = "none",
     legend.title=element_blank(),
     plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
@@ -134,9 +194,8 @@ fig_5F <- ggplot(fig_5F_matrix, aes(x = X2, y = X1, fill = value)) +
     axis.ticks.y = element_blank()) +
   scale_y_discrete(expand = c(0, 0)) +
   xlab(NULL) +
-  ylab(NULL) +
-  coord_flip() 
-
+  ylab(NULL) 
+  
 # Footprinting plots  -------------------------------------------------------------
 fig_5G <- ggplotify::as.ggplot(fig_5G_grob[['NEUROD2_73']])
 fig_5H <- ggplotify::as.ggplot(fig_5H_grob[['DLX5_412']])
