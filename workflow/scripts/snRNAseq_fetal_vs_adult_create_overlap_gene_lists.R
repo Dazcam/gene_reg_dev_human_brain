@@ -315,6 +315,9 @@ for (i in 1:length(skene_df$Var2)) {
   
 }
 
+# Add percentages to df
+skene_df <- skene_df %>% add_column(percent = prcnt)
+
 cat('Creating plots  ... \n')
 # Create plots
 fetal_plot <- reshape2::melt(fetal_matrix) %>%
@@ -336,7 +339,6 @@ fetal_plot <- reshape2::melt(fetal_matrix) %>%
 saveRDS(fetal_matrix, '~/Dropbox/BRAY_sc_analysis/files_for_paper/figures/data_for_figures/fetal_overlap_matrix.rds')
 
 skene_plot <- skene_df %>%
-  add_column(percent = prcnt) %>%
   mutate(percent = sprintf("%0.3f", percent)) %>%
   ggplot(aes(x=Var1, y=Var2, fill = 'white')) + 
   geom_tile(color = "black") +
