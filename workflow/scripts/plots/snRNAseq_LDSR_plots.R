@@ -37,8 +37,6 @@ for (DISORDER in GWAS) {
     # Update region names in plot titles to new ones for FC and GE
     if (REGION == "FC") {
       
-      TITLE <- "FC"
-      
       top10Plot <- ggplot(data = subset_top10_df, aes(x = `Coefficient_z-score`, y = factor(Category, rev(levels(factor(Category)))))) +
         geom_bar(stat = "identity", fill = c("#DCBEFF", '#9A6324', '#CEE5FD', '#CEE5FD', '#CEE5FD', 
                                              '#CEE5FD', '#CEE5FD', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', 
@@ -49,7 +47,7 @@ for (DISORDER in GWAS) {
         geom_vline(xintercept=-qnorm(0.05/91), linetype = "dashed", color = "black") +
         geom_vline(xintercept=qnorm(0.05), linetype = "dotted", color = "black") +
         theme_bw() +
-        ggtitle(toupper(TITLE)) +
+        ggtitle('Frontal Cortex') +
         theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
               panel.grid.major = element_blank(), 
               panel.grid.minor = element_blank(),
@@ -67,9 +65,7 @@ for (DISORDER in GWAS) {
       assign(paste0(REGION, '_', DISORDER, '_ldsc_top10_data'), subset_top10_df, envir = .GlobalEnv)
       
     } else if (REGION == "Cer") {
-      
-      TITLE <- REGION
-      
+
       top10Plot <- ggplot(data = subset_top10_df, aes(x = `Coefficient_z-score`, y = factor(Category, rev(levels(factor(Category)))))) +
         geom_bar(stat = "identity", fill = c('#DCBEFF', '#9A6324', '#CEE5FD', '#CEE5FD', '#CEE5FD', 
                                              '#CEE5FD', '#CEE5FD', '#CEE5FD', '#3CBB75FF', '#3CBB75FF', 
@@ -81,7 +77,7 @@ for (DISORDER in GWAS) {
         geom_vline(xintercept=-qnorm(0.05/91), linetype = "dashed", color = "black") +
         geom_vline(xintercept=qnorm(0.05), linetype = "dotted", color = "black") +
         theme_bw() +
-        ggtitle(toupper(TITLE)) +
+        ggtitle('Cerebellum') +
         theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
               panel.grid.major = element_blank(), 
               panel.grid.minor = element_blank(),
@@ -99,9 +95,7 @@ for (DISORDER in GWAS) {
       assign(paste0(REGION, '_', DISORDER, '_ldsc_top10_data'), subset_top10_df, envir = .GlobalEnv)
       
     } else if (REGION == "Hipp") {
-      
-      TITLE <- 'Hip'
-      
+
       top10Plot <- ggplot(data = subset_top10_df, aes(x = `Coefficient_z-score`, y = factor(Category, rev(levels(factor(Category)))))) +
         geom_bar(stat = "identity", fill = c("#DCBEFF", '#9A6324', '#CEE5FD', '#CEE5FD', '#CEE5FD',  
                                              '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD', '#3CBB75FF', 
@@ -112,7 +106,7 @@ for (DISORDER in GWAS) {
         geom_vline(xintercept=-qnorm(0.05/91), linetype = "dashed", color = "black") +
         geom_vline(xintercept=qnorm(0.05), linetype = "dotted", color = "black") +
         theme_bw() +
-        ggtitle(toupper(TITLE)) +
+        ggtitle('Hippocampus') +
         theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
               panel.grid.major = element_blank(), 
               panel.grid.minor = element_blank(),
@@ -130,9 +124,7 @@ for (DISORDER in GWAS) {
       assign(paste0(REGION, '_', DISORDER, '_ldsc_top10_data'), subset_top10_df, envir = .GlobalEnv)
       
     } else if (REGION == "GE") {
-      
-      TITLE <- "GE"
-      
+
       top10Plot <- ggplot(data = subset_top10_df, aes(x = `Coefficient_z-score`, y = factor(Category, rev(levels(factor(Category)))))) +
         geom_bar(stat = "identity", fill = c('#DCBEFF', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF',
                                              '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', '#FF5959', '#FF5959', 
@@ -142,7 +134,7 @@ for (DISORDER in GWAS) {
         geom_vline(xintercept=-qnorm(0.05/91), linetype = "dashed", color = "black") +
         geom_vline(xintercept=qnorm(0.05), linetype = "dotted", color = "black") +
         theme_bw() +
-        ggtitle(toupper(TITLE)) +
+        ggtitle('Ganglionic Eminence') +
         theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
               panel.grid.major = element_blank(), 
               panel.grid.minor = element_blank(),
@@ -161,19 +153,19 @@ for (DISORDER in GWAS) {
       
       
     } else {
-      
-      TITLE <- 'Tha'
-      
+
       top10Plot <- ggplot(data = subset_top10_df, aes(x = `Coefficient_z-score`, y = factor(Category, rev(levels(factor(Category)))))) +
         geom_bar(stat = "identity", fill = c("#DCBEFF", '#9A6324', '#CEE5FD', '#CEE5FD', '#CEE5FD',  
                                              '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD',
                                              '#CEE5FD', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF',
                                              "#D078FF", '#F58231', '#FDE725FF', '#FF5959',
                                              '#FF5959', '#FF5959', '#FF5959', '#FF5959'), color = 'black') +
-        geom_vline(xintercept=-log10(0.00054), linetype = "dashed", color = "black") +
-        geom_vline(xintercept=-log10(0.05), linetype = "dotted", color = "black") +
+        geom_vline(xintercept=qnorm(0.05/91), linetype = "dashed", color = "black") +
+        geom_vline(xintercept=-qnorm(0.05), linetype = "dotted", color = "black") +
+        geom_vline(xintercept=-qnorm(0.05/91), linetype = "dashed", color = "black") +
+        geom_vline(xintercept=qnorm(0.05), linetype = "dotted", color = "black") +
         theme_bw() +
-        ggtitle(toupper(TITLE)) +
+        ggtitle('Thalamus') +
         theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
               panel.grid.major = element_blank(), 
               panel.grid.minor = element_blank(),
@@ -199,11 +191,11 @@ for (DISORDER in GWAS) {
 cat('\nCreating group plots ... \n')
 for (DISORDER in GWAS) {
   
-  ldsc_top10_plot <- plot_grid(get(paste0('Cer_', DISORDER, '_ldsc_top10_plot')),
+  ldsc_top10_plot <- plot_grid(get(paste0('FC_', DISORDER, '_ldsc_top10_plot')),
+                               get(paste0('GE_', DISORDER, '_ldsc_top10_plot')),
                                get(paste0('Hipp_', DISORDER, '_ldsc_top10_plot')), 
-                               get(paste0('FC_', DISORDER, '_ldsc_top10_plot')),
-                               get(paste0('Thal_', DISORDER, '_ldsc_top10_plot')),
-                               get(paste0('GE_', DISORDER, '_ldsc_top10_plot')))
+                               get(paste0('Cer_', DISORDER, '_ldsc_top10_plot')),
+                               get(paste0('Thal_', DISORDER, '_ldsc_top10_plot')))
   
   assign(paste0('all_regions_', DISORDER, '_ldsc_top10_plot'), ldsc_top10_plot, envir = .GlobalEnv)
   
