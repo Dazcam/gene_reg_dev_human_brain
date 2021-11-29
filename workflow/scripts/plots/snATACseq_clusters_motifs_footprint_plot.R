@@ -106,7 +106,7 @@ for (REGION in c('FC', 'GE')) {
   
   # Set variables 
   cutOff = 20
-  n = 10
+  n = 7
   pMax = Inf
   binaryClusterRows = TRUE
   clusterCols = TRUE
@@ -147,7 +147,7 @@ for (REGION in c('FC', 'GE')) {
   mat2 <- mat[[1]] * 100
   
   assign(paste0(REGION, '_motifs_matix_filtered'), mat2)
-
+  
 }
 
 fig_5E <- ggplot(reshape::melt(FC_motifs_matix_filtered), aes(x = X2, y = X1, fill = value)) +
@@ -195,7 +195,7 @@ fig_5F <- ggplot(reshape::melt(GE_motifs_matix_filtered), aes(x = X2, y = X1, fi
   scale_y_discrete(expand = c(0, 0)) +
   xlab(NULL) +
   ylab(NULL) 
-  
+
 # Footprinting plots  -------------------------------------------------------------
 fig_5G <- ggplotify::as.ggplot(fig_5G_grob[['NEUROD2_73']])
 fig_5H <- ggplotify::as.ggplot(fig_5H_grob[['DLX5_412']])
