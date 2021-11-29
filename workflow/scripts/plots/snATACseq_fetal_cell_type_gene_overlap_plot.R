@@ -6,7 +6,10 @@
 
 ## Info  ------------------------------------------------------------------------------
 
-#  Code for figures 4 A, B and ext_data_fig_1, 2 - Desktop
+#  4A - Fetal cell type gene overlap plot
+#  4B - Adult cell vs. fetal cell grid
+#  Ext data 1 - Adult cell vs. fetal cell grid
+#  Ext data 2 - Conditioning on FC-ExN-2 (not using MAGMA)
 
 ##  Load packages  --------------------------------------------------------------------
 cat('\nLoading packages ... \n\n')
@@ -26,12 +29,14 @@ skene_matrix <- readRDS(paste0(DATA_DIR, 'skene_overlap_matrix.rds'))
 magma_matrix <- read_table(paste0(DATA_DIR, 'magma_fetal.vs.adult_summary.tsv'))
 
 ##  Plot ------------------------------------------------------------------------------
-# Figure 4 - Adult vs. fetal grid
-fig_4A <- reshape2::melt(fetal_matrix) %>%
+# Figure 4A - fetal cell type gene overlap plot
+fig_4A_data <- reshape2::melt(fetal_matrix) %>%
   arrange(Var1) %>%
   group_by(Var1) %>%
-  filter(row_number() >= which(Var1 == Var2)) %>%
-  ggplot(aes(x = Var1, y = Var2, fill = 'white')) + 
+  filter(row_number() >= which(Var1 == Var2)) 
+
+
+fig_4A <- fig_4A_data %>%  ggplot(aes(x = Var1, y = Var2, fill = 'white')) + 
   geom_tile(color = "black", size = 0.5, fill = '#DBF3FA') +
   geom_text(aes(label = value, size = 12)) +
   theme_minimal() +
@@ -39,11 +44,12 @@ fig_4A <- reshape2::melt(fetal_matrix) %>%
         axis.text.y  = element_text(colour = "#000000", size = 12),
         legend.position = "none",
         panel.grid = element_blank()) +
-  scale_y_discrete(limits = rev(levels(fetal_matrix_prep$Var2))) +
+  scale_y_discrete(limits = rev(levels(fig_4A_data$Var2))) +
   xlab("") + 
   ylab("") +
   coord_fixed() 
 
+# Figure 4B - Adult vs. fetal grid
 fig_4B <- skene_matrix %>%
   mutate(percent = sprintf("%0.3f", percent)) %>%
   ggplot(aes(x=Var1, y=Var2, fill = 'white')) + 
@@ -65,7 +71,7 @@ fig_4B <- skene_matrix %>%
 
 
 
-# Figure ext data fig 1 - Adult vs. fetal grid
+# Extended data fig 1 - Adult vs. fetal grid
 magma_matrix_filt <- magma_matrix %>%
   filter(!grepl("_no_FC", VARIABLE))
 
@@ -101,7 +107,7 @@ ext_data_fig_1 <- magma_matrix_filt %>%
   xlab(expression(-log[10](P))) +
   ylab('Cell type')
 
-# Figure 4B - fetal vs. fetal grid
+# Extended data fig 2 - fetal vs. fetal grid
 magma_matrix_no_skene <- magma_matrix %>%
   filter(!grepl("skene", VARIABLE))
 
@@ -131,7 +137,6 @@ ext_data_fig_2 <- magma_matrix_no_skene %>%
   xlab(expression(-log[10](P))) +
   ylab('Cell type')
 
-plot_grid(fig_4A, fig_4B )
 # Save plots
 # Fig 4A - Fetal cell type gene overlap plot
 tiff(paste0(PLOT_DIR, "Fig_4A.tiff"), height = 30, width = 30, units='cm', 
@@ -139,6 +144,7 @@ tiff(paste0(PLOT_DIR, "Fig_4A.tiff"), height = 30, width = 30, units='cm',
 fig_4A
 dev.off()
 
+# Fig 4B - Fetal cell type gene overlap plot
 tiff(paste0(PLOT_DIR, "Fig_4B.tiff"), height = 30, width = 30, units='cm', 
      compression = "lzw", res = 300)
 fig_4B
