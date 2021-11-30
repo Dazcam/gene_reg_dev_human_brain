@@ -22,14 +22,14 @@ SKENE_CELL_TYPES <- c("skene_CA1", "skene_InN", "skene_MSN", "skene_SS")
 # Condition on FC-ExN-2
 FC_ExN_2 <- read.table(paste0(MAGMA_DIR, 'magma_all_sig_and_skene_condition_FC_ExN_2.gsa.out'), header = FALSE) %>%
   row_to_names(row_number = 1) %>% 
-  filter(!str_detect(VARIABLE, "FC_ExN_2")) %>%
+  filter(!str_detect(VARIABLE, "FC_ExN_2|skene")) %>%
   mutate(VARIABLE = R.utils::capitalize(VARIABLE)) %>%
   mutate(VARIABLE = gsub("_", "-", VARIABLE))
 
 FC_ExN_2_plot <- ggplot(data = FC_ExN_2, aes(x = -log10(as.numeric(P)), y = factor(VARIABLE, rev(levels(factor(VARIABLE)))))) +
   geom_bar(stat = "identity", fill = c('#CEE5FD', '#CEE5FD', '#CEE5FD', '#3CBB75FF', '#3CBB75FF', 
-                                       '#3CBB75FF', '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD',
-                                       '#CCCCCC', '#CCCCCC', '#CCCCCC', '#CCCCCC'), color = 'black') +
+                                       '#3CBB75FF', '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD'), 
+           color = 'black') +
   geom_vline(xintercept=-log10(0.05/14), linetype = "dashed", color = "black") +
   geom_vline(xintercept=-log10(0.05), linetype = "dotted", color = "black") +
   theme_bw() +
@@ -46,22 +46,14 @@ FC_ExN_2_plot <- ggplot(data = FC_ExN_2, aes(x = -log10(as.numeric(P)), y = fact
   ylab('Cell type') +
   xlim(0, 11.5)
 
-# Save plots
-# Fig 2 - SCZ
-tiff(paste0(PLOT_DIR, "magma_conditional_FC_ExN_2.tiff"), height = 30, width = 30, units='cm', 
-     compression = "lzw", res = 300)
-FC_ExN_2_plot
-dev.off()
-
-
-
+# Condition on Skene cell types
 for (CELL_TYPE in SKENE_CELL_TYPES) {
-    
+  
   ##  Load Data  ----------------------------------------------------------------------
   SKENE_DATA <- read.table(paste0(MAGMA_DIR, 'magma_all_sig_and_skene_condition_', CELL_TYPE, '.gsa.out'), header = FALSE) %>%
     row_to_names(row_number = 1) %>% 
     filter(!str_detect(VARIABLE, 'skene')) %>%
- #   mutate(VARIABLE = R.utils::capitalize(VARIABLE)) %>%
+    #   mutate(VARIABLE = R.utils::capitalize(VARIABLE)) %>%
     mutate(VARIABLE = gsub("_", "-", VARIABLE)) 
   
   SKENE_PLOT <- ggplot(data = SKENE_DATA, aes(x = -log10(as.numeric(P)), y = factor(VARIABLE, rev(levels(factor(VARIABLE)))))) +
@@ -86,16 +78,18 @@ for (CELL_TYPE in SKENE_CELL_TYPES) {
   
   assign(CELL_TYPE, SKENE_DATA, envir = .GlobalEnv)
   assign(paste0(CELL_TYPE, '_plot'), SKENE_PLOT, envir = .GlobalEnv)
-
+  
 }
 
-    
-plot_grid(skene_CA1_plot, skene_InN_plot, skene_MSN_plot, skene_CA1_plot, 
-          labels = 'AUTO', label_size = 16)
-
 # Save plots
-# Fig 2 - SCZ
-tiff(paste0(PLOT_DIR, "magma_conditional_Skene.tiff"), height = 30, width = 30, units='cm', 
+# Fig 6B - SCZ
+tiff(paste0(PLOT_DIR, "Figure_6B.tiff"), height = 30, width = 30, units='cm', 
+     compression = "lzw", res = 300)
+FC_ExN_2_plot
+dev.off()
+
+# Fig 7B_E - SCZ
+tiff(paste0(PLOT_DIR, "Figure_7B_E.tiff"), height = 30, width = 30, units='cm', 
      compression = "lzw", res = 300)
 plot_grid(skene_CA1_plot, skene_InN_plot, skene_MSN_plot, skene_CA1_plot, 
           labels = 'AUTO', label_size = 16)
