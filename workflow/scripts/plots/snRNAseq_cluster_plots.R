@@ -12,6 +12,8 @@
 #  Nowakowski for GE
 #  Aldinger for Cer
 
+# Monocle - FC ExN MK167
+
 ##  Load Packages  --------------------------------------------------------------------
 library(cowplot)
 library(tidyverse)
@@ -74,6 +76,10 @@ for (REGION in REGIONS) {
   
 }
 
+# Load monocle object
+monocle.obj <- readRDS(paste0(DATA_DIR, "pfc_monocle_MK167.rds"))
+
+## Figure 1  --------------------------------------------------------------------------
 # GE
 ge_colours <- c('#DCBEFF', '#006400', '#55C667FF', '#00FF00A5', '#10A53DFF',
                 '#95D840FF', '#73D055FF',  '#3CBB75FF', '#FAA0A0', '#EF0029', 
@@ -149,15 +155,28 @@ fig1_plot <- plot_grid(fc_final_plot,
                        cer_final_plot, 
                        labels = 'AUTO', label_size = 16)
 
-# Save plot
-tiff(paste0(FIG_DIR, "Fig_1.tiff"), height = 40, width = 30, units='cm',
-     compression = "lzw", res = 300)
-fig1_plot
-dev.off()
-
+## Figure 1  --------------------------------------------------------------------------
+# Plot Monocle pseudotime figure
+Supp_Fig_4B <- plot_cells(monocle.obj, color_cells_by = "pseudotime", label_cell_groups = FALSE, label_leaves = FALSE, 
+                          label_branch_points = FALSE) +
+  ggtitle('Pseudotime - MK167') +
+  theme_bw() +
+  theme(legend.text = element_text(size = 12),
+        legend.title = element_blank(),
+        plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.border = element_rect(colour = "black", size = 1),
+        plot.title = element_text(hjust = 0.5),
+        axis.title.x = element_text(colour = "#000000", size = 14),
+        axis.title.y = element_text(colour = "#000000", size = 14),
+        axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
+        axis.text.y  = element_text(colour = "#000000", size = 12))
 
 ##  Cluster assignment section  -------------------------------------------------------
-#  Seurat - using Polioudakis reference dataset  - FC only  -----------------------------------------
+#  Seurat - using Polioudakis reference dataset  - FC only  ---------------------------
+# I kept this code in here rather than running in a seprate script as I didn't want to 
+# alter the seurat objects
 load("~/Desktop/single_cell/public_datasets/sc_dev_cortex_geschwind/raw_counts_mat.rdata")
 gersch_matrix <-  as.matrix(raw_counts_mat)
 gersch_meta <-  as.data.frame(read_csv("Desktop/single_cell/public_datasets/sc_dev_cortex_geschwind/cell_metadata.csv")) 
@@ -208,11 +227,11 @@ for (REGION in c("pfc", "wge")) {
   # Assign plots
   if (REGION == 'pfc') {
     
-    assign('fig_S1B', clustifyR_plot, envir = .GlobalEnv)
+    assign('fig_Supp_1B', clustifyR_plot, envir = .GlobalEnv)
     
   } else {
     
-    assign('fig_S2B', clustifyR_plot, envir = .GlobalEnv)
+    assign('fig_Supp_2B', clustifyR_plot, envir = .GlobalEnv)
     
   }
   
@@ -249,11 +268,13 @@ list_res <- clustify_lists(
 )
 
 
+
 ## Plots  -----------------------------------------------------------------------------
 # S1 - FC comparisons
-fig_S1A <- pfc_plot +
+fig_Supp_1A <- pfc_plot +
   ggtitle('Frontal Cortex') +
   theme_bw() +
+  NoLegend() +
   my_theme +
   scale_color_manual(values = fc_colours)
 
@@ -261,10 +282,10 @@ nowakowski_fc_colours <- c('#1E81B0', '#76B5C5', '#779CBA',  '#CEE5FD',  '#ABDBE
                            '#9A6324', '#95D840FF', '#55C667FF', '#D078FF', '#F58231',  
                            '#FDE725FF', '#FF5959')
 
-fig_S1B <- fig_S1B + 
+fig_Supp_1B <- fig_Supp_1B + 
   ggtitle('Nowakowski') +
   theme_bw() +
-  #  NoLegend() +
+  NoLegend() +
   my_theme +
   scale_color_manual(values = nowakowski_fc_colours) 
 
@@ -273,76 +294,37 @@ poulioudakis_colours <- c('#9A6324', '#779CBA', '#1E81B0', '#ABDBE3', '#76B5C5',
                           '#FDE725FF', '#FF5959',  '#9A7B47',  '#6300A7FF',  '#8707A6FF', 
                           '#EF0029')
 
-fig_S1C <- DimPlot(seurat.pfc, pt.size = 0.1, reduction = "umap",
+fig_Supp_1C <- DimPlot(seurat.pfc, pt.size = 0.1, reduction = "umap",
                    label = TRUE, group.by = "predicted.id") +
   ggtitle('Poulioudakis') +
   theme_bw() +
-  #  NoLegend() +
+  NoLegend() +
   my_theme +
   scale_color_manual(values = poulioudakis_colours)
 
-fig_S1D <- pfc_noLabel_plot +
-  ggtitle('Frontal Cortex') +
-  theme_bw() +
-  #  NoLegend() +
-  my_theme +
-  scale_color_manual(values = fc_colours)
-
-
 # S2 - GE comparisons
-fig_S2A <- wge_plot +
+fig_Supp_2A <- wge_plot +
   ggtitle('Ganglionic Eminence') +
   theme_bw() +
+  NoLegend() +
   my_theme +
   scale_color_manual(values = ge_colours)
 
 nowakowski_ge_colours <- c('#FFD8B1', '#95D840FF','#55C667FF', '#00FF00A5', '#10A53DFF',
                            '#DCBEFF', '#FAA0A0',  '#3CBB75FF', '#FF5959')
 
-fig_S2B <- fig_S2B + 
+fig_Supp_2B <- fig_Supp_2B + 
   ggtitle('Nowakowski') +
   theme_bw() +
-  #  NoLegend() +
+  NoLegend() +
   my_theme +
   scale_color_manual(values = nowakowski_ge_colours) 
 
-fig_S2C <- wge_noLabel_plot +
-  ggtitle('Ganglionic Eminence') +
-  theme_bw() +
-  my_theme +
-  scale_color_manual(values = ge_colours)
-
-# S3 - Hip comparisons
-fig_S3A <- hip_plot +
-  ggtitle('Hippocampus') +
-  theme_bw() +
-  my_theme +
-  scale_color_manual(values = hip_colours)
-
-fig_S3B <- hip_noLabel_plot +
-  ggtitle('Hippocampus') +
-  theme_bw() +
-  my_theme +
-  scale_color_manual(values = hip_colours)
-
-# S4 - Tha comparisons
-fig_S4A <- tha_plot +
-  ggtitle('Thalamus') +
-  theme_bw() +
-  my_theme +
-  scale_color_manual(values = thalamus_colours)
-
-fig_S4B <- tha_noLabel_plot +
-  ggtitle('Thalamus') +
-  theme_bw() +
-  my_theme +
-  scale_color_manual(values = thalamus_colours)
-
-
-# S5 - Cer comparisons
-fig_S5A <- cer_plot +
+# S3 - Cer comparisons
+fig_Supp_3A <- cer_plot +
   ggtitle('Cerebellum') +
   theme_bw() +
+  NoLegend() +
   my_theme +
   scale_color_manual(values = cer_colours)
 
@@ -356,54 +338,46 @@ aldinger_colours <- c('#FAA0A0', '#CCCCCC', '#9A6324', '#76B5C5', '#D2042D',
                       '#CEE5FD', '#F58231', '#B7FFB7', '#FDE725FF', '#10A53DFF', 
                       '#95D840FF')
 
-fig_S5B <- DimPlot(list_res, reduction = "umap", 
+fig_Supp_3B <- DimPlot(list_res, reduction = "umap", label = TRUE, label.size = 4,
                    pt.size = 0.1, group.by = "type.clustify",
                    repel = TRUE) + ggtitle(NULL) +
   ggtitle('Aldinger') +
   theme_bw() +
+  NoLegend() +
   my_theme +
   scale_color_manual(values = aldinger_colours)
 
-
-fig_S5C <- cer_noLabel_plot +
-  ggtitle('Cerebellum') +
-  theme_bw() +
-  my_theme +
-  scale_color_manual(values = cer_colours)
-
-
-# Save plots
-# Fig S1 
-tiff(paste0(FIG_DIR, "Fig_S1.tiff"), height = 30, width = 40, units='cm', 
+## Save plots  ------------------------------------------------------------------------
+# Figure 1
+tiff(paste0(FIG_DIR, "Fig_1.tiff"), height = 30, width = 40, units='cm',
      compression = "lzw", res = 300)
-fig_S1 <- plot_grid(fig_S1A, fig_S1B, fig_S1C, fig_S1D,
-                    labels = 'AUTO', label_size = 16, align = c("hv"))
+fig1_plot
 dev.off()
 
-# Fig S2
-tiff(paste0(FIG_DIR, "Fig_S2.tiff"), height = 30, width = 40, units='cm', 
+# Fig Supp Fig 1 
+tiff(paste0(FIG_DIR, "Sup_Data_Figure_1.tiff"), height = 30, width = 40, units='cm', 
      compression = "lzw", res = 300)
-plot_grid(fig_S2A, fig_S2B, fig_S2C,
-          labels = 'AUTO', label_size = 16, align = c("hv"))
+plot_grid(fig_Supp_1A, fig_Supp_1B, fig_Supp_1C, labels = 'AUTO', 
+          label_size = 16, align = c("hv"))
 dev.off()
 
-# Fig S3
-tiff(paste0(FIG_DIR, "Fig_S3.tiff"), height = 15, width = 40, units='cm', 
+# Fig Supp Fig 2 
+tiff(paste0(FIG_DIR, "Sup_Data_Figure_2.tiff"), height = 15, width = 40, units='cm', 
      compression = "lzw", res = 300)
-plot_grid(fig_S3A, fig_S3B, labels = 'AUTO', label_size = 16, align = c("hv"))
+plot_grid(fig_Supp_2A, fig_Supp_2B, labels = 'AUTO', label_size = 16, align = c("hv"))
 dev.off()
 
-# Fig S4
-tiff(paste0(FIG_DIR, "Fig_S4.tiff"), height = 15, width = 40, units='cm', 
+# Fig Supp Fig 3
+tiff(paste0(FIG_DIR, "Sup_Data_Figure_3.tiff"), height = 15, width = 40, units='cm', 
      compression = "lzw", res = 300)
-plot_grid(fig_S4A, fig_S4B, labels = 'AUTO', label_size = 16, align = c("hv"))
+plot_grid(fig_Supp_3A, fig_Supp_3B, labels = 'AUTO', label_size = 16, align = c("hv"))
 dev.off()
 
-# Fig S5
-tiff(paste0(FIG_DIR, "Fig_S5.tiff"), height = 30, width = 40, units='cm', 
+# Fig Supp Fig 4
+tiff(paste0(FIG_DIR, "Sup_Data_Figure_4.tiff"), height = 15, width = 40, units='cm', 
      compression = "lzw", res = 300)
-plot_grid(fig_S5A, fig_S5B, fig_S5C,
-          labels = 'AUTO', label_size = 16, align = c("hv"))
+plot_grid(fc_final_plot + NoLegend(), Supp_Fig_4B, labels = 'AUTO', label_size = 16, 
+          align = c("h"), axis = c("tb"), rel_widths = c(1, 1.1))
 dev.off()
 
 #--------------------------------------------------------------------------------------
