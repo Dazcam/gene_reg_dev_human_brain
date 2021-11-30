@@ -6,14 +6,13 @@
 
 ## Info  ------------------------------------------------------------------------------
 
-#  Draft for stacked volin plots may be better done in python scanpy
+#  Figures for stacked violin plots (may be better done in python scanpy?)
+#  Extended data figures 1-5
 
 ##  Load Packages  --------------------------------------------------------------------
 library(cowplot)
 library(tidyverse)
 library(Seurat)
-
-
 
 ## Set variables  ---------------------------------------------------------------------
 DATA_DIR <- '~/Desktop/single_cell/scRNAseq/batch2_CR5_200121/r_objects/final/'
@@ -25,37 +24,62 @@ REGIONS <- c('cer', 'hip', 'pfc', 'tha', 'wge')
 for (REGION in REGIONS) { 
   
   seurat.obj <- readRDS(paste0(DATA_DIR, 'seurat.', REGION, '.final.rds'))
-  features <- c("GAD1", "SLC17A7", "EOMES", "GLI3", "OLIG1", 
-                "MKI67", "C3", "ITM2A")
-  seurat.plot <- VlnPlot(seurat.obj, features, stack = TRUE, sort = TRUE, flip = TRUE) +
-    theme(legend.position = "none") + ggtitle(REGION)
-  
   assign(paste0('seurat.', REGION), seurat.obj, .GlobalEnv)
-  assign(paste0('seurat.', REGION, '_plot'), seurat.plot, .GlobalEnv)
 
+  
 }
 
+# Set features
+fc_features <- c("GAD1", "SLC17A7", "EOMES", "GLI3", "OLIG1", 
+              "MKI67", "C3", "ITM2A", "LHX6", "SST", "CALB2")
+ge_features <- c("GAD1", "SLC17A7", "EOMES", "GLI3", "OLIG1", 
+                 "MKI67", "C3", "ITM2A", "LHX6", "MEIS2", 
+                 "PROX1", "FOXP2")
+hip_features <- c("GAD1", "SLC17A7", "EOMES", "GLI3", "OLIG1", 
+                 "MKI67", "C3", "ITM2A", "SLC17A6", "GRIK4", 
+                 "PROX1")
+tha_features <- c("GAD1", "SLC17A7", "EOMES", "GLI3", "OLIG1", 
+                  "MKI67", "C3", "ITM2A", "SLC17A6", "LHX9")
+cer_features <- c("GAD1", "SLC17A7", "EOMES", "GLI3", "OLIG1", 
+                  "MKI67", "C3", "ITM2A", "SLC17A6", "CALB1", "NEUROD1")
 
+# Plots
+FC_plot <- VlnPlot(seurat.pfc, fc_features, stack = TRUE, sort = TRUE, flip = TRUE) +
+  theme(legend.position = "none") + ggtitle("Frontal Cortex")
+GE_plot <- VlnPlot(seurat.wge, ge_features, stack = TRUE, sort = TRUE, flip = TRUE) +
+  theme(legend.position = "none") + ggtitle("Ganglionic Eminence")
+Cer_plot <- VlnPlot(seurat.cer, cer_features, stack = TRUE, sort = TRUE, flip = TRUE) +
+  theme(legend.position = "none") + ggtitle("Cerebellum")
+Hip_plot <- VlnPlot(seurat.hip, hip_features, stack = TRUE, sort = TRUE, flip = TRUE) +
+  theme(legend.position = "none") + ggtitle("Hippocampus")
+Tha_plot <- VlnPlot(seurat.tha, tha_features, stack = TRUE, sort = TRUE, flip = TRUE) +
+  theme(legend.position = "none") + ggtitle("Thalamus")
 
+# Save
+tiff(paste0(FIG_DIR, "Ext_Data_Figure_1.tiff"), height = 30, width = 40, units='cm', 
+     compression = "lzw", res = 300)
+FC_plot 
+dev.off()
 
+tiff(paste0(FIG_DIR, "Ext_Data_Figure_2.tiff"), height = 30, width = 40, units='cm', 
+     compression = "lzw", res = 300)
+GE_plot 
+dev.off()
 
+tiff(paste0(FIG_DIR, "Ext_Data_Figure_3.tiff"), height = 30, width = 40, units='cm', 
+     compression = "lzw", res = 300)
+Hip_plot 
+dev.off()
 
+tiff(paste0(FIG_DIR, "Ext_Data_Figure_4.tiff"), height = 30, width = 40, units='cm', 
+     compression = "lzw", res = 300)
+Tha_plot 
+dev.off()
 
-features <- c("EOMES", "MEF2C", "RBFOX3", "PTN", "SLC17A6", 
-              "SLC17A7", "ITM2A", "GAD1", "GAD2", "C3", "OLIG1", 
-              "MKI67", "SLC1A3", "PAX3", "TNC", "GLI3")
+tiff(paste0(FIG_DIR, "Ext_Data_Figure_5.tiff"), height = 30, width = 40, units='cm', 
+     compression = "lzw", res = 300)
+Cer_plot 
+dev.off()
 
-features <- c("GAD1", "SLC17A7", "EOMES", "GLI3", "OLIG1", 
-              "MKI67", "C3", "ITM2A")
-
-GAD1
-SLC17A7
-EOMES
-GLI3
-OLIG1
-MKI67
-C3
-ITM2A
-
-a <- VlnPlot(seurat.pfc, features, stack = TRUE, sort = TRUE, flip = TRUE) +
-  theme(legend.position = "none") + ggtitle("FC")
+#--------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------
