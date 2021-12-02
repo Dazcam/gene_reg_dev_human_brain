@@ -40,7 +40,8 @@ hip_features <- c("GAD1", "SLC17A7", "EOMES", "GLI3", "OLIG1",
                   "GAD2", "SLC32A1", "MEF2C", "TNC", "SLC1A3",
                   "PROX1")
 tha_features <- c("GAD1", "SLC17A7", "EOMES", "GLI3", "OLIG1", 
-                  "MKI67", "C3", "ITM2A", "SLC17A6", "LHX9")
+                  "MKI67", "C3", "ITM2A", "SLC17A6", "LHX9", 
+                  "TNC", "GAD2", "SLC32A1", "NEUROD2")
 cer_features <- c("GAD1", "SLC17A7", "EOMES", "GLI3", "OLIG1", 
                   "MKI67", "C3", "ITM2A", "SLC17A6", "CALB1", "NEUROD1")
 
