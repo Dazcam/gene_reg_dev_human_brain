@@ -83,7 +83,7 @@ FC_ExN_2_plot <- ggplot(data = FC_ExN_2, aes(x = -log10(as.numeric(P)), y = fact
   geom_bar(stat = "identity", fill = c('#CEE5FD', '#CEE5FD', '#CEE5FD', '#3CBB75FF', '#3CBB75FF', 
                                        '#3CBB75FF', '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD'), 
            color = 'black') +
-  geom_vline(xintercept=-log10(0.05/14), linetype = "dashed", color = "black") +
+#  geom_vline(xintercept=-log10(0.05/14), linetype = "dashed", color = "black") +
   geom_vline(xintercept=-log10(0.05), linetype = "dotted", color = "black") +
   theme_bw() +
   theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
@@ -144,7 +144,7 @@ dev.off()
 # Fig 7B_E - SCZ
 tiff(paste0(PLOT_DIR, "Figure_7.tiff"), height = 40, width = 40, units='cm', 
      compression = "lzw", res = 300)
-plot_grid(fig_7A, skene_CA1_plot, skene_InN_plot, skene_MSN_plot, skene_CA1_plot, labels = 'AUTO', label_size = 16, align = 'h', axis = 'tb')
+plot_grid(fig_7A, skene_CA1_plot, skene_InN_plot, skene_MSN_plot, skene_SS_plot, labels = 'AUTO', label_size = 16, align = 'h', axis = 'tb')
 dev.off()
 
 
