@@ -26,8 +26,9 @@ library(biomaRt)
 DATA_DIR <- '~/Desktop/single_cell/scRNAseq/batch2_CR5_200121/r_objects/final/'
 MAGMA_DIR <- '~/Dropbox/BRAY_sc_analysis/snRNA-seq/magma_conditional_analyses/'
 REGIONS <- c('cer', 'hip', 'pfc', 'tha', 'wge')
-CELL_TYPES <- c('FC_ExN_2', 'FC_ExN_3', 'FC_ExN_4', 'FC_ExN_5', 'GE_InN_1',
-                'Hipp_ExN_4', 'Hipp_ExN_6', 'Thal_ExN_5', 'Thal_ExN_9')
+CELL_TYPES <- c('FC_ExN_2', 'FC_ExN_3', 'FC_ExN_4', 'FC_ExN_5', 'FC_InN_1', 
+                'GE_InN_1', 'GE_InN_2', 'Hipp_ExN_4', 'Hipp_ExN_6', 'Thal_ExN_5', 
+                'Thal_ExN_9')
 
 
 ## Load Data --------------------------------------------------------------------------
@@ -64,6 +65,11 @@ FC_ExN_5_gene_list <- as.data.frame(pfc_avExp$RNA) %>%
   dplyr::select(`FC-ExN-5`) %>%
   filter(`FC-ExN-5` > 0) %>%
   arrange(desc(`FC-ExN-5`))
+
+FC_InN_1_gene_list <- as.data.frame(pfc_avExp$RNA) %>%
+  dplyr::select(`FC-InN-1`) %>%
+  filter(`FC-InN-1` > 0) %>%
+  arrange(desc(`FC-InN-1`))
 
 GE_InN_1_gene_list <- as.data.frame(wge_avExp$RNA) %>%
   dplyr::select(`GE-InN-1`) %>%
@@ -126,13 +132,13 @@ for (CELL_TYPE in CELL_TYPES) {
 }
 
 ## Intersect with genes in SCZ MAGMA genewise p-value file  ---------------------------
-for (CELL_TYPE in 'GE_InN_2') {
+for (CELL_TYPE in CELL_TYPES) {
   
   GENE_LIST <- get(paste0(CELL_TYPE, '_entrezID'))
   
   cat(paste0('\n\nRunning overlap analysis for: ', CELL_TYPE, '\n'))
   cat(paste0('Total genes before overlap: ', nrow(GENE_LIST), '\n'))
-
+  
   GENE_OVERLAP <- magma_df %>% 
     filter(GENE %in% GENE_LIST[,1]) %>%
     arrange(P) %>%
@@ -144,7 +150,7 @@ for (CELL_TYPE in 'GE_InN_2') {
   cat(paste0('Total genes after overlapping gene sets: ', nrow(GENE_OVERLAP), '\n'))
   
   assign(paste0(CELL_TYPE, '_overlap'), GENE_OVERLAP)
-
+  
   write.table(GENE_OVERLAP, paste0(MAGMA_DIR, CELL_TYPE, '_all_genesExp_in_magmaSCZ.rnk'),
               quote = FALSE, row.names = FALSE,  sep = '\t')
   
