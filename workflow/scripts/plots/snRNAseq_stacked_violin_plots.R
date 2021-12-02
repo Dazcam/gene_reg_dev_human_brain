@@ -25,19 +25,20 @@ for (REGION in REGIONS) {
   
   seurat.obj <- readRDS(paste0(DATA_DIR, 'seurat.', REGION, '.final.rds'))
   assign(paste0('seurat.', REGION), seurat.obj, .GlobalEnv)
-
+  
   
 }
 
 # Set features
 fc_features <- c("GAD1", "SLC17A7", "EOMES", "GLI3", "OLIG1", 
-              "MKI67", "C3", "ITM2A", "LHX6", "SST", "CALB2")
+                 "MKI67", "C3", "ITM2A", "LHX6", "SST", "CALB2")
 ge_features <- c("GAD1", "SLC17A7", "EOMES", "GLI3", "OLIG1", 
                  "MKI67", "C3", "ITM2A", "LHX6", "MEIS2", 
                  "PROX1", "FOXP2")
 hip_features <- c("GAD1", "SLC17A7", "EOMES", "GLI3", "OLIG1", 
-                 "MKI67", "C3", "ITM2A", "SLC17A6", "GRIK4", 
-                 "PROX1")
+                  "MKI67", "C3", "ITM2A", "SLC17A6", "NEUROD2",
+                  "GAD2", "SLC32A1", "MEF2C", "TNC", "SLC1A3",
+                  "PROX1")
 tha_features <- c("GAD1", "SLC17A7", "EOMES", "GLI3", "OLIG1", 
                   "MKI67", "C3", "ITM2A", "SLC17A6", "LHX9")
 cer_features <- c("GAD1", "SLC17A7", "EOMES", "GLI3", "OLIG1", 
