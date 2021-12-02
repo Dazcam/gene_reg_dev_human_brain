@@ -45,17 +45,57 @@ tha_features <- c("GAD1", "SLC17A7", "EOMES", "GLI3", "OLIG1",
 cer_features <- c("GAD1", "SLC17A7", "EOMES", "GLI3", "OLIG1", 
                   "MKI67", "C3", "ITM2A", "SLC17A6", "CALB1", "NEUROD1")
 
-# Plots
-FC_plot <- VlnPlot(seurat.pfc, fc_features, stack = TRUE, sort = TRUE, flip = TRUE) +
+# Set colours
+fc_colours <- c('#DCBEFF', '#9A6324', '#CEE5FD', '#CEE5FD', '#CEE5FD', 
+                '#CEE5FD', '#CEE5FD', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', 
+                '#3CBB75FF', '#D078FF', '#F58231', '#CCCCCC', '#FDE725FF', 
+                '#FF5959', '#FF5959')
+ge_colours <- c('#DCBEFF', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF',
+                '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', '#FF5959', '#FF5959',
+                '#FF5959')
+cer_colours <- c('#DCBEFF', '#9A6324', '#CEE5FD', '#CEE5FD', '#CEE5FD', 
+                 '#CEE5FD', '#CEE5FD', '#CEE5FD', '#3CBB75FF', '#3CBB75FF', 
+                 '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', '#F58231', 
+                 '#CCCCCC', '#CCCCCC', '#FDE725FF', '#FF5959', '#FF5959',
+                 '#FF5959')
+
+tha_colours <- c('#DCBEFF', '#9A6324', '#CEE5FD', '#CEE5FD', '#CEE5FD', 
+                 '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD', 
+                 '#CEE5FD', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', 
+                 '#3CBB75FF', '#F58231', '#FDE725FF', '#FF5959', '#FF5959',
+                 '#FF5959', '#FF5959', '#FF5959')
+  
+  
+hip_colours <- c('#DCBEFF', '#9A6324', '#CEE5FD', '#CEE5FD', '#CEE5FD', 
+                '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD', '#3CBB75FF', 
+                '#3CBB75FF', '#3CBB75FF', '#F58231', '#CCCCCC', '#CCCCCC', 
+                '#FDE725FF', '#FF5959', '#FF5959', '#FF5959')
+
+# Order Idents
+Idents(seurat.pfc) <- factor(x = Idents(seurat.pfc), levels = sort(levels(seurat.pfc)))
+Idents(seurat.wge) <- factor(x = Idents(seurat.wge), levels = sort(levels(seurat.wge)))
+Idents(seurat.cer) <- factor(x = Idents(seurat.cer), levels = sort(levels(seurat.cer)))
+Idents(seurat.tha) <- factor(x = Idents(seurat.tha), levels = sort(levels(seurat.tha)))
+Idents(seurat.hip) <- factor(x = Idents(seurat.hip), levels = sort(levels(seurat.hip)))
+
+# Plot
+FC_plot <- VlnPlot(seurat.pfc, fc_features, stack = TRUE, flip = TRUE, 
+                   cols = fc_colours, same.y.lims = TRUE, fill.by = 'ident') +
   theme(legend.position = "none") + ggtitle("Frontal Cortex")
-GE_plot <- VlnPlot(seurat.wge, ge_features, stack = TRUE, sort = TRUE, flip = TRUE) +
+GE_plot <- VlnPlot(seurat.wge, ge_features, stack = TRUE, flip = TRUE, 
+                   cols = ge_colours, same.y.lims = TRUE, fill.by = 'ident') +
   theme(legend.position = "none") + ggtitle("Ganglionic Eminence")
-Cer_plot <- VlnPlot(seurat.cer, cer_features, stack = TRUE, sort = TRUE, flip = TRUE) +
+Cer_plot <- VlnPlot(seurat.cer, cer_features, stack = TRUE, flip = TRUE, 
+                    cols = cer_colours, same.y.lims = TRUE, fill.by = 'ident') +
   theme(legend.position = "none") + ggtitle("Cerebellum")
-Hip_plot <- VlnPlot(seurat.hip, hip_features, stack = TRUE, sort = TRUE, flip = TRUE) +
+Hip_plot <- VlnPlot(seurat.hip, hip_features, stack = TRUE, flip = TRUE, 
+                    cols = hip_colours, same.y.lims = TRUE, fill.by = 'ident') +
   theme(legend.position = "none") + ggtitle("Hippocampus")
-Tha_plot <- VlnPlot(seurat.tha, tha_features, stack = TRUE, sort = TRUE, flip = TRUE) +
+Tha_plot <- VlnPlot(seurat.tha, tha_features, stack = TRUE, flip = TRUE, 
+                    cols = tha_colours, same.y.lims = TRUE, fill.by = 'ident') +
   theme(legend.position = "none") + ggtitle("Thalamus")
+
+
 
 # Save
 tiff(paste0(FIG_DIR, "Ext_Data_Figure_1.tiff"), height = 30, width = 40, units='cm', 
