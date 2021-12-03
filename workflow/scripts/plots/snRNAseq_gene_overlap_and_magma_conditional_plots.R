@@ -7,6 +7,7 @@
 ## Info  ------------------------------------------------------------------------------
 
 #  Code for figures 6 and 7 - Desktop
+#  https://stackoverflow.com/questions/55855426
 
 ##  Load packages  --------------------------------------------------------------------
 cat('\nLoading packages ... \n\n')
@@ -30,11 +31,17 @@ magma_matrix <- read_table(paste0(DATA_DIR, 'magma_fetal.vs.adult_summary.tsv'))
 fig_6A_data <- reshape2::melt(fetal_matrix) %>%
   arrange(Var1) %>%
   group_by(Var1) %>%
-  filter(row_number() >= which(Var1 == Var2)) 
-
+  filter(row_number() >= which(Var1 == Var2)) %>%
+  mutate(bold = case_when(Var1 == Var2 ~ TRUE,                  # Lines to omit
+                          Var1 != Var2 ~ FALSE))                # if bold boxes
+frames = fig_6A_data[fig_6A_data$bold, c("Var1", "Var2")]       # not
+frames$Var1 = as.integer(frames$Var1)                           # required
+frames$Var2 = rev(as.integer(frames$Var2))                      # and geom_rect
 
 fig_6A <- fig_6A_data %>%  ggplot(aes(x = Var1, y = Var2, fill = 'white')) + 
   geom_tile(color = "black", size = 0.5, fill = '#DBF3FA') +
+  geom_rect(data = frames, size = 1, fill = NA, colour = "black",
+            aes(xmin = Var1 - 0.5, xmax = Var1 + 0.5, ymin = Var2 - 0.5, ymax = Var2 + 0.5)) +
   geom_text(aes(label = value, size = 12)) +
   theme_minimal() +
   theme(axis.text.x = element_text(colour = "#000000", size = 12, angle = 45, vjust = 1, hjust = 1),
@@ -83,7 +90,7 @@ FC_ExN_2_plot <- ggplot(data = FC_ExN_2, aes(x = -log10(as.numeric(P)), y = fact
   geom_bar(stat = "identity", fill = c('#CEE5FD', '#CEE5FD', '#CEE5FD', '#3CBB75FF', '#3CBB75FF', 
                                        '#3CBB75FF', '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD'), 
            color = 'black') +
-#  geom_vline(xintercept=-log10(0.05/14), linetype = "dashed", color = "black") +
+  #  geom_vline(xintercept=-log10(0.05/14), linetype = "dashed", color = "black") +
   geom_vline(xintercept=-log10(0.05), linetype = "dotted", color = "black") +
   theme_bw() +
   theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
