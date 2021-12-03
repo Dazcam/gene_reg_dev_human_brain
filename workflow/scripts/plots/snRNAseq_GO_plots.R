@@ -62,10 +62,16 @@ for (CELL_TYPE in CELL_TYPES) {
   
 }
 
+terms_to_remove <- paste('trans-synaptic signaling', 'anterograde', 'trans-synaptic signaling', 
+                           'cell-cell adhesion', 'axonogenesis', 'regulation of transmembrane transport', 
+                           'ion transmembrane transport', 'cell development', 'eye development', 
+                           'system process', sep = '|')
+
 # Plot all together
 GO_ALL <- rbind(FC_ExN_2_GO, FC_ExN_3_GO, FC_ExN_4_GO, FC_ExN_5_GO, FC_InN_1_GO, 
       GE_InN_1_GO, GE_InN_2_GO, Hipp_ExN_4_GO, Hipp_ExN_6_GO, Thal_ExN_5_GO, 
-      Thal_ExN_9_GO)
+      Thal_ExN_9_GO) %>%
+  filter(!str_detect(Term, terms_to_remove))
 
 GO_ALL_plot <- ggplot(data = GO_ALL, aes(y = Term, x = cell_type, 
                                  color = -log10(FDR), size = `Fold Enrichment`)) + 
@@ -82,6 +88,8 @@ tiff(paste0(PLOT_DIR, "ALL_GO.tiff"), height = 15, width = 30, units='cm',
      compression = "lzw", res = 300)
 print(GO_ALL_plot)
 dev.off()
+
+
 
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
