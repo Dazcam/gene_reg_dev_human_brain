@@ -35,7 +35,7 @@ for (CELL_TYPE in CELL_TYPES) {
                    delim = "\t", escape_double = FALSE, 
                    trim_ws = TRUE, progress = FALSE) %>%
     filter(FDR < 0.05) %>%
-    top_n(-30)  # select the terms with the lowest FDR
+    top_n(-10)  # select the terms with the lowest FDR
     
   cat(paste0("\nNumber of terms with FDR < 0.05: ", nrow(GO), "\n")) 
     
@@ -62,7 +62,26 @@ for (CELL_TYPE in CELL_TYPES) {
   
 }
 
+# Plot all together
+GO_ALL <- rbind(FC_ExN_2_GO, FC_ExN_3_GO, FC_ExN_4_GO, FC_ExN_5_GO, FC_InN_1_GO, 
+      GE_InN_1_GO, GE_InN_2_GO, Hipp_ExN_4_GO, Hipp_ExN_6_GO, Thal_ExN_5_GO, 
+      Thal_ExN_9_GO)
 
+GO_ALL_plot <- ggplot(data = GO_ALL, aes(y = Term, x = cell_type, 
+                                 color = -log10(FDR), size = `Fold Enrichment`)) + 
+  geom_point() +
+  scale_color_gradient(low = "blue", high = "red") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(colour = "#000000", angle = 45, vjust = 1, hjust = 1)) +
+  ylab("") + 
+  xlab("") + 
+  ggtitle("GO enrichment analysis") 
+
+# Save plot
+tiff(paste0(PLOT_DIR, "ALL_GO.tiff"), height = 15, width = 30, units='cm', 
+     compression = "lzw", res = 300)
+print(GO_ALL_plot)
+dev.off()
 
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
