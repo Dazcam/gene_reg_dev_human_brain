@@ -99,40 +99,87 @@ FC_ExN_2_plot <- ggplot(data = FC_ExN_2, aes(x = -log10(as.numeric(P)), y = fact
   ylab('Cell type') +
   xlim(0, 11.5)
 
-# Conditional analysis bar charts conditioning Skene cell types
 for (CELL_TYPE in SKENE_CELL_TYPES) {
   
   ##  Load Data  ----------------------------------------------------------------------
   SKENE_DATA <- read.table(paste0(MAGMA_DIR, 'magma_all_sig_and_skene_condition_', CELL_TYPE, '.gsa.out'), header = FALSE) %>%
     row_to_names(row_number = 1) %>% 
     filter(!str_detect(VARIABLE, 'skene')) %>%
-    #   mutate(VARIABLE = R.utils::capitalize(VARIABLE)) %>%
-    mutate(VARIABLE = gsub("_", "-", VARIABLE)) 
+    mutate(VARIABLE = paste0(VARIABLE, " no ", CELL_TYPE)) %>%
+    mutate(VARIABLE = gsub("_", "-", VARIABLE))
   
-  SKENE_PLOT <- ggplot(data = SKENE_DATA, aes(x = -log10(as.numeric(P)), y = factor(VARIABLE, rev(levels(factor(VARIABLE)))))) +
-    geom_bar(stat = "identity", fill = c('#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD', '#3CBB75FF', 
-                                         '#3CBB75FF', '#3CBB75FF', '#CEE5FD', '#CEE5FD', '#CEE5FD',
-                                         '#CEE5FD'), color = 'black') +
-    geom_vline(xintercept=-log10(0.05/14), linetype = "dashed", color = "black") +
-    geom_vline(xintercept=-log10(0.05), linetype = "dotted", color = "black") +
-    theme_bw() +
-    theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
-          panel.grid.major = element_blank(), 
-          panel.grid.minor = element_blank(),
-          panel.border = element_rect(colour = "black", size = 1),
-          plot.title = element_text(hjust = 0.5),
-          axis.title.x = element_text(colour = "#000000", size = 14),
-          axis.title.y = element_text(colour = "#000000", size = 14),
-          axis.text.x  = element_text(colour = "#000000", size = 12),
-          axis.text.y  = element_text(colour = "#000000", size = 12)) +
-    xlab(expression(-log[10](P))) +
-    ylab('Cell type') +
-    xlim(0, 11.5)
-  
-  assign(CELL_TYPE, SKENE_DATA, envir = .GlobalEnv)
-  assign(paste0(CELL_TYPE, '_plot'), SKENE_PLOT, envir = .GlobalEnv)
+  assign(CELL_TYPE, SKENE_DATA)
   
 }
+
+fetal_vs_adult <- rbind(skene_CA1, skene_InN, skene_MSN, skene_SS) 
+fetal_vs_adult$VARIABLE <- as.factor(fetal_vs_adult$VARIABLE)
+
+fig_7B <- fetal_vs_adult %>%
+  ggplot(aes(x = -log10(as.numeric(P)), y = factor(VARIABLE, rev(levels(factor(VARIABLE)))))) +
+  geom_bar(stat = "identity", fill = c('#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD', '#3CBB75FF',
+                                       '#3CBB75FF', '#3CBB75FF', '#CEE5FD', '#CEE5FD', '#CEE5FD',
+                                       '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD', 
+                                       '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', '#CEE5FD', '#CEE5FD',
+                                       '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD',
+                                       '#CEE5FD', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', '#CEE5FD',
+                                       '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD',
+                                       '#CEE5FD', '#CEE5FD', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF',
+                                       '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD'), color = 'black') +
+  geom_vline(xintercept=-log10(0.05), linetype = "dotted", color = "black") +
+  theme_bw() +
+  #  ggtitle(toupper(TITLE)) +
+  theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.border = element_rect(colour = "black", size = 1),
+        plot.title = element_text(hjust = 0.5),
+        axis.title.x = element_text(colour = "#000000", size = 14),
+        axis.title.y = element_text(colour = "#000000", size = 14),
+        axis.text.x  = element_text(colour = "#000000", size = 12, vjust = 0.5),
+        axis.text.y  = element_text(colour = "#000000", size = 12)) +
+  xlab(expression(-log[10](P))) +
+  ylab('Cell type')
+
+# # Conditional analysis bar charts conditioning Skene cell types
+# for (CELL_TYPE in SKENE_CELL_TYPES) {
+#   
+#   ##  Load Data  ----------------------------------------------------------------------
+#   SKENE_DATA <- read.table(paste0(MAGMA_DIR, 'magma_all_sig_and_skene_condition_', CELL_TYPE, '.gsa.out'), header = FALSE) %>%
+#     row_to_names(row_number = 1) %>% 
+#     filter(!str_detect(VARIABLE, 'skene')) %>%
+#     #   mutate(VARIABLE = R.utils::capitalize(VARIABLE)) %>%
+#     mutate(VARIABLE = gsub("_", "-", VARIABLE)) 
+#   
+#   SKENE_PLOT <- ggplot(data = SKENE_DATA, aes(x = -log10(as.numeric(P)), y = factor(VARIABLE, rev(levels(factor(VARIABLE)))))) +
+#     geom_bar(stat = "identity", fill = c('#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD', '#3CBB75FF', 
+#                                          '#3CBB75FF', '#3CBB75FF', '#CEE5FD', '#CEE5FD', '#CEE5FD',
+#                                          '#CEE5FD'), color = 'black') +
+#     geom_vline(xintercept=-log10(0.05/14), linetype = "dashed", color = "black") +
+#     geom_vline(xintercept=-log10(0.05), linetype = "dotted", color = "black") +
+#     theme_bw() +
+#     theme(plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
+#           panel.grid.major = element_blank(), 
+#           panel.grid.minor = element_blank(),
+#           panel.border = element_rect(colour = "black", size = 1),
+#           plot.title = element_text(hjust = 0.5),
+#           axis.title.x = element_text(colour = "#000000", size = 14),
+#           axis.title.y = element_text(colour = "#000000", size = 14),
+#           axis.text.x  = element_text(colour = "#000000", size = 12),
+#           axis.text.y  = element_text(colour = "#000000", size = 12)) +
+#     xlab(expression(-log[10](P))) +
+#     ylab('Cell type') +
+#     xlim(0, 11.5)
+#   
+#   assign(CELL_TYPE, SKENE_DATA, envir = .GlobalEnv)
+#   assign(paste0(CELL_TYPE, '_plot'), SKENE_PLOT, envir = .GlobalEnv)
+#   
+# }
+# # Fig 7B_E - SCZ
+# tiff(paste0(PLOT_DIR, "Figure_7.tiff"), height = 40, width = 40, units='cm', 
+#      compression = "lzw", res = 300)
+# plot_grid(fig_7A, skene_CA1_plot, skene_InN_plot, skene_MSN_plot, skene_SS_plot, labels = 'AUTO', label_size = 16, align = 'h', axis = 'tb')
+# dev.off()
 
 # Save plots
 # Fig 6 - SCZ
@@ -141,10 +188,10 @@ tiff(paste0(PLOT_DIR, "Figure_6.tiff"), height = 20, width = 40, units='cm',
 plot_grid(fig_6A, FC_ExN_2_plot, align = 'h', labels = 'AUTO', label_size = 16, rel_heights = c(1, 0.1), axis = 'tb')
 dev.off()
 
-# Fig 7B_E - SCZ
-tiff(paste0(PLOT_DIR, "Figure_7.tiff"), height = 40, width = 40, units='cm', 
+# Fig 7 - SCZ
+tiff(paste0(PLOT_DIR, "Figure_7.tiff"), height = 20, width = 40, units='cm', 
      compression = "lzw", res = 300)
-plot_grid(fig_7A, skene_CA1_plot, skene_InN_plot, skene_MSN_plot, skene_SS_plot, labels = 'AUTO', label_size = 16, align = 'h', axis = 'tb')
+plot_grid(fig_7A, fig_7B, align = 'h', labels = 'AUTO', label_size = 16, rel_heights = c(1, 0.1), axis = 'tb')
 dev.off()
 
 
