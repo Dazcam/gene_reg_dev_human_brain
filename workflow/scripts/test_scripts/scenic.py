@@ -30,7 +30,7 @@ DATABASES_GLOB = "SCENIC/encode_20190621__ChIP_seq_transcription_factor.hg38__re
 
 MOTIF_ANNOTATIONS_FNAME = "SCENIC/motifs-v9-nr.hgnc-m0.001-o0.0.tbl"
 MM_TFS_FNAME = "SCENIC/hs_hgnc_tfs.txt"
-SC_EXP_FNAME = "SCENIC/FC_raw_counts.txt"
+SC_EXP_FNAME = "SCENIC/FC_raw_counts.tsv"
 REGULONS_FNAME = "SCENIC/regulons.p"
 MOTIFS_FNAME = "SCENIC/motifs.csv"
 
