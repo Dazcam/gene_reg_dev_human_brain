@@ -40,10 +40,11 @@ hip_features <- c("GAD1", "SLC17A7", "EOMES", "GLI3", "OLIG1",
                   "GAD2", "SLC32A1", "MEF2C", "TNC", "SLC1A3",
                   "PROX1")
 tha_features <- c("GAD1", "SLC17A7", "EOMES", "GLI3", "OLIG1", 
-                  "MKI67", "C3", "ITM2A", "SLC17A6", "LHX9", 
-                  "TNC", "GAD2", "SLC32A1", "NEUROD2")
+                  "MKI67", "C3", "ITM2A", "SLC1A6", "LHX9", 
+                  "TNC", "GAD2", "PAX6", "SLC17A6")
 cer_features <- c("GAD1", "SLC17A7", "EOMES", "GLI3", "OLIG1", 
                   "MKI67", "C3", "ITM2A", "SLC17A6", "CALB1", "NEUROD1")
+
 
 # Set colours
 fc_colours <- c('#DCBEFF', '#9A6324', '#CEE5FD', '#CEE5FD', '#CEE5FD', 
@@ -64,12 +65,12 @@ tha_colours <- c('#DCBEFF', '#9A6324', '#CEE5FD', '#CEE5FD', '#CEE5FD',
                  '#CEE5FD', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', 
                  '#3CBB75FF', '#F58231', '#FDE725FF', '#FF5959', '#FF5959',
                  '#FF5959', '#FF5959', '#FF5959')
-  
-  
+
+
 hip_colours <- c('#DCBEFF', '#9A6324', '#CEE5FD', '#CEE5FD', '#CEE5FD', 
-                '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD', '#3CBB75FF', 
-                '#3CBB75FF', '#3CBB75FF', '#F58231', '#CCCCCC', '#CCCCCC', 
-                '#FDE725FF', '#FF5959', '#FF5959', '#FF5959')
+                 '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD', '#3CBB75FF', 
+                 '#3CBB75FF', '#3CBB75FF', '#F58231', '#CCCCCC', '#CCCCCC', 
+                 '#FDE725FF', '#FF5959', '#FF5959', '#FF5959')
 
 # Order Idents
 Idents(seurat.pfc) <- factor(x = Idents(seurat.pfc), levels = sort(levels(seurat.pfc)))
