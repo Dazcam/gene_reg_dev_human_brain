@@ -1,5 +1,6 @@
-# run this for scenic.py
-exec(open('scenic_env.py').read())
+# run this for pyscenic.py to skip to line 59
+# exec(open('pyscenic_env.py').read())
+# Run in scratch folder
 
 
 # Docs: https://buildmedia.readthedocs.org/media/pdf/pyscenic/stable/pyscenic.pdf
@@ -26,13 +27,14 @@ from pyscenic.aucell import aucell
 
 import seaborn as sns
 
-DATABASES_GLOB = "SCENIC/encode_20190621__ChIP_seq_transcription_factor.hg38__refseq-r80__10kb_up_and_down_tss.max.feather"
+SCENIC_DIR = "SCENIC/"
+DATABASES_GLOB = os.path.join(SCENIC_DIR, "encode*.feather") 
 
-MOTIF_ANNOTATIONS_FNAME = "SCENIC/motifs-v9-nr.hgnc-m0.001-o0.0.tbl"
-MM_TFS_FNAME = "SCENIC/hs_hgnc_tfs.txt"
-SC_EXP_FNAME = "SCENIC/FC_raw_counts.tsv"
-REGULONS_FNAME = "SCENIC/regulons.p"
-MOTIFS_FNAME = "SCENIC/motifs.csv"
+MOTIF_ANNOTATIONS_FNAME = os.path.join(SCENIC_DIR, "motifs-v9-nr.hgnc-m0.001-o0.0.tbl")
+MM_TFS_FNAME = os.path.join(SCENIC_DIR, "hs_hgnc_tfs.txt")
+SC_EXP_FNAME = os.path.join(SCENIC_DIR, "FC_raw_counts.tsv")
+REGULONS_FNAME = os.path.join(SCENIC_DIR, "regulons.p")
+MOTIFS_FNAME = os.path.join(SCENIC_DIR, "motifs.csv")
 
 
 if __name__ == '__main__':
