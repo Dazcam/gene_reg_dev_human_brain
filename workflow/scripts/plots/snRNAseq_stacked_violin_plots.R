@@ -62,7 +62,7 @@ cer_colours <- c('#DCBEFF', '#9A6324', '#CEE5FD', '#CEE5FD', '#CEE5FD',
 tha_colours <- c('#DCBEFF', '#9A6324', '#CEE5FD', '#CEE5FD', '#CEE5FD', 
                  '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD', 
                  '#CEE5FD', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', 
-                 '#3CBB75FF', '#F58231', '#FDE725FF', '#FF5959', '#FF5959',
+                 '#D078FF', '#F58231', '#FDE725FF', '#FF5959', '#FF5959',
                  '#FF5959', '#FF5959', '#FF5959')
 
 
