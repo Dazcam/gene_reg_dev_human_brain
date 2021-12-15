@@ -20,31 +20,30 @@ FIG_DIR <- '~/Dropbox/BRAY_sc_analysis/files_for_paper/figures/'
 REGIONS <- c('cer', 'hip', 'pfc', 'tha', 'wge')
 
 ## Load Data --------------------------------------------------------------------------
-# Seurat objects  ----
 for (REGION in REGIONS) { 
   
   seurat.obj <- readRDS(paste0(DATA_DIR, 'seurat.', REGION, '.final.rds'))
   assign(paste0('seurat.', REGION), seurat.obj, .GlobalEnv)
   
-  
 }
 
 # Set features
 fc_features <- c("GAD1", "SLC17A7", "EOMES", "GLI3", "OLIG1", 
-                 "MKI67", "C3", "ITM2A", "LHX6", "SST", "CALB2")
+                 "MKI67", "C3", "ITM2A", "LHX6", "SST", 
+                 "CALB2", "DCC", "SCGN")
 ge_features <- c("GAD1", "SLC17A7", "EOMES", "GLI3", "OLIG1", 
                  "MKI67", "C3", "ITM2A", "LHX6", "MEIS2", 
-                 "PROX1", "FOXP2")
+                 "PROX1", "FOXP2", "DLX1", "SCGN")
 hip_features <- c("GAD1", "SLC17A7", "EOMES", "GLI3", "OLIG1", 
                   "MKI67", "C3", "ITM2A", "SLC17A6", "NEUROD2",
                   "GAD2", "SLC32A1", "MEF2C", "TNC", "SLC1A3",
-                  "PROX1")
+                  "PROX1", "SCGN")
 tha_features <- c("GAD1", "SLC17A7", "EOMES", "GLI3", "OLIG1", 
                   "MKI67", "C3", "ITM2A", "SLC1A6", "LHX9", 
-                  "TNC", "GAD2", "PAX6", "SLC17A6")
+                  "TNC", "GAD2", "PAX6", "SLC17A6", "SCGN")
 cer_features <- c("GAD1", "SLC17A7", "EOMES", "GLI3", "OLIG1", 
-                  "MKI67", "C3", "ITM2A", "SLC17A6", "CALB1", "NEUROD1")
-
+                  "MKI67", "C3", "ITM2A", "SLC17A6", "CALB1", 
+                  "NEUROD1", "SCGN")
 
 # Set colours
 fc_colours <- c('#DCBEFF', '#9A6324', '#CEE5FD', '#CEE5FD', '#CEE5FD', 
@@ -79,6 +78,9 @@ Idents(seurat.cer) <- factor(x = Idents(seurat.cer), levels = sort(levels(seurat
 Idents(seurat.tha) <- factor(x = Idents(seurat.tha), levels = sort(levels(seurat.tha)))
 Idents(seurat.hip) <- factor(x = Idents(seurat.hip), levels = sort(levels(seurat.hip)))
 
+#haem <- c("HBB", "HBD", "HBG1", "HBG2", "HBE1", "HBZ", "HBM", "HBA2", 
+#          "HBA1", "HBQ1")
+
 # Plot
 FC_plot <- VlnPlot(seurat.pfc, fc_features, stack = TRUE, flip = TRUE, 
                    cols = fc_colours, same.y.lims = TRUE, fill.by = 'ident') +
@@ -92,10 +94,9 @@ Cer_plot <- VlnPlot(seurat.cer, cer_features, stack = TRUE, flip = TRUE,
 Hip_plot <- VlnPlot(seurat.hip, hip_features, stack = TRUE, flip = TRUE, 
                     cols = hip_colours, same.y.lims = TRUE, fill.by = 'ident') +
   theme(legend.position = "none") + ggtitle("Hippocampus")
-Tha_plot <- VlnPlot(seurat.tha, tha_features, stack = TRUE, flip = TRUE, 
+Tha_plot <- VlnPlot(seurat.tha, haem, stack = TRUE, flip = TRUE, 
                     cols = tha_colours, same.y.lims = TRUE, fill.by = 'ident') +
   theme(legend.position = "none") + ggtitle("Thalamus")
-
 
 
 # Save
