@@ -42,7 +42,7 @@ for (DISORDER in GWAS) {
                                              '#CEE5FD', '#CEE5FD', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', 
                                              '#3CBB75FF', '#D078FF', '#F58231', '#CCCCCC', '#FDE725FF', 
                                              '#FF5959', '#FF5959'), color = 'black') +
-        geom_vline(xintercept=qnorm(0.05/91), linetype = "dashed", color = "black") +
+#        geom_vline(xintercept=qnorm(0.05/91), linetype = "dashed", color = "black") +
         geom_vline(xintercept=-qnorm(0.05), linetype = "dotted", color = "black") +
         geom_vline(xintercept=-qnorm(0.05/91), linetype = "dashed", color = "black") +
         geom_vline(xintercept=qnorm(0.05), linetype = "dotted", color = "black") +
@@ -65,16 +65,16 @@ for (DISORDER in GWAS) {
       assign(paste0(REGION, '_', DISORDER, '_ldsc_top10_data'), subset_top10_df, envir = .GlobalEnv)
       
     } else if (REGION == "Cer") {
-
+      
       top10Plot <- ggplot(data = subset_top10_df, aes(x = `Coefficient_z-score`, y = factor(Category, rev(levels(factor(Category)))))) +
         geom_bar(stat = "identity", fill = c('#DCBEFF', '#9A6324', '#CEE5FD', '#CEE5FD', '#CEE5FD', 
                                              '#CEE5FD', '#CEE5FD', '#CEE5FD', '#3CBB75FF', '#3CBB75FF', 
                                              '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', '#F58231', 
                                              '#CCCCCC', '#CCCCCC', '#FDE725FF', '#FF5959', '#FF5959', 
                                              '#FF5959'), color = 'black') +
-        geom_vline(xintercept=qnorm(0.05/91), linetype = "dashed", color = "black") +
+#        geom_vline(xintercept=qnorm(0.05/91), linetype = "dashed", color = "black") +
         geom_vline(xintercept=-qnorm(0.05), linetype = "dotted", color = "black") +
-        geom_vline(xintercept=-qnorm(0.05/91), linetype = "dashed", color = "black") +
+#        geom_vline(xintercept=-qnorm(0.05/91), linetype = "dashed", color = "black") +
         geom_vline(xintercept=qnorm(0.05), linetype = "dotted", color = "black") +
         theme_bw() +
         ggtitle('Cerebellum') +
@@ -95,15 +95,15 @@ for (DISORDER in GWAS) {
       assign(paste0(REGION, '_', DISORDER, '_ldsc_top10_data'), subset_top10_df, envir = .GlobalEnv)
       
     } else if (REGION == "Hipp") {
-
+      
       top10Plot <- ggplot(data = subset_top10_df, aes(x = `Coefficient_z-score`, y = factor(Category, rev(levels(factor(Category)))))) +
         geom_bar(stat = "identity", fill = c("#DCBEFF", '#9A6324', '#CEE5FD', '#CEE5FD', '#CEE5FD',  
                                              '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD', '#3CBB75FF', 
-                                             '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', '#CCCCCC', "#CCCCCC",   
+                                             '#3CBB75FF', '#3CBB75FF', '#F58231', '#CCCCCC', "#CCCCCC",   
                                              '#FDE725FF', '#FF5959', '#FF5959', '#FF5959'), color = 'black') +
-        geom_vline(xintercept=qnorm(0.05/91), linetype = "dashed", color = "black") +
+#        geom_vline(xintercept=qnorm(0.05/91), linetype = "dashed", color = "black") +
         geom_vline(xintercept=-qnorm(0.05), linetype = "dotted", color = "black") +
-        geom_vline(xintercept=-qnorm(0.05/91), linetype = "dashed", color = "black") +
+ #       geom_vline(xintercept=-qnorm(0.05/91), linetype = "dashed", color = "black") +
         geom_vline(xintercept=qnorm(0.05), linetype = "dotted", color = "black") +
         theme_bw() +
         ggtitle('Hippocampus') +
@@ -124,14 +124,14 @@ for (DISORDER in GWAS) {
       assign(paste0(REGION, '_', DISORDER, '_ldsc_top10_data'), subset_top10_df, envir = .GlobalEnv)
       
     } else if (REGION == "GE") {
-
+      
       top10Plot <- ggplot(data = subset_top10_df, aes(x = `Coefficient_z-score`, y = factor(Category, rev(levels(factor(Category)))))) +
         geom_bar(stat = "identity", fill = c('#DCBEFF', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF',
                                              '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', '#FF5959', '#FF5959', 
                                              '#FF5959'), color = 'black') +
-        geom_vline(xintercept=qnorm(0.05/91), linetype = "dashed", color = "black") +
+ #       geom_vline(xintercept=qnorm(0.05/91), linetype = "dashed", color = "black") +
         geom_vline(xintercept=-qnorm(0.05), linetype = "dotted", color = "black") +
-        geom_vline(xintercept=-qnorm(0.05/91), linetype = "dashed", color = "black") +
+ #       geom_vline(xintercept=-qnorm(0.05/91), linetype = "dashed", color = "black") +
         geom_vline(xintercept=qnorm(0.05), linetype = "dotted", color = "black") +
         theme_bw() +
         ggtitle('Ganglionic Eminence') +
@@ -153,16 +153,16 @@ for (DISORDER in GWAS) {
       
       
     } else {
-
+      
       top10Plot <- ggplot(data = subset_top10_df, aes(x = `Coefficient_z-score`, y = factor(Category, rev(levels(factor(Category)))))) +
         geom_bar(stat = "identity", fill = c("#DCBEFF", '#9A6324', '#CEE5FD', '#CEE5FD', '#CEE5FD',  
                                              '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD', '#CEE5FD',
                                              '#CEE5FD', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF', '#3CBB75FF',
                                              "#D078FF", '#F58231', '#FDE725FF', '#FF5959',
                                              '#FF5959', '#FF5959', '#FF5959', '#FF5959'), color = 'black') +
-        geom_vline(xintercept=qnorm(0.05/91), linetype = "dashed", color = "black") +
+ #       geom_vline(xintercept=qnorm(0.05/91), linetype = "dashed", color = "black") +
         geom_vline(xintercept=-qnorm(0.05), linetype = "dotted", color = "black") +
-        geom_vline(xintercept=-qnorm(0.05/91), linetype = "dashed", color = "black") +
+ #       geom_vline(xintercept=-qnorm(0.05/91), linetype = "dashed", color = "black") +
         geom_vline(xintercept=qnorm(0.05), linetype = "dotted", color = "black") +
         theme_bw() +
         ggtitle('Thalamus') +
@@ -208,20 +208,20 @@ tiff(paste0(PLOT_DIR, "Fig_3.tiff"), height = 30, width = 30, units='cm',
 all_regions_SCZ_ldsc_top10_plot
 dev.off()
 
-# Fig S8 - SCZ
+# Fig S8 - BPD
 tiff(paste0(PLOT_DIR, "Fig_S8.tiff"), height = 30, width = 30, units='cm', 
      compression = "lzw", res = 300)
 all_regions_BPD_ldsc_top10_plot
 dev.off()
 
-# Fig S10 - SCZ
+# Fig S10 - MDD
 tiff(paste0(PLOT_DIR, "Fig_S10.tiff"), height = 30, width = 30, units='cm', 
      compression = "lzw", res = 300)
 all_regions_MDD_ldsc_top10_plot
 dev.off()
 
-# Fig S12 - SCZ
-tiff(paste0(PLOT_DIR, "Fig_S12.tiff"), height = 30, width = 30, units='cm', 
+# Fig 5 - HEIGHT
+tiff(paste0(PLOT_DIR, "Fig_5.tiff"), height = 30, width = 30, units='cm', 
      compression = "lzw", res = 300)
 all_regions_HEIGHT_ldsc_top10_plot
 dev.off()
