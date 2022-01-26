@@ -1,0 +1,106 @@
+# -------------------------------------------------------------------------------------
+#
+#    snRNAseq - prepare GO term gene lists MAGMA analysis
+#
+# -------------------------------------------------------------------------------------
+
+# Abandoned this approach
+
+## Info  ------------------------------------------------------------------------------
+
+#  1. Download GO term gene lists - use Biomart 
+#  2. Get intersect of GO term genes and q10 genes for all sig cell types 
+#  3. Run Magma on those intersects 
+
+# https://www.biostars.org/p/52101/
+
+##  Load packages  --------------------------------------------------------------------
+library(biomaRt)
+library(tidyverse)
+library(readxl)
+library(janitor)
+
+##  Initialise variables  -------------------------------------------------------------
+SIG_CELLS <- c('FC-ExN-2', 'FC-ExN-3', 'FC-ExN-4', 'GE-InN-2', 'Hipp-ExN-3', 'Hipp-ExN-5')
+DATA_DIR <- "~/Desktop/fetal_brain_snRNAseq_110122/results/gene_lists/q10_gene_lists/"
+RESOURCES_DIR <- "~/Desktop/fetal_brain_snRNAseq_110122/resources/sheets/"
+
+##  Load data  ------------------------------------------------------------------------
+for (CELL_TYPE in SIG_CELLS) {
+  
+  GENES <- read_delim(paste0(DATA_DIR, CELL_TYPE, '_Q10_genes.tsv'), 
+                      delim = '\t', escape_double = FALSE, col_names = FALSE,
+                      trim_ws = TRUE)
+  colnames(GENES) <- 'hgnc_symbol'
+  assign(paste0(CELL_TYPE, '_q10_genes'), GENES)
+  
+}
+
+##  Extract GO terms  -----------------------------------------------------------------
+GO_TERMS <- read_excel(paste0(RESOURCES_DIR, 'FinalGOterms_to_plot_for_figure6.xlsx')) %>%
+  dplyr::select(...1) %>%
+  janitor::row_to_names(row_number = 1) %>%
+  separate(Term, '~', into = c("pre", "post")) %>%
+  pull('pre')
+
+
+# Download GO term gene lists - use Biomart  ------------------------------------------
+# listFilters(ensembl)
+# listAttributes(ensembl)
+for (TERM in GO_TERMS) {
+  
+  cat('\nRetrieving GO term genes for: ', TERM)
+  ensembl = useMart("ensembl", dataset="hsapiens_gene_ensembl") #uses human ensembl annotations
+  GO_GENES <- getBM(attributes=c('hgnc_symbol', 'go_id', 'entrezgene_id', 'gene_biotype', 'description'),
+                   filters = 'go', values = TERM, mart = ensembl)
+
+  assign(paste0(TERM, '_genes'), GO_GENES)
+  
+}
+
+# Checks
+for (TERM in GO_TERMS) {
+  
+  GO_GENES <- get(paste0(TERM, '_genes')) 
+  GO_GENES_2 <- GO_GENES %>%
+    filter(go_id == TERM)
+  
+  cat('\nChecks for: ', TERM)
+  cat('\nGene count: ', nrow(GO_GENES))
+  cat('\nGene count after filter: ', nrow(GO_GENES_2))
+  cat('\nAll filtered genes protein coding:', base::unique(GO_GENES_2$gene_biotype))
+  cat('\nDuplicate count in HGNC: ', sum(duplicated(GO_GENES_2$hgnc_symbol)))
+  cat('\nDuplicate count in Entrez: ', sum(duplicated(GO_GENES_2$entrezgene_id)))
+  
+  assign(paste0(TERM, '_genes_filtered'), GO_GENES_2)
+  
+}
+
+
+## Intersect GO term genes and q10 genes for all sig cell types 
+for (CELL_TYPE in SIG_CELLS) {
+  
+  cat('\n\nCell type: ', CELL_TYPE)
+  
+  for (TERM in GO_TERMS) {
+    
+    if (nrow(get(paste0(TERM, '_genes_filtered'))) == 0) next
+  
+      INTERSECT_GENES <- left_join(get(paste0(CELL_TYPE, '_q10_genes')), 
+                                   get(paste0(TERM, '_genes_filtered')), 
+                                   by = 'hgnc_symbol') %>%
+      drop_na()
+      
+      if (nrow(INTERSECT_GENES) < 20) next
+  
+        cat('\n\nChecks for: ', TERM)
+        cat('\nGene count: ', nrow(INTERSECT_GENES))
+        cat('\nAll filtered genes protein coding:', base::unique(INTERSECT_GENES$gene_biotype))
+        cat('\nDuplicate count in HGNC: ', sum(duplicated(INTERSECT_GENES$hgnc_symbol)))
+        cat('\nDuplicate count in Entrez: ', sum(duplicated(INTERSECT_GENES$entrezgene_id)))
+        
+        assign()
+    
+  }
+  
+}
